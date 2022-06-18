@@ -51,6 +51,17 @@ local spellTxtIds = {}
 -- configuration
 ----------------------------------------------------------------------------------------------------
 
+-- party melee range (experimental)
+
+mem.prot(true)
+-- that is default value - change it
+
+mem.u8[0x004B9418] = 0x4074000000000000
+mem.prot(false)
+-- mem.u1[0x004B9418] = 0x33
+-- default value mem.u8[0x004B9418] = 0x4079733333333333
+
+
 -- melee recovery cap
 
 local meleeRecoveryCap = 10
@@ -2116,11 +2127,11 @@ function events.GameInitialized2()
 
 		-- multiply monster damage
 				local monsterLevel = Game.MonstersTxt[monsterTxtIndex].Level
-		monsterTxt.Attack1.DamageDiceSides = math.round(monsterTxt.Attack1.DamageDiceSides * ((monsterLevel+5)/20 +1))
-		monsterTxt.Attack1.DamageAdd = math.round(monsterTxt.Attack1.DamageAdd * ((monsterLevel+5)/20 +1))
+		monsterTxt.Attack1.DamageDiceSides = math.round(monsterTxt.Attack1.DamageDiceSides * ((monsterLevel+5)/20 +1.75))
+		monsterTxt.Attack1.DamageAdd = math.round(monsterTxt.Attack1.DamageAdd * ((monsterLevel+5)/20 +1.75))
 
-		monsterTxt.Attack2.DamageDiceSides = math.round(monsterTxt.Attack2.DamageDiceSides * ((monsterLevel+5)/20 +1))
-		monsterTxt.Attack2.DamageAdd = math.round(monsterTxt.Attack2.DamageAdd * ((monsterLevel+5)/20 +1))
+		monsterTxt.Attack2.DamageDiceSides = math.round(monsterTxt.Attack2.DamageDiceSides * ((monsterLevel+5)/20 +1.75))
+		monsterTxt.Attack2.DamageAdd = math.round(monsterTxt.Attack2.DamageAdd * ((monsterLevel+5)/20 +1.75))
 
 		local skillLevel, skillMastery = SplitSkill(monsterTxt.SpellSkill)
 		monsterTxt.SpellSkill = math.round(JoinSkill(skillLevel * ((monsterLevel+5)/30 +1)), skillMastery)
