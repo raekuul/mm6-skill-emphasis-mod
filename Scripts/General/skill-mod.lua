@@ -276,19 +276,19 @@ local newWeaponSkillResistanceBonuses =
 
 local newArmorSkillACBonuses =
 {
-	[const.Skills.Shield]	= {2, 2, 2, },
-	[const.Skills.Leather]	= {2, 3, 4, },
-	[const.Skills.Chain]	= {4, 6, 8, },
-	[const.Skills.Plate]	= {6, 9,12, },
+	[const.Skills.Shield]	= {3, 3, 3, },
+	[const.Skills.Leather]	= {3, 3, 3, },
+	[const.Skills.Chain]	= {3, 3, 3, },
+	[const.Skills.Plate]	= {3, 3,3, },
 }
 
 -- armor skill resistance bonuses (by rank)
 
 local newArmorSkillResistanceBonuses =
 {
-	[const.Skills.Leather]	= {4, 6, 8, },
-	[const.Skills.Chain]	= {2, 3, 4, },
-	[const.Skills.Plate]	= {1, 2, 3, },
+	[const.Skills.Leather]	= {3, 3, 6, },
+	[const.Skills.Chain]	= {3, 3, 3, },
+	[const.Skills.Plate]	= {0, 0, 0, },
 }
 
 -- armor skill damage reduction exponential multiplier (by rank)
@@ -297,7 +297,7 @@ local newArmorSkillDamageMultiplier =
 {
 	[const.Skills.Leather]	= {1.00, 1.00, 1.00, },
 	[const.Skills.Chain]	= {1.00, 1.00, 0.99, },
-	[const.Skills.Plate]	= {0.30, 0.30, 0.30, },
+	[const.Skills.Plate]	= {1.00, 1.00, 0.98, },
 }
 
 -- local recoveryBonusByMastery = {[const.Novice] = 4, [const.Expert] = 5, [const.Master] = 6, }
@@ -349,7 +349,7 @@ local classRangedWeaponSkillDamageBonus =
 local plateCoverChances = {[const.Novice] = 0.1, [const.Expert] = 0.2, [const.Master] = 0.3, }
 
 -- shield projectile damage multiplier by mastery
-local shieldProjectileDamageReductionPerLevel = 0.02
+local shieldProjectileDamageReductionPerLevel = 0.01
 
 -- monster global settings
 
@@ -375,6 +375,7 @@ local characterLinkedSkillGroups =
 		{
 			[const.Skills.Sword] = true,
 			[const.Skills.Dagger] = true,
+			[const.Skills.Shield] = true,
 		},
 	["ranged"] =
 		{
@@ -1792,13 +1793,14 @@ function events.CalcDamageToPlayer(t)
 	
 	if t.DamageKind == const.Damage.Phys then
 	
-		local armor = equipmentData.armor.level
+		local armor = equipmentData.armor
 	
 		if armor.equipped then
-		
+
 			local damageMultiplier = math.pow(newArmorSkillDamageMultiplier[armor.skill][armor.rank], equipmentData.armor.level)
-			
-			t.Damage = math.round(t.Damage * damageMultiplier)
+
+			t.Result = math.round(t.Damage * damageMultiplier)
+
 			
 		end
 		
@@ -2059,7 +2061,9 @@ function events.GameInitialized2()
 	----------------------------------------------------------------------------------------------------
 	
 	for monsterTxtId, monsterInfo in pairs(monsterInfos) do
-	
+		
+		-- get monster
+		
 		local monsterTxt = Game.MonstersTxt[monsterTxtId]
 		
 		-- Attack1
@@ -2091,6 +2095,33 @@ function events.GameInitialized2()
 			if monsterInfo.SpellSkill ~= nil then
 				monsterTxt.SpellSkill = monsterInfo.SpellSkill
 			end
+		end
+				-- process other custom values in monsterInfo
+
+		for key, value in pairs(monsterInfo) do
+
+			-- skip Attack1, Attack2, Spell
+
+			if key == "Attack1" or key == "Attack2Chance" or key == "Attack2" or key == "SpellChance" or key == "Spell" or key == "SpellSkill" then
+
+				-- do nothing - it is already processed
+
+			elseif key == "Resistances" then
+
+				-- apply custom resistances
+
+				for resistanceDamageType, resistanceValue in pairs(value) do
+					monsterTxt.Resistances[resistanceDamageType] = resistanceValue
+				end
+
+			else
+
+				-- apply all other flat values
+
+				monsterTxt[key] = value
+
+			end
+
 		end
 		
 	end
@@ -2358,7 +2389,7 @@ function events.GameInitialized2()
 			string.format(
 				" %s |                 %s |",
 				formatSkillRankNumber(newArmorSkillACBonuses[const.Skills.Shield][rank], 77),
-				formatSkillRankNumber(Game.SkillRecoveryTimes[const.Skills.Shield + 1], 209)
+formatSkillRankNumber(Game.SkillRecoveryTimes[const.Skills.Shield + 1] * (rank == const.Novice and 1 or (rank == const.Expert and 0.5 or 0)), 209)
 			)
 	end
 	
@@ -3724,3 +3755,41 @@ local function changedCharacterCalcStatBonusByItems(d, def, characterPointer, st
 end
 mem.hookcall(0x0047FF37, 1, 1, changedCharacterCalcStatBonusByItems)
 mem.hookcall(0x0048875B, 1, 1, changedCharacterCalcStatBonusByItems)
+
+----------------------------------------------------------------------------------------------------
+-- Monster_CalculateDamage
+----------------------------------------------------------------------------------------------------
+
+local function modifiedMonsterCalculateDamage(d, def, monsterPointer, attackType)
+
+	-- get monster
+
+	local monsterIndex, monster = GetMonster(d.edi)
+
+	-- execute original code
+
+	local damage = def(monsterPointer, attackType)
+
+	if attackType == 0 then
+		-- primary attack is calculated correctly
+		return damage
+	elseif attackType == 1 then
+		-- secondary attach uses attack1 DamageAdd
+		-- replace Attack1.DamageAdd with Attack2.DamageAdd
+		damage = damage - monster.Attack1.DamageAdd + monster.Attack2.DamageAdd
+		return damage
+	elseif attackType == 2 and (monster.Spell == 44 or monster.Spell == 95) then
+		-- don't recalculate Mass Distortion or Finger of Death
+		return damage
+	end
+
+	-- calculate spell damage same way as for party
+
+	local spellSkill, spellMastery = SplitSkill(monster.SpellSkill)
+	damage = Game.CalcSpellDamage(monster.Spell, spellSkill, spellMastery, 0)
+
+	return damage
+
+end
+mem.hookcall(0x00431D4F, 1, 1, modifiedMonsterCalculateDamage)
+mem.hookcall(0x00431EE3, 1, 1, modifiedMonsterCalculateDamage)
