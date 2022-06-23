@@ -279,7 +279,7 @@ local newArmorSkillACBonuses =
 	[const.Skills.Shield]	= {3, 3, 3, },
 	[const.Skills.Leather]	= {3, 3, 3, },
 	[const.Skills.Chain]	= {3, 3, 3, },
-	[const.Skills.Plate]	= {3, 3,3, },
+	[const.Skills.Plate]	= {3, 3, 3, },
 }
 
 -- armor skill resistance bonuses (by rank)
@@ -310,7 +310,7 @@ local learningSkillExtraMultiplier = 2
 local learningSkillMultiplierByMastery = {[const.Novice] = 1 + learningSkillExtraMultiplier, [const.Expert] = 2 + learningSkillExtraMultiplier, [const.Master] = 3 + learningSkillExtraMultiplier, }
 
 -- special modifiers
-local daggerCrowdDamageMultiplier = 0.5
+local daggerCrowdDamageMultiplier = 0.25
 
 -- special weapon skill chances
 local staffEffect = {["base"] = 10, ["multiplier"] = 2, ["duration"] = 5, }
@@ -325,6 +325,9 @@ local classMeleeWeaponSkillDamageBonus =
 	[const.Class.Paladin] = 0,
 	[const.Class.Crusader] = 0.5,
 	[const.Class.Hero] = 1,
+	[const.Class.Archer] = 0,
+	[const.Class.BattleMage] = 0.5,
+	[const.Class.WarriorMage] = 1,
 }
 local classRangedWeaponSkillAttackBonusMultiplier =
 {
@@ -438,9 +441,9 @@ local spellPowers =
 -- Inferno
 [10] =
 {
-[const.Novice] = {fixedMin = 11, fixedMax = 11, variableMin = 1, variableMax = 4, },
-[const.Expert] = {fixedMin = 11, fixedMax = 11, variableMin = 1, variableMax = 4, },
-[const.Master] = {fixedMin = 11, fixedMax = 11, variableMin = 1, variableMax = 4, },
+[const.Novice] = {fixedMin = 11, fixedMax = 11, variableMin = 1, variableMax = 7, },
+[const.Expert] = {fixedMin = 11, fixedMax = 11, variableMin = 1, variableMax = 7, },
+[const.Master] = {fixedMin = 11, fixedMax = 11, variableMin = 1, variableMax = 7, },
 },
 -- Incinerate
 [11] =
@@ -745,12 +748,22 @@ local monsterInfos =
 	[143] = {["SpellChance"] = 20, ["SpellName"] = "Fire Bolt", ["SpellSkill"] = JoinSkill(2, const.Novice), },
 	-- Witch Doctor (male)
 	[144] = {["SpellChance"] = 30, ["SpellName"] = "Fire Bolt", ["SpellSkill"] = JoinSkill(3, const.Novice), },
+	--Malekith rebalance
+	--Magyar
+	[  4] = {["SpellChance"] = 10, ["SpellName"] = "Lightning Bolt", ["SpellSkill"] = JoinSkill(4, const.Master), },
+	-- Magyar Soldier
+	[  5] = {["SpellChance"] = 20, ["SpellName"] = "Lightning Bolt", ["SpellSkill"] = JoinSkill(6, const.Master), },
+	-- Magyar Matron
+	[  6] = {["SpellChance"] = 30, ["SpellName"] = "Implosion", ["SpellSkill"] = JoinSkill(6, const.Master), },
+	
+	--[[ SkEm mod
 	-- Magyar
 	[  4] = {["Attack2Chance"] = 10, ["Attack2"] = {["Type"] = const.Damage.Elec, ["DamageDiceCount"] = 3, ["DamageDiceSides"] = 8, ["DamageAdd"] = 0, ["Missile"] = missiles["Elec"], }, },
 	-- Magyar Soldier
 	[  5] = {["Attack2Chance"] = 20, ["Attack2"] = {["Type"] = const.Damage.Elec, ["DamageDiceCount"] = 5, ["DamageDiceSides"] = 8, ["DamageAdd"] = 0, ["Missile"] = missiles["Elec"], }, },
 	-- Magyar Matron
 	[  6] = {["Attack2Chance"] = 30, ["Attack2"] = {["Type"] = const.Damage.Elec, ["DamageDiceCount"] = 7, ["DamageDiceSides"] = 8, ["DamageAdd"] = 0, ["Missile"] = missiles["Elec"], }, },
+	]]
 	-- Goblin
 	[ 76] = {["SpellChance"] = 10, ["SpellName"] = "Fire Bolt", ["SpellSkill"] = JoinSkill(1, const.Novice), },
 	-- Goblin Shaman
@@ -2046,6 +2059,23 @@ mem.asmpatch(
 
 function events.GameInitialized2()
 
+	-- Healing Spell SP Cost
+	-- Cure Wounds
+	Game.Spells[71].SpellPointsNormal = 5
+	Game.Spells[71].SpellPointsExpert = 8
+	Game.Spells[71].SpellPointsMaster = 15
+	Game.SpellsTxt[71].SpellPointsNormal = 5
+	Game.SpellsTxt[71].SpellPointsExpert = 8
+	Game.SpellsTxt[71].SpellPointsMaster = 15
+
+	-- Healing Touch
+	Game.Spells[47].SpellPointsNormal = 3
+	Game.Spells[47].SpellPointsExpert = 6
+	Game.Spells[47].SpellPointsMaster = 12
+	Game.SpellsTxt[47].SpellPointsNormal = 3
+	Game.SpellsTxt[47].SpellPointsExpert = 6
+	Game.SpellsTxt[47].SpellPointsMaster = 12
+
 	----------------------------------------------------------------------------------------------------
 	-- populate global references
 	----------------------------------------------------------------------------------------------------
@@ -2164,7 +2194,7 @@ function events.GameInitialized2()
 		-- monster movement speed is increased
 		
 		local monsterMoveSpeed = monsterTxt.MoveSpeed
-		monsterMoveSpeed = monsterMoveSpeed + (400 - monsterMoveSpeed) / 2 + 70
+		monsterMoveSpeed = monsterMoveSpeed + (400 - monsterMoveSpeed) / 2 + 100
 		monsterTxt.MoveSpeed = monsterMoveSpeed
 		
 		-- monster experience
@@ -3097,7 +3127,7 @@ local function modifiedTempleHealingPrice(d, def, playerPointer, cost)
 	
 	-- get total price
 	
-	local totalPrice = healingPrice + restorationPrice
+	local totalPrice = (healingPrice + restorationPrice)^0.6
 	
 	-- return result
 	
