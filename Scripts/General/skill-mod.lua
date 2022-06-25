@@ -2175,10 +2175,10 @@ function events.GameInitialized2()
 		
 		-- multiply monster hit points
 		
-		monsterTxt.FullHitPoints = monsterTxt.FullHitPoints * monsterHitPointsMultiplier
+		monsterTxt.FullHitPoints = monsterTxt.FullHitPoints * monsterHitPointsMultiplier * ((100-Game.MonstersTxt[monsterTxtIndex].Level)/300+1)
 		
 		-- multiply monster damage
-				local monsterLevel = Game.MonstersTxt[monsterTxtIndex+1].Level
+		local monsterLevel = Game.MonstersTxt[monsterTxtIndex-1].Level
 		monsterTxt.Attack1.DamageDiceSides = math.round(monsterTxt.Attack1.DamageDiceSides * ((monsterLevel+5)/20 +1.75))
 		monsterTxt.Attack1.DamageAdd = math.round(monsterTxt.Attack1.DamageAdd * ((monsterLevel+5)/20 +1.75))
 
@@ -2194,12 +2194,12 @@ function events.GameInitialized2()
 		monsterArmorClass = math.round(monsterArmorClass * (1 + (100 - monsterArmorClass) / 100)) * monsterArmorClassMultiplier
 		monsterTxt.ArmorClass = monsterArmorClass
 		
-		-- modify and multiply monster level
+		--[[ modify and multiply monster level
 		
 		local monsterLevel = monsterTxt.Level
 		monsterLevel = math.round(monsterLevel * (1 + (100 - monsterLevel) / 100)) * monsterLevelMultiplier
 		monsterTxt.Level = monsterLevel
-		
+		]]
 		-- monster movement speed is increased
 		
 		local monsterMoveSpeed = monsterTxt.MoveSpeed
@@ -2228,10 +2228,10 @@ function events.GameInitialized2()
 		
 		-- multiply monster hit points
 		
-		monsterTxt.FullHitPoints = monsterTxt.FullHitPoints * monsterHitPointsMultiplier
+		monsterTxt.FullHitPoints = monsterTxt.FullHitPoints * monsterHitPointsMultiplier * ((100-Game.MonstersTxt[monsterTxtIndex].Level)/300+1)
 		
 		-- multiply monster damage
-				local monsterLevel = Game.MonstersTxt[monsterTxtIndex].Level
+				local monsterLevel = Game.MonstersTxt[monsterTxtIndex-1].Level
 		monsterTxt.Attack1.DamageDiceSides = math.round(monsterTxt.Attack1.DamageDiceSides * ((monsterLevel+5)/20 +1.75))
 		monsterTxt.Attack1.DamageAdd = math.round(monsterTxt.Attack1.DamageAdd * ((monsterLevel+5)/20 +1.75))
 
@@ -2247,12 +2247,12 @@ function events.GameInitialized2()
 		monsterArmorClass = math.round(monsterArmorClass * (1 + (100 - monsterArmorClass) / 100)) * monsterArmorClassMultiplier
 		monsterTxt.ArmorClass = monsterArmorClass
 		
-		-- modify and multiply monster level
+		--[[ modify and multiply monster level
 		
 		local monsterLevel = monsterTxt.Level
 		monsterLevel = math.round(monsterLevel * (1 + (100 - monsterLevel) / 100)) * monsterLevelMultiplier
 		monsterTxt.Level = monsterLevel
-		
+		]]
 		-- monster movement speed is increased
 		
 		local monsterMoveSpeed = monsterTxt.MoveSpeed
@@ -2281,7 +2281,7 @@ function events.GameInitialized2()
 		
 		-- multiply monster hit points
 		
-		monsterTxt.FullHitPoints = monsterTxt.FullHitPoints * monsterHitPointsMultiplier
+		monsterTxt.FullHitPoints = monsterTxt.FullHitPoints * monsterHitPointsMultiplier * ((100-Game.MonstersTxt[monsterTxtIndex].Level)/300+1)
 		
 		-- multiply monster damage
 		local monsterLevel = Game.MonstersTxt[monsterTxtIndex-1].Level
@@ -2300,12 +2300,12 @@ function events.GameInitialized2()
 		monsterArmorClass = math.round(monsterArmorClass * (1 + (100 - monsterArmorClass) / 100)) * monsterArmorClassMultiplier
 		monsterTxt.ArmorClass = monsterArmorClass
 		
-		-- modify and multiply monster level
+		--[[ modify and multiply monster level
 		
 		local monsterLevel = monsterTxt.Level
 		monsterLevel = math.round(monsterLevel * (1 + (100 - monsterLevel) / 100)) * monsterLevelMultiplier
 		monsterTxt.Level = monsterLevel
-		
+		]]
 		-- monster movement speed is increased
 		
 		local monsterMoveSpeed = monsterTxt.MoveSpeed
