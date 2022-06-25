@@ -724,6 +724,28 @@ local modifiedBookValues =
 
 local monsterInfos =
 {
+	--Maddening Eye
+	[12] = {["SpellChance"] = 2, ["SpellName"] = "Dispell Magic", ["SpellSkill"] = JoinSkill(10, const.Novice), },
+	--Devil Master
+	[12] = {["SpellChance"] = 20, ["SpellName"] = "Meteor Shower", ["SpellSkill"] = JoinSkill(2, const.Master), },
+	--Defender of VARN
+	[88] = {["SpellChance"] = 20, ["SpellName"] = "Psychic Shock", ["SpellSkill"] = JoinSkill(4, const.Master), },
+	--Sentinel of VARN
+	[89] = {["SpellChance"] = 20, ["SpellName"] = "Psychic Shock", ["SpellSkill"] = JoinSkill(6, const.Master), },
+	--Guardian of VARN
+	[90] = {["SpellChance"] = 20, ["SpellName"] = "Psychic Shock", ["SpellSkill"] = JoinSkill(7, const.Master), },
+	--Lich
+	[94] = {["SpellChance"] = 1, ["SpellName"] = "Dispell Magic", ["SpellSkill"] = JoinSkill(10, const.Novice), },
+	--Greater Lich
+	[95] = {["SpellChance"] = 1, ["SpellName"] = "Dispell Magic", ["SpellSkill"] = JoinSkill(10, const.Novice), },
+	--Gorgon
+	[102] = {["SpellChance"] = 30, ["SpellName"] = "Psychic Shock", ["SpellSkill"] = JoinSkill(5, const.Master), },
+	--Titan
+	[166] = {["SpellChance"] = 30, ["SpellName"] = "Psychic Shock", ["SpellSkill"] = JoinSkill(8, const.Master), },
+	--Noble Titan
+	[167] = {["SpellChance"] = 40, ["SpellName"] = "Psychic Shock", ["SpellSkill"] = JoinSkill(9, const.Master), },
+	--Supreme Titan
+	[168] = {["SpellChance"] = 50, ["SpellName"] = "Psychic Shock", ["SpellSkill"] = JoinSkill(13, const.Master), },
 	-- Follower of Baa
 	[139] = {["SpellChance"] = 10, ["SpellName"] = "Mind Blast", ["SpellSkill"] = JoinSkill(1, const.Novice), },
 	-- Mystic of Baa
@@ -2175,8 +2197,9 @@ function events.GameInitialized2()
 		
 		-- multiply monster hit points
 		
-		monsterTxt.FullHitPoints = monsterTxt.FullHitPoints * monsterHitPointsMultiplier * ((100-Game.MonstersTxt[monsterTxtIndex].Level)/300+1)
-		
+		monsterTxt.FullHitPoints = monsterTxt.FullHitPoints * monsterHitPointsMultiplier
+		if Game.MonstersTxt[monsterTxtIndex].Level/Game.MonstersTxt[monsterTxtIndex-2].Level>1.9 then
+		monsterTxt.FullHitPoints= monsterTxt.FullHitPoints * (Game.MonstersTxt[monsterTxtIndex].Level/Game.MonstersTxt[monsterTxtIndex-2].Level*0.2+1) end
 		-- multiply monster damage
 		local monsterLevel = Game.MonstersTxt[monsterTxtIndex-1].Level
 		monsterTxt.Attack1.DamageDiceSides = math.round(monsterTxt.Attack1.DamageDiceSides * ((monsterLevel+5)/20 +1.75))
@@ -2228,7 +2251,9 @@ function events.GameInitialized2()
 		
 		-- multiply monster hit points
 		
-		monsterTxt.FullHitPoints = monsterTxt.FullHitPoints * monsterHitPointsMultiplier * ((100-Game.MonstersTxt[monsterTxtIndex].Level)/300+1)
+		monsterTxt.FullHitPoints = monsterTxt.FullHitPoints * monsterHitPointsMultiplier
+		if Game.MonstersTxt[monsterTxtIndex].Level/Game.MonstersTxt[monsterTxtIndex-2].Level>1.9 then 
+		monsterTxt.FullHitPoints= monsterTxt.FullHitPoints * (Game.MonstersTxt[monsterTxtIndex].Level/Game.MonstersTxt[monsterTxtIndex-1].Level*0.2+1) end
 		
 		-- multiply monster damage
 				local monsterLevel = Game.MonstersTxt[monsterTxtIndex-1].Level
@@ -2281,7 +2306,7 @@ function events.GameInitialized2()
 		
 		-- multiply monster hit points
 		
-		monsterTxt.FullHitPoints = monsterTxt.FullHitPoints * monsterHitPointsMultiplier * ((100-Game.MonstersTxt[monsterTxtIndex].Level)/300+1)
+		monsterTxt.FullHitPoints = monsterTxt.FullHitPoints * monsterHitPointsMultiplier
 		
 		-- multiply monster damage
 		local monsterLevel = Game.MonstersTxt[monsterTxtIndex-1].Level
