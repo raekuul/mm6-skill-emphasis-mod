@@ -730,12 +730,13 @@ local monsterInfos =
 	[140] = {["SpellChance"] = 30, ["SpellName"] = "Mind Blast", ["SpellSkill"] = JoinSkill(2, const.Novice), },
 	-- Fanatic of Baa
 	[141] = {["SpellChance"] = 50, ["SpellName"] = "Mind Blast", ["SpellSkill"] = JoinSkill(3, const.Novice), },
-	-- Cutpurse
+	--[[ Cutpurse
 	[127] = {["Attack2Chance"] = 10, ["Attack2"] = {["Type"] = const.Damage.Phys, ["DamageDiceCount"] = 1, ["DamageDiceSides"] = 6, ["DamageAdd"] = 0, ["Missile"] = missiles["Arrow"], }, },
 	-- Bounty Hunter
 	[128] = {["Attack2Chance"] = 20, ["Attack2"] = {["Type"] = const.Damage.Phys, ["DamageDiceCount"] = 1, ["DamageDiceSides"] = 6, ["DamageAdd"] = 2, ["Missile"] = missiles["Arrow"], }, },
 	-- Assassin
 	[129] = {["Attack2Chance"] = 30, ["Attack2"] = {["Type"] = const.Damage.Phys, ["DamageDiceCount"] = 1, ["DamageDiceSides"] = 6, ["DamageAdd"] = 4, ["Missile"] = missiles["Arrow"], }, },
+	]]
 	-- Cannibal (female)
 	[130] = {["SpellChance"] = 10, ["SpellName"] = "Deadly Swarm", ["SpellSkill"] = JoinSkill(1, const.Novice), },
 	-- Head Hunter (female)
@@ -749,6 +750,11 @@ local monsterInfos =
 	-- Witch Doctor (male)
 	[144] = {["SpellChance"] = 30, ["SpellName"] = "Fire Bolt", ["SpellSkill"] = JoinSkill(3, const.Novice), },
 	--Malekith rebalance
+	[154] = {["SpellChance"] = 10, ["SpellName"] = "Magic Arrow", ["SpellSkill"] = JoinSkill(1, const.Novice), },
+	-- Skeleton Knight
+	[155] = {["SpellChance"] = 20, ["SpellName"] = "Magic Arrow", ["SpellSkill"] = JoinSkill(2, const.Novice), },
+	-- Skeleton Lord
+	[156] = {["SpellChance"] = 30, ["SpellName"] = "Magic Arrow", ["SpellSkill"] = JoinSkill(3, const.Novice), },
 	--Magyar
 	[  4] = {["SpellChance"] = 10, ["SpellName"] = "Lightning Bolt", ["SpellSkill"] = JoinSkill(4, const.Master), },
 	-- Magyar Soldier
@@ -770,12 +776,14 @@ local monsterInfos =
 	[ 77] = {["SpellChance"] = 20, ["SpellName"] = "Fire Bolt", ["SpellSkill"] = JoinSkill(2, const.Novice), },
 	-- Goblin King
 	[ 78] = {["SpellChance"] = 30, ["SpellName"] = "Fire Bolt", ["SpellSkill"] = JoinSkill(3, const.Novice), },
-	-- Skeleton
+	--[[
+	Skeleton
 	[154] = {["Attack2Chance"] = 10, ["Attack2"] = {["Type"] = const.Damage.Phys, ["DamageDiceCount"] = 1, ["DamageDiceSides"] = 6, ["DamageAdd"] = 0, ["Missile"] = missiles["Arrow"], }, },
 	-- Skeleton Knight
 	[155] = {["Attack2Chance"] = 20, ["Attack2"] = {["Type"] = const.Damage.Phys, ["DamageDiceCount"] = 1, ["DamageDiceSides"] = 6, ["DamageAdd"] = 2, ["Missile"] = missiles["Arrow"], }, },
 	-- Skeleton Lord
 	[156] = {["Attack2Chance"] = 30, ["Attack2"] = {["Type"] = const.Damage.Phys, ["DamageDiceCount"] = 1, ["DamageDiceSides"] = 6, ["DamageAdd"] = 6, ["Missile"] = missiles["Arrow"], }, },
+	]]
 	-- Ghost
 	[ 73] = {["SpellChance"] = 10, ["SpellName"] = "Spirit Arrow", ["SpellSkill"] = JoinSkill(1, const.Novice), },
 	-- Evil Spirit
@@ -2160,9 +2168,63 @@ function events.GameInitialized2()
 	-- modify monster statistics
 	----------------------------------------------------------------------------------------------------
 	
-	for monsterTxtIndex = 1,Game.MonstersTxt.high do
-	
-		local monsterTxt = Game.MonstersTxt[monsterTxtIndex]
+	for monsterTxtIndex = 3,Game.MonstersTxt.high,3 do
+		
+		--TYPE A
+		local monsterTxt = Game.MonstersTxt[monsterTxtIndex-2]
+		
+		-- multiply monster hit points
+		
+		monsterTxt.FullHitPoints = monsterTxt.FullHitPoints * monsterHitPointsMultiplier
+		
+		-- multiply monster damage
+				local monsterLevel = Game.MonstersTxt[monsterTxtIndex+1].Level
+		monsterTxt.Attack1.DamageDiceSides = math.round(monsterTxt.Attack1.DamageDiceSides * ((monsterLevel+5)/20 +1.75))
+		monsterTxt.Attack1.DamageAdd = math.round(monsterTxt.Attack1.DamageAdd * ((monsterLevel+5)/20 +1.75))
+
+		monsterTxt.Attack2.DamageDiceSides = math.round(monsterTxt.Attack2.DamageDiceSides * ((monsterLevel+5)/20 +1.75))
+		monsterTxt.Attack2.DamageAdd = math.round(monsterTxt.Attack2.DamageAdd * ((monsterLevel+5)/20 +1.75))
+
+		local skillLevel, skillMastery = SplitSkill(monsterTxt.SpellSkill)
+		monsterTxt.SpellSkill = math.round(JoinSkill(skillLevel * ((monsterLevel+5)/30 +1)), skillMastery)
+		
+		-- modify multiply monster armor class
+		
+		local monsterArmorClass = monsterTxt.ArmorClass
+		monsterArmorClass = math.round(monsterArmorClass * (1 + (100 - monsterArmorClass) / 100)) * monsterArmorClassMultiplier
+		monsterTxt.ArmorClass = monsterArmorClass
+		
+		-- modify and multiply monster level
+		
+		local monsterLevel = monsterTxt.Level
+		monsterLevel = math.round(monsterLevel * (1 + (100 - monsterLevel) / 100)) * monsterLevelMultiplier
+		monsterTxt.Level = monsterLevel
+		
+		-- monster movement speed is increased
+		
+		local monsterMoveSpeed = monsterTxt.MoveSpeed
+		monsterMoveSpeed = monsterMoveSpeed + (400 - monsterMoveSpeed) / 2 + 100
+		monsterTxt.MoveSpeed = monsterMoveSpeed
+		
+		-- monster experience
+		
+		monsterTxt.Experience = monsterTxt.Experience * monsterExperienceMultiplier
+		
+		-- monster energy attack
+		
+		if monsterTxt.Attack1.Type == const.Damage.Energy then
+			monsterTxt.Attack1.DamageDiceSides = math.round(monsterTxt.Attack1.DamageDiceSides * monsterEnergyAttackStrengthMultiplier)
+			monsterTxt.Attack1.DamageAdd = math.round(monsterTxt.Attack1.DamageAdd * monsterEnergyAttackStrengthMultiplier)
+		end
+		
+		if monsterTxt.Attack2Chance ~= nil and monsterTxt.Attack2.Type == const.Damage.Energy then
+			monsterTxt.Attack2.DamageDiceSides = math.round(monsterTxt.Attack2.DamageDiceSides * monsterEnergyAttackStrengthMultiplier)
+			monsterTxt.Attack2.DamageAdd = math.round(monsterTxt.Attack2.DamageAdd * monsterEnergyAttackStrengthMultiplier)
+		end
+		
+		
+		-- TYPE B
+		local monsterTxt = Game.MonstersTxt[monsterTxtIndex-1]
 		
 		-- multiply monster hit points
 		
@@ -2213,6 +2275,58 @@ function events.GameInitialized2()
 			monsterTxt.Attack2.DamageAdd = math.round(monsterTxt.Attack2.DamageAdd * monsterEnergyAttackStrengthMultiplier)
 		end
 		
+		
+		--type C
+		local monsterTxt = Game.MonstersTxt[monsterTxtIndex]
+		
+		-- multiply monster hit points
+		
+		monsterTxt.FullHitPoints = monsterTxt.FullHitPoints * monsterHitPointsMultiplier
+		
+		-- multiply monster damage
+		local monsterLevel = Game.MonstersTxt[monsterTxtIndex-1].Level
+		monsterTxt.Attack1.DamageDiceSides = math.round(monsterTxt.Attack1.DamageDiceSides * ((monsterLevel+5)/20 +1.75))
+		monsterTxt.Attack1.DamageAdd = math.round(monsterTxt.Attack1.DamageAdd * ((monsterLevel+5)/20 +1.75))
+
+		monsterTxt.Attack2.DamageDiceSides = math.round(monsterTxt.Attack2.DamageDiceSides * ((monsterLevel+5)/20 +1.75))
+		monsterTxt.Attack2.DamageAdd = math.round(monsterTxt.Attack2.DamageAdd * ((monsterLevel+5)/20 +1.75))
+
+		local skillLevel, skillMastery = SplitSkill(monsterTxt.SpellSkill)
+		monsterTxt.SpellSkill = math.round(JoinSkill(skillLevel * ((monsterLevel+5)/30 +1)), skillMastery)
+		
+		-- modify multiply monster armor class
+		
+		local monsterArmorClass = monsterTxt.ArmorClass
+		monsterArmorClass = math.round(monsterArmorClass * (1 + (100 - monsterArmorClass) / 100)) * monsterArmorClassMultiplier
+		monsterTxt.ArmorClass = monsterArmorClass
+		
+		-- modify and multiply monster level
+		
+		local monsterLevel = monsterTxt.Level
+		monsterLevel = math.round(monsterLevel * (1 + (100 - monsterLevel) / 100)) * monsterLevelMultiplier
+		monsterTxt.Level = monsterLevel
+		
+		-- monster movement speed is increased
+		
+		local monsterMoveSpeed = monsterTxt.MoveSpeed
+		monsterMoveSpeed = monsterMoveSpeed + (400 - monsterMoveSpeed) / 2 + 100
+		monsterTxt.MoveSpeed = monsterMoveSpeed
+		
+		-- monster experience
+		
+		monsterTxt.Experience = monsterTxt.Experience * monsterExperienceMultiplier
+		
+		-- monster energy attack
+		
+		if monsterTxt.Attack1.Type == const.Damage.Energy then
+			monsterTxt.Attack1.DamageDiceSides = math.round(monsterTxt.Attack1.DamageDiceSides * monsterEnergyAttackStrengthMultiplier)
+			monsterTxt.Attack1.DamageAdd = math.round(monsterTxt.Attack1.DamageAdd * monsterEnergyAttackStrengthMultiplier)
+		end
+		
+		if monsterTxt.Attack2Chance ~= nil and monsterTxt.Attack2.Type == const.Damage.Energy then
+			monsterTxt.Attack2.DamageDiceSides = math.round(monsterTxt.Attack2.DamageDiceSides * monsterEnergyAttackStrengthMultiplier)
+			monsterTxt.Attack2.DamageAdd = math.round(monsterTxt.Attack2.DamageAdd * monsterEnergyAttackStrengthMultiplier)
+		end
 	end
 	
 	----------------------------------------------------------------------------------------------------
