@@ -202,7 +202,7 @@ local newWeaponSkillRecoveryBonuses =
 	[const.Skills.Dagger]	= {0, 0, 0, },
 	[const.Skills.Axe]		= {0, 2, 2, },
 	[const.Skills.Spear]	= {0, 0, 0, },
-	[const.Skills.Bow]		= {2, 2, 2, },
+	[const.Skills.Bow]		= {6, 6, 6, },
 	[const.Skills.Mace]		= {0, 0, 0, },
 	[const.Skills.Blaster]	= {0, 0, 0, },
 }
@@ -337,9 +337,9 @@ local classRangedWeaponSkillAttackBonusMultiplier =
 }
 local classRangedWeaponSkillSpeedBonusMultiplier =
 {
-	[const.Class.Archer] = 2,
-	[const.Class.BattleMage] = 2,
-	[const.Class.WarriorMage] = 2,
+	[const.Class.Archer] = 6,
+	[const.Class.BattleMage] = 6,
+	[const.Class.WarriorMage] = 6,
 }
 local classRangedWeaponSkillDamageBonus =
 {
@@ -772,18 +772,19 @@ local monsterInfos =
 	-- Witch Doctor (male)
 	[144] = {["SpellChance"] = 30, ["SpellName"] = "Fire Bolt", ["SpellSkill"] = JoinSkill(3, const.Novice), },
 	--Malekith rebalance
-	[154] = {["SpellChance"] = 10, ["SpellName"] = "Magic Arrow", ["SpellSkill"] = JoinSkill(1, const.Novice), },
+	--skeleton
+	[154] = {["SpellChance"] = 10, ["SpellName"] = "Flame Arrow", ["SpellSkill"] = JoinSkill(1, const.Novice), },
 	-- Skeleton Knight
-	[155] = {["SpellChance"] = 20, ["SpellName"] = "Magic Arrow", ["SpellSkill"] = JoinSkill(2, const.Novice), },
+	[155] = {["SpellChance"] = 20, ["SpellName"] = "Flame Arrow", ["SpellSkill"] = JoinSkill(2, const.Novice), },
 	-- Skeleton Lord
-	[156] = {["SpellChance"] = 30, ["SpellName"] = "Magic Arrow", ["SpellSkill"] = JoinSkill(3, const.Novice), },
+	[156] = {["SpellChance"] = 30, ["SpellName"] = "Flame Arrow", ["SpellSkill"] = JoinSkill(3, const.Novice), },
 	--Magyar
 	[  4] = {["SpellChance"] = 10, ["SpellName"] = "Lightning Bolt", ["SpellSkill"] = JoinSkill(4, const.Master), },
 	-- Magyar Soldier
 	[  5] = {["SpellChance"] = 20, ["SpellName"] = "Lightning Bolt", ["SpellSkill"] = JoinSkill(6, const.Master), },
-	-- Magyar Matron
-	[  6] = {["SpellChance"] = 30, ["SpellName"] = "Implosion", ["SpellSkill"] = JoinSkill(6, const.Master), },
-	
+	--[[ Magyar Matron
+	[  6] = {["SpellChance"] = 30, ["SpellName"] = "Lightning Bolt", ["SpellSkill"] = JoinSkill(6, const.Master), },
+	]]
 	--[[ SkEm mod
 	-- Magyar
 	[  4] = {["Attack2Chance"] = 10, ["Attack2"] = {["Type"] = const.Damage.Elec, ["DamageDiceCount"] = 3, ["DamageDiceSides"] = 8, ["DamageAdd"] = 0, ["Missile"] = missiles["Elec"], }, },
