@@ -2226,8 +2226,11 @@ function events.GameInitialized2()
 		-- monster movement speed is increased
 		
 		local monsterMoveSpeed = monsterTxt.MoveSpeed
+		if Game.MonstersTxt[monsterTxtIndex].Attack1.Missile==0
+		then
 		monsterMoveSpeed = monsterMoveSpeed + (400 - monsterMoveSpeed) / 2 + 100
 		monsterTxt.MoveSpeed = monsterMoveSpeed
+		end
 		
 		-- monster experience
 		
@@ -2281,8 +2284,11 @@ function events.GameInitialized2()
 		-- monster movement speed is increased
 		
 		local monsterMoveSpeed = monsterTxt.MoveSpeed
+		if Game.MonstersTxt[monsterTxtIndex].Attack1.Missile==0
+		then
 		monsterMoveSpeed = monsterMoveSpeed + (400 - monsterMoveSpeed) / 2 + 100
 		monsterTxt.MoveSpeed = monsterMoveSpeed
+		end
 		
 		-- monster experience
 		
@@ -2334,8 +2340,11 @@ function events.GameInitialized2()
 		-- monster movement speed is increased
 		
 		local monsterMoveSpeed = monsterTxt.MoveSpeed
+		if Game.MonstersTxt[monsterTxtIndex].Attack1.Missile==0
+		then
 		monsterMoveSpeed = monsterMoveSpeed + (400 - monsterMoveSpeed) / 2 + 100
 		monsterTxt.MoveSpeed = monsterMoveSpeed
+		end
 		
 		-- monster experience
 		
