@@ -2231,7 +2231,14 @@ function events.GameInitialized2()
 		monsterMoveSpeed = monsterMoveSpeed + (400 - monsterMoveSpeed) / 2 + 100
 		monsterTxt.MoveSpeed = monsterMoveSpeed
 		end
-		
+		-- monster resistance
+
+		for damageType = const.Damage.Phys, const.Damage.Energy do
+			-- reduce former immunity resistance level
+			if (monsterTxt.Resistances[damageType] == 200) then
+				monsterTxt.Resistances[damageType] = 120
+			end
+		end
 		-- monster experience
 		
 		monsterTxt.Experience = monsterTxt.Experience * monsterExperienceMultiplier
@@ -2289,7 +2296,14 @@ function events.GameInitialized2()
 		monsterMoveSpeed = monsterMoveSpeed + (400 - monsterMoveSpeed) / 2 + 100
 		monsterTxt.MoveSpeed = monsterMoveSpeed
 		end
-		
+		-- monster resistance
+
+		for damageType = const.Damage.Phys, const.Damage.Energy do
+			-- reduce former immunity resistance level
+			if (monsterTxt.Resistances[damageType] == 200) then
+				monsterTxt.Resistances[damageType] = 120
+			end
+		end
 		-- monster experience
 		
 		monsterTxt.Experience = monsterTxt.Experience * monsterExperienceMultiplier
@@ -2360,6 +2374,14 @@ function events.GameInitialized2()
 		if monsterTxt.Attack2Chance ~= nil and monsterTxt.Attack2.Type == const.Damage.Energy then
 			monsterTxt.Attack2.DamageDiceSides = math.round(monsterTxt.Attack2.DamageDiceSides * monsterEnergyAttackStrengthMultiplier)
 			monsterTxt.Attack2.DamageAdd = math.round(monsterTxt.Attack2.DamageAdd * monsterEnergyAttackStrengthMultiplier)
+		end
+		-- monster resistance
+
+		for damageType = const.Damage.Phys, const.Damage.Energy do
+			-- reduce former immunity resistance level
+			if (monsterTxt.Resistances[damageType] == 200) then
+				monsterTxt.Resistances[damageType] = 120
+			end
 		end
 		
 	end
