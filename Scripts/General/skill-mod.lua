@@ -588,9 +588,9 @@ local spellPowers =
 -- Sun Ray
 [87] =
 {
-[const.Novice] = {fixedMin = 50, fixedMax = 70, variableMin = 1, variableMax = 30, },
-[const.Expert] = {fixedMin = 50, fixedMax = 70, variableMin = 1, variableMax = 30, },
-[const.Master] = {fixedMin = 50, fixedMax = 70, variableMin = 1, variableMax = 30, },
+[const.Novice] = {fixedMin = 60, fixedMax = 60, variableMin = 1, variableMax = 40, },
+[const.Expert] = {fixedMin = 60, fixedMax = 60, variableMin = 1, variableMax = 40, },
+[const.Master] = {fixedMin = 60, fixedMax = 60, variableMin = 1, variableMax = 40, },
 },
 -- Toxic Cloud
 [90] =
@@ -726,8 +726,27 @@ local monsterInfos =
 {
 	--Maddening Eye
 	[12] = {["SpellChance"] = 2, ["SpellName"] = "Dispell Magic", ["SpellSkill"] = JoinSkill(10, const.Novice), },
+	--Priest of Baa
+	[16] = 
+	{["Name"]= "Priest of Baa",["FullHP"] = 220,["Level"] = 40, ["ArmorClass"]=40,["Experience"]= 1144,["Attack1"] = {["Type"] = const.Damage.Elec, ["DamageDiceCount"] = 6, ["DamageDiceSides"] = 6, ["DamageAdd"] = 0, ["Missile"] = missiles["Elec"], },},
+	--Bishop of Baa
+	[17] = 
+	{["Name"]= "Bishop of Baa",["FullHP"] = 340,["Level"] = 50,["ArmorClass"]=50,["Experience"]= 2375,["Attack1"] = {["Type"] = const.Damage.Elec, ["DamageDiceCount"] = 7, ["DamageDiceSides"] = 6, ["DamageAdd"] = 5, ["Missile"] = missiles["Elec"], },["SpellName"] = "Harm", ["SpellSkill"] = JoinSkill(6, const.Master),},
+	--Cardinal of Baa
+	[18] = 
+	{["Name"]= "Cardinal of Baa",["FullHP"] = 510,["Level"] =60,["ArmorClass"]=60,["Experience"]= 4000,["Attack1"] = {["Type"] = const.Damage.Elec, ["DamageDiceCount"] = 10, ["DamageDiceSides"] = 6, ["DamageAdd"] = 10, ["Missile"] = missiles["Elec"], },["SpellName"] = "Flying Fist", ["SpellSkill"] = JoinSkill(6, const.Master),},
+	--devil captain
+	[25] = {["FullHP"] = 650,["Level"] = 70,["ArmorClass"]=60, ["Attack1"] = {["Type"] = const.Damage.Phys, ["DamageDiceCount"] = 6, ["DamageDiceSides"] = 6, ["DamageAdd"] = 0,},},
 	--Devil Master
-	[12] = {["SpellChance"] = 20, ["SpellName"] = "Meteor Shower", ["SpellSkill"] = JoinSkill(2, const.Master), },
+	[26] = {["FullHP"] = 850,["Level"] = 85,["ArmorClass"]=80, ["Attack1"] = {["Type"] = const.Damage.Phys, ["DamageDiceCount"] = 7, ["DamageDiceSides"] = 8, ["DamageAdd"] = 20,},["SpellChance"] = 20, ["SpellName"] = "Meteor Shower", ["SpellSkill"] = JoinSkill(3, const.Master),},	
+	--Devil King
+	[27] = { ["FullHP"] = 1050,["Level"] = 100,["ArmorClass"]=100, ["Attack1"] = {["Type"] = const.Damage.Phys, ["DamageDiceCount"] = 10, ["DamageDiceSides"] = 8, ["DamageAdd"] = 20,},},
+	--devil Spawn
+	[28] = {["FullHP"] = 190,["Level"] = 50,["ArmorClass"]=40,["Experience"]= 2800, ["Attack1"] = {["Type"] = const.Damage.Phys, ["DamageDiceCount"] = 4, ["DamageDiceSides"] = 6, ["DamageAdd"] = 8,},["SpellChance"] = 20, ["SpellName"] = "Fire Bolt", ["SpellSkill"] = JoinSkill(8, const.Master),},
+	--devil Worker
+	[29] = {["FullHP"] = 580,["Level"] = 70,["ArmorClass"]=60,["Experience"]= 6800, ["Attack1"] = {["Type"] = const.Damage.Phys, ["DamageDiceCount"] = 5, ["DamageDiceSides"] = 6, ["DamageAdd"] = 20,},["SpellChance"] = 20, ["SpellName"] = "Fire Bolt", ["SpellSkill"] = JoinSkill(14, const.Master),},
+	--devil Warrior
+	[30] = {["FullHP"] = 900,["Level"] = 90,["ArmorClass"]=80,["Experience"]= 9500, ["Attack1"] = {["Type"] = const.Damage.Phys, ["DamageDiceCount"] = 5, ["DamageDiceSides"] = 6, ["DamageAdd"] = 30,},["SpellChance"] = 20, ["SpellName"] = "Fireball", ["SpellSkill"] = JoinSkill(12, const.Master),},
 	--Defender of VARN
 	[88] = {["SpellChance"] = 20, ["SpellName"] = "Psychic Shock", ["SpellSkill"] = JoinSkill(4, const.Master), },
 	--Sentinel of VARN
@@ -740,25 +759,24 @@ local monsterInfos =
 	[95] = {["SpellChance"] = 1, ["SpellName"] = "Dispell Magic", ["SpellSkill"] = JoinSkill(10, const.Novice), },
 	--Gorgon
 	[102] = {["SpellChance"] = 30, ["SpellName"] = "Psychic Shock", ["SpellSkill"] = JoinSkill(5, const.Master), },
+	--Minotaur
+	[106] = {["Attack1"] = {["Type"] = const.Damage.Phys, ["DamageDiceCount"] = 3, ["DamageDiceSides"] = 7, ["DamageAdd"] = 25,},},
+	--Minotaur Mage
+	[107] = {["Attack1"] = {["Type"] = const.Damage.Phys, ["DamageDiceCount"] = 6, ["DamageDiceSides"] = 7, ["DamageAdd"] = 28,},},
+	--Minotaur King
+	[108] = {["Attack1"] = {["Type"] = const.Damage.Phys, ["DamageDiceCount"] = 9, ["DamageDiceSides"] = 7, ["DamageAdd"] = 36,},},
 	--Titan
-	[166] = {["SpellChance"] = 30, ["SpellName"] = "Psychic Shock", ["SpellSkill"] = JoinSkill(8, const.Master), },
+	[166] = {["Attack1"] = {["Type"] = const.Damage.Elec, ["DamageDiceCount"] = 7, ["DamageDiceSides"] = 20, ["DamageAdd"] = 10,["Missile"] = missiles["Elec"],},["SpellChance"] = 50, ["SpellName"] = "Psychic Shock", ["SpellSkill"] = JoinSkill(8, const.Master), },
 	--Noble Titan
-	[167] = {["SpellChance"] = 40, ["SpellName"] = "Psychic Shock", ["SpellSkill"] = JoinSkill(9, const.Master), },
+	[167] = {["Attack1"] = {["Type"] = const.Damage.Elec, ["DamageDiceCount"] = 8, ["DamageDiceSides"] = 20, ["DamageAdd"] = 20,["Missile"] = missiles["Elec"],},["SpellChance"] = 50, ["SpellName"] = "Psychic Shock", ["SpellSkill"] = JoinSkill(9, const.Master), },
 	--Supreme Titan
-	[168] = {["SpellChance"] = 50, ["SpellName"] = "Psychic Shock", ["SpellSkill"] = JoinSkill(13, const.Master), },
+	[168] = {["Attack1"] = {["Type"] = const.Damage.Elec, ["DamageDiceCount"] = 11, ["DamageDiceSides"] = 20, ["DamageAdd"] = 30,["Missile"] = missiles["Elec"],},["SpellChance"] = 50, ["SpellName"] = "Psychic Shock", ["SpellSkill"] = JoinSkill(13, const.Master), },
 	-- Follower of Baa
 	[139] = {["SpellChance"] = 10, ["SpellName"] = "Mind Blast", ["SpellSkill"] = JoinSkill(1, const.Novice), },
 	-- Mystic of Baa
 	[140] = {["SpellChance"] = 30, ["SpellName"] = "Mind Blast", ["SpellSkill"] = JoinSkill(2, const.Novice), },
 	-- Fanatic of Baa
 	[141] = {["SpellChance"] = 50, ["SpellName"] = "Mind Blast", ["SpellSkill"] = JoinSkill(3, const.Novice), },
-	--[[ Cutpurse
-	[127] = {["Attack2Chance"] = 10, ["Attack2"] = {["Type"] = const.Damage.Phys, ["DamageDiceCount"] = 1, ["DamageDiceSides"] = 6, ["DamageAdd"] = 0, ["Missile"] = missiles["Arrow"], }, },
-	-- Bounty Hunter
-	[128] = {["Attack2Chance"] = 20, ["Attack2"] = {["Type"] = const.Damage.Phys, ["DamageDiceCount"] = 1, ["DamageDiceSides"] = 6, ["DamageAdd"] = 2, ["Missile"] = missiles["Arrow"], }, },
-	-- Assassin
-	[129] = {["Attack2Chance"] = 30, ["Attack2"] = {["Type"] = const.Damage.Phys, ["DamageDiceCount"] = 1, ["DamageDiceSides"] = 6, ["DamageAdd"] = 4, ["Missile"] = missiles["Arrow"], }, },
-	]]
 	-- Cannibal (female)
 	[130] = {["SpellChance"] = 10, ["SpellName"] = "Deadly Swarm", ["SpellSkill"] = JoinSkill(1, const.Novice), },
 	-- Head Hunter (female)
@@ -782,45 +800,18 @@ local monsterInfos =
 	[  4] = {["SpellChance"] = 10, ["SpellName"] = "Lightning Bolt", ["SpellSkill"] = JoinSkill(4, const.Master), },
 	-- Magyar Soldier
 	[  5] = {["SpellChance"] = 20, ["SpellName"] = "Lightning Bolt", ["SpellSkill"] = JoinSkill(6, const.Master), },
-	--[[ Magyar Matron
-	[  6] = {["SpellChance"] = 30, ["SpellName"] = "Lightning Bolt", ["SpellSkill"] = JoinSkill(6, const.Master), },
-	]]
-	--[[ SkEm mod
-	-- Magyar
-	[  4] = {["Attack2Chance"] = 10, ["Attack2"] = {["Type"] = const.Damage.Elec, ["DamageDiceCount"] = 3, ["DamageDiceSides"] = 8, ["DamageAdd"] = 0, ["Missile"] = missiles["Elec"], }, },
-	-- Magyar Soldier
-	[  5] = {["Attack2Chance"] = 20, ["Attack2"] = {["Type"] = const.Damage.Elec, ["DamageDiceCount"] = 5, ["DamageDiceSides"] = 8, ["DamageAdd"] = 0, ["Missile"] = missiles["Elec"], }, },
-	-- Magyar Matron
-	[  6] = {["Attack2Chance"] = 30, ["Attack2"] = {["Type"] = const.Damage.Elec, ["DamageDiceCount"] = 7, ["DamageDiceSides"] = 8, ["DamageAdd"] = 0, ["Missile"] = missiles["Elec"], }, },
-	]]
 	-- Goblin
 	[ 76] = {["SpellChance"] = 10, ["SpellName"] = "Fire Bolt", ["SpellSkill"] = JoinSkill(1, const.Novice), },
 	-- Goblin Shaman
 	[ 77] = {["SpellChance"] = 20, ["SpellName"] = "Fire Bolt", ["SpellSkill"] = JoinSkill(2, const.Novice), },
 	-- Goblin King
 	[ 78] = {["SpellChance"] = 30, ["SpellName"] = "Fire Bolt", ["SpellSkill"] = JoinSkill(3, const.Novice), },
-	--[[
-	Skeleton
-	[154] = {["Attack2Chance"] = 10, ["Attack2"] = {["Type"] = const.Damage.Phys, ["DamageDiceCount"] = 1, ["DamageDiceSides"] = 6, ["DamageAdd"] = 0, ["Missile"] = missiles["Arrow"], }, },
-	-- Skeleton Knight
-	[155] = {["Attack2Chance"] = 20, ["Attack2"] = {["Type"] = const.Damage.Phys, ["DamageDiceCount"] = 1, ["DamageDiceSides"] = 6, ["DamageAdd"] = 2, ["Missile"] = missiles["Arrow"], }, },
-	-- Skeleton Lord
-	[156] = {["Attack2Chance"] = 30, ["Attack2"] = {["Type"] = const.Damage.Phys, ["DamageDiceCount"] = 1, ["DamageDiceSides"] = 6, ["DamageAdd"] = 6, ["Missile"] = missiles["Arrow"], }, },
-	]]
 	-- Ghost
 	[ 73] = {["SpellChance"] = 10, ["SpellName"] = "Spirit Arrow", ["SpellSkill"] = JoinSkill(1, const.Novice), },
 	-- Evil Spirit
 	[ 74] = {["SpellChance"] = 20, ["SpellName"] = "Spirit Arrow", ["SpellSkill"] = JoinSkill(2, const.Novice), },
 	-- Specter
 	[ 75] = {["SpellChance"] = 30, ["SpellName"] = "Spirit Arrow", ["SpellSkill"] = JoinSkill(3, const.Novice), },
-	-- Hydra
-	[ 85] = {["Attack2Chance"] = 30, ["Attack2"] = {["Type"] = const.Damage.Fire, ["DamageDiceCount"] = 8, ["DamageDiceSides"] = 5, ["DamageAdd"] = 0, ["Missile"] = missiles["Fire"], }, },
-	-- Venomous Hydra
-	[ 86] = {["Attack2Chance"] = 35, ["Attack2"] = {["Type"] = const.Damage.Cold, ["DamageDiceCount"] = 9, ["DamageDiceSides"] = 5, ["DamageAdd"] = 0, ["Missile"] = missiles["Cold"], }, },
-	-- Colossal Hydra
-	[ 87] = {["Attack2Chance"] = 40, ["Attack2"] = {["Type"] = const.Damage.Energy, ["DamageDiceCount"] = 10, ["DamageDiceSides"] = 5, ["DamageAdd"] = 0, ["Missile"] = missiles["Energy"], }, },
-	-- Devil Master
-	[ 26] = {["SpellChance"] = 20, ["SpellName"] = "Meteor Shower", ["SpellSkill"] = JoinSkill(2, const.Master), },
 }
 
 -- set melee recovery cap
@@ -2106,6 +2097,14 @@ function events.GameInitialized2()
 	Game.SpellsTxt[47].SpellPointsNormal = 3
 	Game.SpellsTxt[47].SpellPointsExpert = 6
 	Game.SpellsTxt[47].SpellPointsMaster = 12
+	
+	-- Share spirit
+	Game.Spells[54].SpellPointsNormal = 10
+	Game.Spells[54].SpellPointsExpert = 10
+	Game.Spells[54].SpellPointsMaster = 10
+	Game.SpellsTxt[54].SpellPointsNormal = 10
+	Game.SpellsTxt[54].SpellPointsExpert = 10
+	Game.SpellsTxt[54].SpellPointsMaster = 10
 
 	----------------------------------------------------------------------------------------------------
 	-- populate global references
@@ -2257,7 +2256,7 @@ function events.GameInitialized2()
 		monsterTxt.FullHitPoints= monsterTxt.FullHitPoints * (Game.MonstersTxt[monsterTxtIndex].Level/Game.MonstersTxt[monsterTxtIndex-1].Level*0.2+1) end
 		
 		-- multiply monster damage
-				local monsterLevel = Game.MonstersTxt[monsterTxtIndex-1].Level
+		local monsterLevel = Game.MonstersTxt[monsterTxtIndex-1].Level
 		monsterTxt.Attack1.DamageDiceSides = math.round(monsterTxt.Attack1.DamageDiceSides * ((monsterLevel+5)/20 +1.75))
 		monsterTxt.Attack1.DamageAdd = math.round(monsterTxt.Attack1.DamageAdd * ((monsterLevel+5)/20 +1.75))
 
@@ -2353,6 +2352,7 @@ function events.GameInitialized2()
 			monsterTxt.Attack2.DamageDiceSides = math.round(monsterTxt.Attack2.DamageDiceSides * monsterEnergyAttackStrengthMultiplier)
 			monsterTxt.Attack2.DamageAdd = math.round(monsterTxt.Attack2.DamageAdd * monsterEnergyAttackStrengthMultiplier)
 		end
+		
 	end
 	
 	----------------------------------------------------------------------------------------------------
