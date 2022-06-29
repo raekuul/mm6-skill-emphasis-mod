@@ -304,7 +304,7 @@ local newArmorSkillDamageMultiplier =
 -- local damageBonusByMastery = {[const.Novice] = 2, [const.Expert] = 3, [const.Master] = 4, }
 -- local weaponACBonusByMastery = {[const.Novice] = 4, [const.Expert] = 6, [const.Master] = 8, }
 -- local weaponResistanceBonusByMastery = {[const.Novice] = 0, [const.Expert] = 1, [const.Master] = 2, }
-local twoHandedWeaponDamageBonus = 3
+local twoHandedWeaponDamageBonus = 1
 local twoHandedWeaponDamageBonusByMastery = {[const.Novice] = twoHandedWeaponDamageBonus, [const.Expert] = twoHandedWeaponDamageBonus, [const.Master] = twoHandedWeaponDamageBonus, }
 local learningSkillExtraMultiplier = 2
 local learningSkillMultiplierByMastery = {[const.Novice] = 1 + learningSkillExtraMultiplier, [const.Expert] = 2 + learningSkillExtraMultiplier, [const.Master] = 3 + learningSkillExtraMultiplier, }
@@ -319,15 +319,15 @@ local maceEffect = {["base"] = 5, ["multiplier"] = 1, ["duration"] = 5, }
 -- class weapon skill damage bonus
 local classMeleeWeaponSkillDamageBonus =
 {
-	[const.Class.Knight] = 0.5,
-	[const.Class.Cavalier] = 1,
-	[const.Class.Champion] = 2,
+	[const.Class.Knight] = 1,
+	[const.Class.Cavalier] = 2,
+	[const.Class.Champion] = 4,
 	[const.Class.Paladin] = 0,
-	[const.Class.Crusader] = 0.5,
-	[const.Class.Hero] = 1,
+	[const.Class.Crusader] = 1,
+	[const.Class.Hero] = 2,
 	[const.Class.Archer] = 0,
-	[const.Class.BattleMage] = 0.5,
-	[const.Class.WarriorMage] = 1,
+	[const.Class.BattleMage] = 1,
+	[const.Class.WarriorMage] = 2,
 }
 local classRangedWeaponSkillAttackBonusMultiplier =
 {
@@ -1680,14 +1680,14 @@ function events.CalcStatBonusBySkills(t)
 					t.Result = t.Result + (classMeleeWeaponSkillDamageBonus[t.Player.Class] * mainEffectiveSkillLevel)
 				end
 				
-				-- add class bonus for extra hand weapon if any and different from main weapon
+				--[[ add class bonus for extra hand weapon if any and different from main weapon
 				
 				if extra.weapon and extra.skill ~= main.skill then
 					if classMeleeWeaponSkillDamageBonus[t.Player.Class] ~= nil then
 						t.Result = t.Result + math.round(classMeleeWeaponSkillDamageBonus[t.Player.Class] * extraEffectiveSkillLevel)
 					end
 				end
-				
+				]]
 			end
 			
 			-- dagger crowd damage
@@ -2203,11 +2203,13 @@ function events.GameInitialized2()
 		-- multiply monster damage
 		local monsterLevel = Game.MonstersTxt[monsterTxtIndex-1].Level
 		monsterTxt.Attack1.DamageDiceSides = math.round(monsterTxt.Attack1.DamageDiceSides * ((monsterLevel+5)/20 +1.75))
-		monsterTxt.Attack1.DamageAdd = math.round(monsterTxt.Attack1.DamageAdd * ((monsterLevel+5)/20 +1.75))
-
+		if (math.round(monsterTxt.Attack1.DamageAdd * ((monsterLevel+5)/20 +1.75))) >= 250 then monsterTxt.Attack1.DamageAdd = 250 
+		else monsterTxt.Attack1.DamageAdd =  math.round(monsterTxt.Attack1.DamageAdd * ((monsterLevel+5)/20 +1.75))
+		end
 		monsterTxt.Attack2.DamageDiceSides = math.round(monsterTxt.Attack2.DamageDiceSides * ((monsterLevel+5)/20 +1.75))
-		monsterTxt.Attack2.DamageAdd = math.round(monsterTxt.Attack2.DamageAdd * ((monsterLevel+5)/20 +1.75))
-
+		if (math.round(monsterTxt.Attack2.DamageAdd * ((monsterLevel+5)/20 +1.75))) >= 250 then monsterTxt.Attack2.DamageAdd = 250 
+		else monsterTxt.Attack2.DamageAdd =  math.round(monsterTxt.Attack2.DamageAdd * ((monsterLevel+5)/20 +1.75))
+		end
 		local skillLevel, skillMastery = SplitSkill(monsterTxt.SpellSkill)
 		monsterTxt.SpellSkill = math.round(JoinSkill(skillLevel * ((monsterLevel+5)/30 +1)), skillMastery)
 		
@@ -2268,11 +2270,13 @@ function events.GameInitialized2()
 		-- multiply monster damage
 		local monsterLevel = Game.MonstersTxt[monsterTxtIndex-1].Level
 		monsterTxt.Attack1.DamageDiceSides = math.round(monsterTxt.Attack1.DamageDiceSides * ((monsterLevel+5)/20 +1.75))
-		monsterTxt.Attack1.DamageAdd = math.round(monsterTxt.Attack1.DamageAdd * ((monsterLevel+5)/20 +1.75))
-
+		if (math.round(monsterTxt.Attack1.DamageAdd * ((monsterLevel+5)/20 +1.75))) >= 250 then monsterTxt.Attack1.DamageAdd = 250 
+		else monsterTxt.Attack1.DamageAdd =  math.round(monsterTxt.Attack1.DamageAdd * ((monsterLevel+5)/20 +1.75))
+		end
 		monsterTxt.Attack2.DamageDiceSides = math.round(monsterTxt.Attack2.DamageDiceSides * ((monsterLevel+5)/20 +1.75))
-		monsterTxt.Attack2.DamageAdd = math.round(monsterTxt.Attack2.DamageAdd * ((monsterLevel+5)/20 +1.75))
-
+		if (math.round(monsterTxt.Attack2.DamageAdd * ((monsterLevel+5)/20 +1.75))) >= 250 then monsterTxt.Attack2.DamageAdd = 250 
+		else monsterTxt.Attack2.DamageAdd =  math.round(monsterTxt.Attack2.DamageAdd * ((monsterLevel+5)/20 +1.75))
+		end
 		local skillLevel, skillMastery = SplitSkill(monsterTxt.SpellSkill)
 		monsterTxt.SpellSkill = math.round(JoinSkill(skillLevel * ((monsterLevel+5)/30 +1)), skillMastery)
 		
@@ -2331,11 +2335,13 @@ function events.GameInitialized2()
 		-- multiply monster damage
 		local monsterLevel = Game.MonstersTxt[monsterTxtIndex-1].Level
 		monsterTxt.Attack1.DamageDiceSides = math.round(monsterTxt.Attack1.DamageDiceSides * ((monsterLevel+5)/20 +1.75))
-		monsterTxt.Attack1.DamageAdd = math.round(monsterTxt.Attack1.DamageAdd * ((monsterLevel+5)/20 +1.75))
-
+		if (math.round(monsterTxt.Attack1.DamageAdd * ((monsterLevel+5)/20 +1.75))) >= 250 then monsterTxt.Attack1.DamageAdd = 250 
+		else monsterTxt.Attack1.DamageAdd =  math.round(monsterTxt.Attack1.DamageAdd * ((monsterLevel+5)/20 +1.75))
+		end
 		monsterTxt.Attack2.DamageDiceSides = math.round(monsterTxt.Attack2.DamageDiceSides * ((monsterLevel+5)/20 +1.75))
-		monsterTxt.Attack2.DamageAdd = math.round(monsterTxt.Attack2.DamageAdd * ((monsterLevel+5)/20 +1.75))
-
+		if (math.round(monsterTxt.Attack2.DamageAdd * ((monsterLevel+5)/20 +1.75))) >= 250 then monsterTxt.Attack2.DamageAdd = 250 
+		else monsterTxt.Attack2.DamageAdd =  math.round(monsterTxt.Attack2.DamageAdd * ((monsterLevel+5)/20 +1.75))
+		end
 		local skillLevel, skillMastery = SplitSkill(monsterTxt.SpellSkill)
 		monsterTxt.SpellSkill = math.round(JoinSkill(skillLevel * ((monsterLevel+5)/30 +1)), skillMastery)
 		
@@ -2408,7 +2414,7 @@ function events.GameInitialized2()
 	-- normal books
 	
 	local normalBookBaseIndex = 300
-	for itemTxtIndex = normalBookBaseIndex, Game.ItemsTxt.high do
+	for itemTxtIndex = 300, 376 do
 
 		local itemTxt = Game.ItemsTxt[itemTxtIndex]
 		local bookLevel = math.fmod((itemTxtIndex - normalBookBaseIndex), 11)
@@ -2420,7 +2426,7 @@ function events.GameInitialized2()
 	-- mirror books
 	
 	local mirrorBookBaseIndex = 377
-	for itemTxtIndex = mirrorBookBaseIndex, Game.ItemsTxt.high do
+	for itemTxtIndex = 377, 398 do
 
 		local itemTxt = Game.ItemsTxt[itemTxtIndex]
 		local bookLevel = math.fmod((itemTxtIndex - mirrorBookBaseIndex), 11)
