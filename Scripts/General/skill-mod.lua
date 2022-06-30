@@ -220,6 +220,7 @@ local oldWeaponSkillDamageBonuses =
 	[const.Skills.Bow]		= {0, 0, 0, },
 	[const.Skills.Mace]		= {0, 1, 1, },
 	[const.Skills.Blaster]	= {0, 0, 0, },
+	[const.Skills.Shield]	= {5, 5, 5, },
 }
 local newWeaponSkillDamageBonuses =
 {
@@ -231,6 +232,7 @@ local newWeaponSkillDamageBonuses =
 	[const.Skills.Bow]		= {1, 2, 2, },
 	[const.Skills.Mace]		= {0, 1, 2, },
 	[const.Skills.Blaster]	= {0, 0, 0, },
+	
 }
 
 -- weapon skill AC bonuses (by rank)
@@ -304,7 +306,7 @@ local newArmorSkillDamageMultiplier =
 -- local damageBonusByMastery = {[const.Novice] = 2, [const.Expert] = 3, [const.Master] = 4, }
 -- local weaponACBonusByMastery = {[const.Novice] = 4, [const.Expert] = 6, [const.Master] = 8, }
 -- local weaponResistanceBonusByMastery = {[const.Novice] = 0, [const.Expert] = 1, [const.Master] = 2, }
-local twoHandedWeaponDamageBonus = 1
+local twoHandedWeaponDamageBonus = 3
 local twoHandedWeaponDamageBonusByMastery = {[const.Novice] = twoHandedWeaponDamageBonus, [const.Expert] = twoHandedWeaponDamageBonus, [const.Master] = twoHandedWeaponDamageBonus, }
 local learningSkillExtraMultiplier = 2
 local learningSkillMultiplierByMastery = {[const.Novice] = 1 + learningSkillExtraMultiplier, [const.Expert] = 2 + learningSkillExtraMultiplier, [const.Master] = 3 + learningSkillExtraMultiplier, }
@@ -319,15 +321,15 @@ local maceEffect = {["base"] = 5, ["multiplier"] = 1, ["duration"] = 5, }
 -- class weapon skill damage bonus
 local classMeleeWeaponSkillDamageBonus =
 {
-	[const.Class.Knight] = 1,
-	[const.Class.Cavalier] = 2,
-	[const.Class.Champion] = 4,
+	[const.Class.Knight] = 0.5,
+	[const.Class.Cavalier] = 1,
+	[const.Class.Champion] = 2,
 	[const.Class.Paladin] = 0,
-	[const.Class.Crusader] = 1,
-	[const.Class.Hero] = 2,
+	[const.Class.Crusader] = 0.5,
+	[const.Class.Hero] = 1,
 	[const.Class.Archer] = 0,
-	[const.Class.BattleMage] = 1,
-	[const.Class.WarriorMage] = 2,
+	[const.Class.BattleMage] = 0.5,
+	[const.Class.WarriorMage] = 1,
 }
 local classRangedWeaponSkillAttackBonusMultiplier =
 {
@@ -378,7 +380,6 @@ local characterLinkedSkillGroups =
 		{
 			[const.Skills.Sword] = true,
 			[const.Skills.Dagger] = true,
-			[const.Skills.Shield] = true,
 		},
 	["ranged"] =
 		{
@@ -1599,9 +1600,13 @@ function events.CalcStatBonusBySkills(t)
 	
 		local main = equipmentData.main
 		local extra = equipmentData.extra
-		
+		local shield = equipmentData.shield
 		if main.weapon then
-			
+			if shield.equipped then
+				if classMeleeWeaponSkillDamageBonus[t.Player.Class] ~= nil then
+					t.Result = t.Result + (classMeleeWeaponSkillDamageBonus[t.Player.Class] * shield.level)
+				end
+end
 			-- single wield
 			
 			if not equipmentData.dualWield then
@@ -1621,6 +1626,7 @@ function events.CalcStatBonusBySkills(t)
 				-- add new bonus for main weapon
 				
 				t.Result = t.Result + newWeaponSkillDamageBonuses[main.skill][main.rank] * main.level
+
 				
 				-- add class bonus for main hand weapon
 				
