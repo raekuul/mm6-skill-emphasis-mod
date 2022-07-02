@@ -1,3 +1,5 @@
+
+
 ----------------------------------------------------------------------------------------------------
 -- global constants and lists
 ----------------------------------------------------------------------------------------------------
@@ -2132,7 +2134,7 @@ function events.GameInitialized2()
 			monsterTxt.Attack2Chance = monsterInfo.Attack2.Chance
 			if monsterInfo.Attack2 ~= nil then
 				for key, value in pairs(monsterInfo.Attack2) do
-					monsterTxt.Attack1[key] = value
+					monsterTxt.Attack2[key] = value
 				end
 			end
 		end
@@ -2750,7 +2752,7 @@ formatSkillRankNumber(Game.SkillRecoveryTimes[const.Skills.Shield + 1] * (rank =
 	
 	-- guardian angel
 	
-	Game.SpellsTxt[spellTxtIds["Guardian Angel"]].Description = string.replace(Game.SpellsTxt[spellTxtIds["Guardian Angel"]].Description, "Guardian Angel lasts for 1 hour per point of skill in Spirit Magic", "Guardian Angel lasts for 1 hour plus 5 minutes per point of skill in Spirit Magic") .. string.format("\n\nWhile active Guardian Angel lowers the death HP threshold by 10 per point of skill in Spirit Magic for all characters.")
+	Game.SpellsTxt[spellTxtIds["Guardian Angel"]].Description = string.replace(Game.SpellsTxt[spellTxtIds["Guardian Angel"]].Description, "Guardian Angel lasts for 1 hour per point of skill in Spirit Magic", "Guardian Angel lasts for 1 hour plus 5 minutes per point of skill in Spirit Magic") .. string.format("\n\nWhile active Guardian Angel lowers death HP threshold by 1000 for all characters protecting them from dying of HP loss.")
 	
 	----------------------------------------------------------------------------------------------------
 	-- professions
@@ -3128,13 +3130,30 @@ local function disableFeeblemindedMonsterCasting(d, def)
 	local randomRoll = def()
 	-- get monster
 	local monsterIndex, monster = GetMonster(d.esi)
-	-- set random to 99 for feebleminded monster
+	
+		-- check monster is feebleminded
 	if monster.SpellBuffs[const.MonsterBuff.Feeblemind].ExpireTime ~= 0 then
+		-- set random roll to 100 to prevent casting
 		randomRoll = 99
 	end
 	return randomRoll
 end
 mem.hookcall(0x00421C5C, 0, 0, disableFeeblemindedMonsterCasting)
+
+-- Feeblemind prevents monster to do bad things
+
+local function disableFeeblemindedMonsterSpecialAbility(d, def, playerPointer, thing)
+	-- get monster
+	local monsterIndex, monster = GetMonster(d.edi)
+	-- check monster is feebleminded
+	if monster.SpellBuffs[const.MonsterBuff.Feeblemind].ExpireTime ~= 0 then
+		-- do nothing
+	else
+		-- do bad thing
+		def(playerPointer, thing)
+	end
+end
+mem.hookcall(0x00431DE7, 1, 1, disableFeeblemindedMonsterSpecialAbility)
 
 -- Summon hirelings
 local function bringMonsterToParty(monster)
@@ -3943,7 +3962,7 @@ local function guardianAngelSetSpellBuff(d, def, spellBuffAddress, expireTimeLow
 end
 mem.hookcall(0x00426C0F, 1, 6, guardianAngelSetSpellBuff)
 
-local guardianAngelEnduranceBonusPerLevel = 10
+local guardianAngelEnduranceBonus = 1000
 local function changedCharacterCalcStatBonusByItems(d, def, characterPointer, statId)
 	-- calculate default bonus
 	local statBonus = def(characterPointer, statId)
@@ -3951,7 +3970,7 @@ local function changedCharacterCalcStatBonusByItems(d, def, characterPointer, st
 	local guardianAngelBuff = Party.SpellBuffs[const.PartyBuff.GuardianAngel]
 	-- increase bonus to make it positive so character doesn't die with guardian angel
 	if guardianAngelBuff.ExpireTime ~= 0 then
-		statBonus = statBonus + guardianAngelEnduranceBonusPerLevel * guardianAngelBuff.Power
+		statBonus = statBonus + guardianAngelEnduranceBonus
 	end
 	return statBonus
 end
