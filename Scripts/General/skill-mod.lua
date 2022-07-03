@@ -299,8 +299,8 @@ local newArmorSkillResistanceBonuses =
 local newArmorSkillDamageMultiplier =
 {
 	[const.Skills.Leather]	= {1.00, 1.00, 1.00, },
-	[const.Skills.Chain]	= {1.00, 1.00, 0.99, },
-	[const.Skills.Plate]	= {1.00, 1.00, 0.98, },
+	[const.Skills.Chain]	= {1.00, 0.99, 0.99, },
+	[const.Skills.Plate]	= {1.00, 0.98, 0.98, },
 }
 
 -- local recoveryBonusByMastery = {[const.Novice] = 4, [const.Expert] = 5, [const.Master] = 6, }
@@ -472,9 +472,9 @@ local spellPowers =
 -- Implosion
 [20] =
 {
-[const.Novice] = {fixedMin = 10, fixedMax = 24, variableMin = 1, variableMax = 10, },
-[const.Expert] = {fixedMin = 10, fixedMax = 24, variableMin = 1, variableMax = 10, },
-[const.Master] = {fixedMin = 10, fixedMax = 24, variableMin = 1, variableMax = 10, },
+[const.Novice] = {fixedMin = 18, fixedMax = 18, variableMin = 1, variableMax = 13, },
+[const.Expert] = {fixedMin = 18, fixedMax = 18, variableMin = 1, variableMax = 13, },
+[const.Master] = {fixedMin = 18, fixedMax = 18, variableMin = 1, variableMax = 13, },
 },
 -- Poison Spray
 [26] =
@@ -538,9 +538,9 @@ local spellPowers =
 -- Psychic Shock
 [65] =
 {
-[const.Novice] = {fixedMin = 19, fixedMax = 59, variableMin = 1, variableMax = 24, },
-[const.Expert] = {fixedMin = 19, fixedMax = 59, variableMin = 1, variableMax = 24, },
-[const.Master] = {fixedMin = 19, fixedMax = 59, variableMin = 1, variableMax = 24, },
+[const.Novice] = {fixedMin = 39, fixedMax = 39, variableMin = 1, variableMax = 24, },
+[const.Expert] = {fixedMin = 39, fixedMax = 39, variableMin = 1, variableMax = 24, },
+[const.Master] = {fixedMin = 39, fixedMax = 39, variableMin = 1, variableMax = 24, },
 },
 -- Harm
 [70] =
@@ -559,9 +559,9 @@ local spellPowers =
 -- Destroy Undead
 [82] =
 {
-[const.Novice] = {fixedMin = 20, fixedMax = 80, variableMin = 1, variableMax = 40, },
-[const.Expert] = {fixedMin = 20, fixedMax = 80, variableMin = 1, variableMax = 40, },
-[const.Master] = {fixedMin = 20, fixedMax = 80, variableMin = 1, variableMax = 40, },
+[const.Novice] = {fixedMin = 50, fixedMax = 50, variableMin = 1, variableMax = 40, },
+[const.Expert] = {fixedMin = 50, fixedMax = 50, variableMin = 1, variableMax = 40, },
+[const.Master] = {fixedMin = 50, fixedMax = 50, variableMin = 1, variableMax = 40, },
 },
 --[[
 -- Prismatic Light
@@ -582,9 +582,9 @@ local spellPowers =
 -- Toxic Cloud
 [90] =
 {
-[const.Novice] = {fixedMin = 10, fixedMax = 30, variableMin = 1, variableMax = 20, },
-[const.Expert] = {fixedMin = 10, fixedMax = 30, variableMin = 1, variableMax = 20, },
-[const.Master] = {fixedMin = 10, fixedMax = 30, variableMin = 1, variableMax = 20, },
+[const.Novice] = {fixedMin = 20, fixedMax = 20, variableMin = 1, variableMax = 20, },
+[const.Expert] = {fixedMin = 20, fixedMax = 20, variableMin = 1, variableMax = 20, },
+[const.Master] = {fixedMin = 20, fixedMax = 20, variableMin = 1, variableMax = 20, },
 },
 --[[
 -- Shrapmetal
@@ -1693,7 +1693,7 @@ end
 				for monsterIndex = 0, Map.Monsters.high do
 					local monster = Map.Monsters[monsterIndex]
 					local distanceToMonster = getDistanceToMonster(monster)
-					if distanceToMonster < meleeRangeDistance then
+					if distanceToMonster < meleeRangeDistance and monster.Active then
 						meleeRangeMonsterCount = meleeRangeMonsterCount + 1
 					end
 				end
@@ -3439,7 +3439,7 @@ local function modifiedMonsterChooseTargetMember(d, def, monsterPointer)
 				
 				-- switch to substitute player only if they wear plate
 				
-				if playerEquipmentData.armor.skill == const.Skills.Plate then
+				if player:IsConscious() and playerEquipmentData.armor.skill == const.Skills.Plate then
 				
 					substituteProbability = substituteProbability + plateCoverChances[playerEquipmentData.armor.rank]
 					
