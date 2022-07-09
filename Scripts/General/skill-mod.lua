@@ -1,4 +1,4 @@
-
+Beta 0.7.7
 
 ----------------------------------------------------------------------------------------------------
 -- global constants and lists
@@ -65,14 +65,11 @@ mem.prot(false)
 
 local meleeRecoveryCap = 10
 
---[[
+--
 -- attribute breakpoints
 
 local attributeBreakpoints =
 {
-500,
-400,
-350,
 300,
 280,
 260,
@@ -80,31 +77,31 @@ local attributeBreakpoints =
 220,
 200,
 180,
+170,
 160,
+150,
 140,
+130,
 120,
+110,
 100,
 90,
 80,
 70,
 60,
 50,
-45,
 40,
 35,
 30,
 25,
-20,
+21,
+19,
+17,
 15,
-10,
-5,
-0,
+13,
 }
 local attributeEffects =
 {
-100,
-80,
-70,
 60,
 56,
 52,
@@ -112,16 +109,19 @@ local attributeEffects =
 44,
 40,
 36,
+34,
 32,
+30,
 28,
+26,
 24,
+22,
 20,
 18,
 16,
 14,
 12,
 10,
-9,
 8,
 7,
 6,
@@ -132,7 +132,7 @@ local attributeEffects =
 1,
 0,
 }
---]]
+--
 
 -- weapon base recovery bonuses
 
@@ -175,10 +175,10 @@ local oldWeaponSkillAttackBonuses =
 local newWeaponSkillAttackBonuses =
 {
 	[const.Skills.Staff]	= {2, 3, 4, },
-	[const.Skills.Sword]	= {2, 3, 4, },
-	[const.Skills.Dagger]	= {2, 3, 4, },
+	[const.Skills.Sword]	= {2, 2, 2, },
+	[const.Skills.Dagger]	= {2, 2, 2, },
 	[const.Skills.Axe]		= {2, 3, 4, },
-	[const.Skills.Spear]	= {4, 6, 8, },
+	[const.Skills.Spear]	= {2, 3, 4, },
 	[const.Skills.Bow]		= {2, 3, 4, },
 	[const.Skills.Mace]		= {2, 3, 4, },
 	[const.Skills.Blaster]	= {2, 4, 6, },
@@ -255,7 +255,7 @@ local newWeaponSkillACBonuses =
 	[const.Skills.Sword]	= {0, 0, 0, },
 	[const.Skills.Dagger]	= {0, 0, 0, },
 	[const.Skills.Axe]		= {0, 0, 0, },
-	[const.Skills.Spear]	= {0, 0, 0, },
+	[const.Skills.Spear]	= {0, 3, 3, },
 	[const.Skills.Bow]		= {0, 0, 0, },
 	[const.Skills.Mace]		= {0, 0, 0, },
 	[const.Skills.Blaster]	= {0, 0, 0, },
@@ -317,7 +317,7 @@ local daggerCrowdDamageMultiplier = 0.25
 
 -- special weapon skill chances
 local staffEffect = {["base"] = 10, ["multiplier"] = 2, ["duration"] = 5, }
-local maceEffect = {["base"] = 5, ["multiplier"] = 1, ["duration"] = 5, }
+local maceEffect = {["base"] = 5, ["multiplier"] = 0.25, ["duration"] = 5, }
 
 -- class weapon skill damage bonus
 local classMeleeWeaponSkillDamageBonus =
@@ -408,7 +408,7 @@ local partyLinkedSkills =
 
 -- spell powers
 
-local protectionSpellExtraMultiplier = 2
+local protectionSpellExtraMultiplier = 1
 
 local spellPowers =
 {
@@ -418,6 +418,13 @@ local spellPowers =
 [const.Novice] = {fixedMin = 8, fixedMax = 8, variableMin = 1, variableMax = 5, },
 [const.Expert] = {fixedMin = 8, fixedMax = 8, variableMin = 1, variableMax = 5, },
 [const.Master] = {fixedMin = 8, fixedMax = 8, variableMin = 1, variableMax = 5, },
+},
+--Fireball
+[6] =
+{
+[const.Novice] = {fixedMin = 0, fixedMax = 0, variableMin = 1, variableMax = 6, },
+[const.Expert] = {fixedMin = 0, fixedMax = 0, variableMin = 1, variableMax = 6, },
+[const.Master] = {fixedMin = 12, fixedMax = 12, variableMin = 1, variableMax = 9, },
 },
 -- Ring of Fire
 [7] =
@@ -488,7 +495,7 @@ local spellPowers =
 {
 [const.Novice] = {fixedMin = 12, fixedMax = 12, variableMin = 1, variableMax = 8, },
 [const.Expert] = {fixedMin = 12, fixedMax = 12, variableMin = 1, variableMax = 8, },
-[const.Master] = {fixedMin = 12, fixedMax = 12, variableMin = 1, variableMax = 8, },
+[const.Master] = {fixedMin = 20, fixedMax = 20, variableMin = 1, variableMax = 13, },
 },
 -- Acid Burst
 [30] =
@@ -640,13 +647,13 @@ local spellBuffPowers =
 	["StoneSkin"] =
 	{
 		["fixed"] = 5,
-		["proportional"] = 3,
+		["proportional"] = 2,
 	},
 	-- Bless
 	["Bless"] =
 	{
 		["fixed"] = 5,
-		["proportional"] = 1,
+		["proportional"] = 2,
 	},
 	-- Heroism
 	["Heroism"] =
@@ -660,7 +667,7 @@ local spellStatsBuffPowers =
 	["StatsBuff"] =
 	{
 		["fixed"] = 10,
-		["proportional"] = 5,
+		["proportional"] = 2,
 	},
 }
 
@@ -1731,7 +1738,7 @@ end
 				
 				t.Result = t.Result + (newWeaponSkillACBonuses[const.Skills.Staff][main.rank] * main.level)
 				
-			-- spear do not grant AC anymore
+			-- spear grant AC again
 			
 			elseif main.skill == const.Skills.Spear then
 			
@@ -1741,8 +1748,8 @@ end
 					t.Result = t.Result - main.level
 				end
 				
-				-- no new bonus for spear
-				--[[
+			
+				
 				-- add new bonus
 				t.Result = t.Result + (newWeaponSkillACBonuses[const.Skills.Spear][main.rank] * main.level)
 				--]]
@@ -2099,6 +2106,15 @@ function events.GameInitialized2()
 	Game.SpellsTxt[54].SpellPointsNormal = 10
 	Game.SpellsTxt[54].SpellPointsExpert = 10
 	Game.SpellsTxt[54].SpellPointsMaster = 10
+	
+	--damaging spells sp cost
+	--Fireball
+	Game.Spells[6].SpellPointsMaster = 16
+	Game.SpellsTxt[6].SpellPointsMaster = 16
+	--Ice Bolt
+	Game.Spells[28].SpellPointsMaster = 20
+	Game.SpellsTxt[28].SpellPointsMaster = 20
+	
 
 	----------------------------------------------------------------------------------------------------
 	-- populate global references
@@ -2565,7 +2581,7 @@ function events.GameInitialized2()
 	
 	Game.SkillDescriptions[const.Skills.Mace] = Game.SkillDescriptions[const.Skills.Mace] ..
 		string.format(
-			"\n\nBase recovery: %d\n\nSpecial effects: Paralyze\nchance = %d%% + %d%% * level, duration = %d minutes\n\nBonus increment per skill level\n------------------------------------------------------------\n          attack | damage |",
+			"\n\nBase recovery: %d\n\nSpecial effects: Paralyze\nchance = %d%% + 0.25 * level, duration = %d minutes\n\nBonus increment per skill level\n------------------------------------------------------------\n          attack | damage |",
 			100 - newWeaponBaseRecoveryBonuses[const.Skills.Mace],
 			maceEffect["base"],
 			maceEffect["multiplier"],
@@ -2727,8 +2743,8 @@ formatSkillRankNumber(Game.SkillRecoveryTimes[const.Skills.Shield + 1] * (rank =
 	-- Healing Touch
 	Game.SpellsTxt[47].Description = string.format("Cheaply heals a single character. Skill increases the recovery rate of this spell.")
 	Game.SpellsTxt[47].Normal = string.format("Heals 3-7 points of damage")
-	Game.SpellsTxt[47].Expert = string.format("Casting cost 6 spell points. Heals around 30 points of damage")
-	Game.SpellsTxt[47].Master = string.format("Casting cost 12 spell points. Heals around 70 points of damage")
+	Game.SpellsTxt[47].Expert = string.format("Casting costs 6 spell points. Heals around 30 points of damage")
+	Game.SpellsTxt[47].Master = string.format("Casting costs 12 spell points. Heals around 70 points of damage")
 
 	-- First Aid
 	Game.SpellsTxt[68].Description = string.format("Cures single character. Recovery is reduced by an amount equal to the caster's skill in Body Magic.")
@@ -2738,11 +2754,16 @@ formatSkillRankNumber(Game.SkillRecoveryTimes[const.Skills.Shield + 1] * (rank =
 
 	-- Cure Wounds
 	Game.SpellsTxt[71].Description = string.format("Cures hit points on a single target when cast. The number cured is equal to 10+2 per point of skill in Body Magic.")
-	Game.SpellsTxt[71].Normal = string.format("Casting cost 5 spell points. Cures 10+2 hit points per point of skill")
-	Game.SpellsTxt[71].Expert = string.format("Casting cost 8 spell points. Cures 20+3 hit points per point of skill")
-	Game.SpellsTxt[71].Master = string.format("Casting cost 15 spell points. Cures 40+5 hit points per point of skill")
+	Game.SpellsTxt[71].Normal = string.format("Casting costs 5 spell points. Cures 10+2 hit points per point of skill")
+	Game.SpellsTxt[71].Expert = string.format("Casting costs 8 spell points. Cures 20+3 hit points per point of skill")
+	Game.SpellsTxt[71].Master = string.format("Casting costs 15 spell points. Cures 40+5 hit points per point of skill")
 	-- Power Cure
 	Game.SpellsTxt[77].Description = string.format("Cures hit points of all characters in your party at once. The number cured is equal to 3 per point of skill in Body Magic.")
+	
+	--Fireball
+	Game.SpellsTxt[6].Master = string.format("Casting costs 16 spell points. Deals 12+1-9 damage per point of skill")
+	-- Ice Bolt
+	Game.SpellsTxt[28].Master = string.format("Casting costs 20 spell points. Deals 20+1-13 damage per point of skill")
 
 	-- direct damage spells
 	
@@ -2927,7 +2948,7 @@ formatSkillRankNumber(Game.SkillRecoveryTimes[const.Skills.Shield + 1] * (rank =
 	
 end
 
---[[
+--
 ----------------------------------------------------------------------------------------------------
 -- primary statistics effect
 ----------------------------------------------------------------------------------------------------
@@ -2938,10 +2959,10 @@ end
 for index,value in ipairs(attributeEffects) do
 	mem.bytecodepatch(0x004C289C + 1 * (index - 1), string.char(bit.band(value, 0xFF)), 1)
 end
---]]
+--
 
---[[
--- skill advancement
+--
+--[[ skill advancement
 local function calculateSkillAdvancementCost(level)
 	return math.min(10, level + 1)
 end
