@@ -1,4 +1,4 @@
---Beta 0.7.7
+--Beta 0.7.8
 
 ----------------------------------------------------------------------------------------------------
 -- global constants and lists
@@ -178,7 +178,7 @@ local newWeaponSkillAttackBonuses =
 	[const.Skills.Sword]	= {2, 2, 2, },
 	[const.Skills.Dagger]	= {2, 2, 2, },
 	[const.Skills.Axe]		= {2, 3, 4, },
-	[const.Skills.Spear]	= {2, 3, 4, },
+	[const.Skills.Spear]	= {2, 4, 6, },
 	[const.Skills.Bow]		= {2, 3, 4, },
 	[const.Skills.Mace]		= {2, 3, 4, },
 	[const.Skills.Blaster]	= {2, 4, 6, },
@@ -255,7 +255,7 @@ local newWeaponSkillACBonuses =
 	[const.Skills.Sword]	= {0, 0, 0, },
 	[const.Skills.Dagger]	= {0, 0, 0, },
 	[const.Skills.Axe]		= {0, 0, 0, },
-	[const.Skills.Spear]	= {0, 3, 3, },
+	[const.Skills.Spear]	= {0, 2, 4, },
 	[const.Skills.Bow]		= {0, 0, 0, },
 	[const.Skills.Mace]		= {0, 0, 0, },
 	[const.Skills.Blaster]	= {0, 0, 0, },
@@ -653,7 +653,7 @@ local spellBuffPowers =
 	["Bless"] =
 	{
 		["fixed"] = 5,
-		["proportional"] = 2,
+		["proportional"] = 1,
 	},
 	-- Heroism
 	["Heroism"] =
@@ -2075,6 +2075,41 @@ mem.asmpatch(
 	"mov    DWORD [esp+0x14], ecx\n",
 	0x2D
 )
+
+-- Day of Protection
+
+-- Novice power = 2 (same as in vanilla - no change)
+-- Expert power = 2
+mem.asmpatch(0x0042961A, "lea    edx,[eax+eax*1]", 3)
+-- Master power = 2
+mem.asmpatch(0x0042960D, "lea    ecx,[eax*2+0x0]", 7)
+
+-- duration = 1 hour * skill
+mem.asmpatch(0x0042962E, [[
+		lea    eax,[eax+eax*2]
+		nop
+	]], 4)
+
+-- Day of the Gods
+
+-- Novice power = 05 + skill * 1
+mem.asmpatch(0x00428A90, [[
+		lea    edx,[ecx+0x5]
+		nop
+	]], 4)
+-- Expert power = 10 + skill * 1
+mem.asmpatch(0x00428A7B, [[
+		lea    ecx,[ecx+0xa]
+		nop
+	]], 4)
+-- Master power = 15 + skill * 1
+mem.asmpatch(0x00428A62, [[
+		lea    eax,[ecx+0xf]
+		nop
+		nop
+		nop
+		nop
+	]], 7)
 
 ----------------------------------------------------------------------------------------------------
 -- game initialization
