@@ -1,4 +1,4 @@
---Beta 0.7.8
+--Beta 0.8.0
 
 ----------------------------------------------------------------------------------------------------
 -- global constants and lists
@@ -174,14 +174,14 @@ local oldWeaponSkillAttackBonuses =
 }
 local newWeaponSkillAttackBonuses =
 {
-	[const.Skills.Staff]	= {2, 3, 4, },
-	[const.Skills.Sword]	= {2, 2, 2, },
-	[const.Skills.Dagger]	= {2, 2, 2, },
-	[const.Skills.Axe]		= {2, 3, 4, },
-	[const.Skills.Spear]	= {2, 4, 6, },
-	[const.Skills.Bow]		= {2, 3, 4, },
-	[const.Skills.Mace]		= {2, 3, 4, },
-	[const.Skills.Blaster]	= {2, 4, 6, },
+	[const.Skills.Staff]	= {1, 1.5, 2, },
+	[const.Skills.Sword]	= {1, 1.5, 2, },
+	[const.Skills.Dagger]	= {1, 1.5, 2, },
+	[const.Skills.Axe]		= {1, 1.5, 2, },
+	[const.Skills.Spear]	= {1, 2, 3, },
+	[const.Skills.Bow]		= {1, 2, 3, },
+	[const.Skills.Mace]		= {1, 1.5, 2, },
+	[const.Skills.Blaster]	= {1, 2, 3, },
 }
 
 -- weapon skill recovery bonuses (by rank)
@@ -308,7 +308,7 @@ local newArmorSkillDamageMultiplier =
 -- local weaponACBonusByMastery = {[const.Novice] = 4, [const.Expert] = 6, [const.Master] = 8, }
 -- local weaponResistanceBonusByMastery = {[const.Novice] = 0, [const.Expert] = 1, [const.Master] = 2, }
 local twoHandedWeaponDamageBonus = 3
-local twoHandedWeaponDamageBonusByMastery = {[const.Novice] = twoHandedWeaponDamageBonus, [const.Expert] = twoHandedWeaponDamageBonus, [const.Master] = twoHandedWeaponDamageBonus, }
+local twoHandedWeaponDamageBonusByMastery = {[const.Novice] = twoHandedWeaponDamageBonus/3, [const.Expert] = twoHandedWeaponDamageBonus/3*2, [const.Master] = twoHandedWeaponDamageBonus, }
 local learningSkillExtraMultiplier = 2
 local learningSkillMultiplierByMastery = {[const.Novice] = 1 + learningSkillExtraMultiplier, [const.Expert] = 2 + learningSkillExtraMultiplier, [const.Master] = 3 + learningSkillExtraMultiplier, }
 
@@ -361,7 +361,7 @@ local shieldProjectileDamageReductionPerLevel = 0.01
 
 local monsterHitPointsMultiplier = 2
 local monsterDamageMultiplier = 2
-local monsterArmorClassMultiplier = 2
+local monsterArmorClassMultiplier = 1
 local monsterLevelMultiplier = 1
 local monsterExperienceMultiplier = 1
 local monsterEnergyAttackStrengthMultiplier = 0.5
@@ -570,13 +570,13 @@ local spellPowers =
 [const.Expert] = {fixedMin = 50, fixedMax = 50, variableMin = 1, variableMax = 40, },
 [const.Master] = {fixedMin = 50, fixedMax = 50, variableMin = 1, variableMax = 40, },
 },
---[[
+--
 -- Prismatic Light
 [84] =
 {
-[const.Novice] = {fixedMin = 18, fixedMax = 18, variableMin = 1, variableMax = 12, },
-[const.Expert] = {fixedMin = 18, fixedMax = 18, variableMin = 1, variableMax = 12, },
-[const.Master] = {fixedMin = 18, fixedMax = 18, variableMin = 1, variableMax = 12, },
+[const.Novice] = {fixedMin = 25, fixedMax = 25, variableMin = 1, variableMax = 7, },
+[const.Expert] = {fixedMin = 25, fixedMax = 25, variableMin = 1, variableMax = 7, },
+[const.Master] = {fixedMin = 25, fixedMax = 25, variableMin = 1, variableMax = 7, },
 },
 --]]
 -- Sun Ray
@@ -659,7 +659,7 @@ local spellBuffPowers =
 	["Heroism"] =
 	{
 		["fixed"] = 5,
-		["proportional"] = 1,
+		["proportional"] = 2,
 	},
 }
 local spellStatsBuffPowers =
@@ -2030,6 +2030,8 @@ mem.asmpatch(
 	"mov    DWORD [esp+0x14], ecx\n",
 	0x2D
 )
+-- duration = skill * 2 hours
+mem.asmpatch(0x00423719, "shl     eax, 5", 3)
 
 -- Protection from Electricity
 mem.asmpatch(
@@ -2043,6 +2045,9 @@ mem.asmpatch(
 	0x2D
 )
 
+-- duration = skill * 2 hours
+mem.asmpatch(0x004243D4, "shl     eax, 5", 3)
+
 -- Protection from Cold
 mem.asmpatch(
 	0x00424F99,
@@ -2053,6 +2058,9 @@ mem.asmpatch(
 	"mov    DWORD [esp+0x14], ecx\n",
 	0x2D
 )
+
+-- duration = skill * 2 hours
+mem.asmpatch(0x00424FD0, "shl     eax, 5", 3)
 
 -- Protection from Magic
 mem.asmpatch(
@@ -2065,6 +2073,9 @@ mem.asmpatch(
 	0x2D
 )
 
+-- duration = skill * 2 hours
+mem.asmpatch(0x004260BE, "shl     eax, 5", 3)
+
 -- Protection from Poison
 mem.asmpatch(
 	0x00427EBB,
@@ -2075,6 +2086,9 @@ mem.asmpatch(
 	"mov    DWORD [esp+0x14], ecx\n",
 	0x2D
 )
+
+-- duration = skill * 2 hours
+mem.asmpatch(0x00427EF1, "shl     eax, 5", 3)
 
 -- Day of Protection
 
@@ -2110,6 +2124,15 @@ mem.asmpatch(0x00428A62, [[
 		nop
 		nop
 	]], 7)
+
+-- Novice duration = skill * 1 hour
+mem.asmpatch(0x00428A9E, "shl     eax, 4", 3)
+-- Expert duration = skill * 1 hour
+mem.asmpatch(0x00428A75, "imul    eax, 3600", 6)
+-- Novice duration = skill * 1 hour
+mem.asmpatch(0x00428A5B, "shl     eax, 4", 3)
+
+
 
 ----------------------------------------------------------------------------------------------------
 -- game initialization
