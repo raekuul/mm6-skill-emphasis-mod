@@ -1,4 +1,4 @@
---Beta 0.8.0
+--Beta 0.8.0b
 
 ----------------------------------------------------------------------------------------------------
 -- global constants and lists
@@ -2886,17 +2886,19 @@ formatSkillRankNumber(Game.SkillRecoveryTimes[const.Skills.Shield + 1] * (rank =
 	
 	-- knight
 	Game.ClassKinds.StartingSkills[0][const.Skills.Spear] = 1
+	Game.ClassKinds.StartingSkills[0][const.Skills.Leather] = 3
 	Game.ClassKinds.StartingSkills[0][const.Skills.Sword] = 2
+	Game.ClassKinds.StartingSkills[0][const.Skills.Chain] = 1
 	-- cleric
 	-- sorcerer
 	-- paladin
 	Game.ClassKinds.StartingSkills[3][const.Skills.Spear] = 1
 	Game.ClassKinds.StartingSkills[3][const.Skills.Sword] = 2
-	Game.ClassKinds.StartingSkills[3][const.Skills.Leather] = 1
+	Game.ClassKinds.StartingSkills[3][const.Skills.Leather] = 3
 	Game.ClassKinds.StartingSkills[3][const.Skills.Spirit] = 2
 	Game.ClassKinds.StartingSkills[3][const.Skills.Mind] = 2
 	Game.ClassKinds.StartingSkills[3][const.Skills.Body] = 2
-	Game.ClassKinds.StartingSkills[3][const.Skills.Chain] = 3
+	Game.ClassKinds.StartingSkills[3][const.Skills.Chain] = 1
 	Game.ClassKinds.StartingSkills[3][const.Skills.Diplomacy] = 3
 	Game.ClassKinds.StartingSkills[3][const.Skills.Light] = 3
 	-- archer
