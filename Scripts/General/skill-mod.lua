@@ -2918,6 +2918,7 @@ formatSkillRankNumber(Game.SkillRecoveryTimes[const.Skills.Shield + 1] * (rank =
 	Game.ClassKinds.StartingSkills[5][const.Skills.Repair] = 3
 	Game.ClassKinds.StartingSkills[5][const.Skills.Learning] = 3
 	Game.ClassKinds.StartingSkills[5][const.Skills.Meditation] = 2
+	Game.ClassKinds.StartingSkills[5][const.Skills.Shield] = 0
 	
 		----------------------------------------------------------------------------------------------------
 	-- Class starting HP/SP
