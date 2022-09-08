@@ -1,5 +1,18 @@
---Beta 0.8.0b
+-- Beta 0.8.5
+-- added experimental medidation regeneration.  Disable by removing meditation-sp-regen.lua
 
+--[[ list of expected files:
+
+skill-mod.lua <-- you are here
+skem-item-overrides.lua
+skem-monster-overrides.lua
+skem-mapstats-overrides.lua
+skem-monster-infobox.lua
+skem-skill-linking.lua
+skem-spell-overrides.lua
+meditation-sp-regen.lua
+
+]]
 ----------------------------------------------------------------------------------------------------
 -- global constants and lists
 ----------------------------------------------------------------------------------------------------
@@ -181,7 +194,7 @@ local newWeaponSkillAttackBonuses =
 	[const.Skills.Spear]	= {1, 2, 3, },
 	[const.Skills.Bow]		= {1, 2, 3, },
 	[const.Skills.Mace]		= {1, 1.5, 2, },
-	[const.Skills.Blaster]	= {1, 2, 3, },
+	[const.Skills.Blaster]	= {5, 10, 15, },
 }
 
 -- weapon skill recovery bonuses (by rank)
@@ -357,319 +370,7 @@ local plateCoverChances = {[const.Novice] = 0.1, [const.Expert] = 0.2, [const.Ma
 -- shield projectile damage multiplier by mastery
 local shieldProjectileDamageReductionPerLevel = 0.01
 
--- monster global settings
-
-local monsterHitPointsMultiplier = 2
-local monsterDamageMultiplier = 2
-local monsterArmorClassMultiplier = 1
-local monsterLevelMultiplier = 1
-local monsterExperienceMultiplier = 1
-local monsterEnergyAttackStrengthMultiplier = 0.5
-
--- skill set groups advancing together within a group for a single character
-
-local characterLinkedSkillGroups =
-{
-	["meleeMain"] =
-		{
-			[const.Skills.Staff] = true,
-			[const.Skills.Axe] = true,
-			[const.Skills.Spear] = true,
-			[const.Skills.Mace] = true,
-		},
-	["meleeExtra"] =
-		{
-			[const.Skills.Sword] = true,
-			[const.Skills.Dagger] = true,
-		},
-	["ranged"] =
-		{
-			[const.Skills.Bow] = true,
-			[const.Skills.Blaster] = true,
-		},
-	["armor"] =
-		{
-			[const.Skills.Leather] = true,
-			[const.Skills.Chain] = true,
-			[const.Skills.Plate] = true,
-		},
-}
-
--- skills advancing together across whole party
-
-local partyLinkedSkills =
-{
-	[const.Skills.IdentifyItem] = true,
-	[const.Skills.Merchant] = true,
-	[const.Skills.Repair] = true,
-	[const.Skills.Perception] = true,
-	[const.Skills.DisarmTraps] = true,
-}
-
--- spell powers
-
-local protectionSpellExtraMultiplier = 1
-
-local spellPowers =
-{
--- Fire Bolt
-[4] =
-{
-[const.Novice] = {fixedMin = 8, fixedMax = 8, variableMin = 1, variableMax = 5, },
-[const.Expert] = {fixedMin = 8, fixedMax = 8, variableMin = 1, variableMax = 5, },
-[const.Master] = {fixedMin = 8, fixedMax = 8, variableMin = 1, variableMax = 5, },
-},
---Fireball
-[6] =
-{
-[const.Novice] = {fixedMin = 0, fixedMax = 0, variableMin = 1, variableMax = 6, },
-[const.Expert] = {fixedMin = 0, fixedMax = 0, variableMin = 1, variableMax = 6, },
-[const.Master] = {fixedMin = 12, fixedMax = 12, variableMin = 1, variableMax = 9, },
-},
--- Ring of Fire
-[7] =
-{
-[const.Novice] = {fixedMin = 6, fixedMax = 6, variableMin = 1, variableMax = 3, },
-[const.Expert] = {fixedMin = 6, fixedMax = 6, variableMin = 1, variableMax = 3, },
-[const.Master] = {fixedMin = 6, fixedMax = 6, variableMin = 1, variableMax = 3, },
-},
--- Fire Blast
-[8] =
-{
-[const.Novice] = {fixedMin = 4, fixedMax = 4, variableMin = 1, variableMax = 4, },
-[const.Expert] = {fixedMin = 4, fixedMax = 4, variableMin = 1, variableMax = 4, },
-[const.Master] = {fixedMin = 4, fixedMax = 4, variableMin = 1, variableMax = 4, },
-},
--- Meteor Shower
-[9] =
-{
-[const.Novice] = {fixedMin = 0, fixedMax = 0, variableMin = 1, variableMax = 3, },
-[const.Expert] = {fixedMin = 0, fixedMax = 0, variableMin = 1, variableMax = 3, },
-[const.Master] = {fixedMin = 0, fixedMax = 0, variableMin = 1, variableMax = 3, },
-},
--- Inferno
-[10] =
-{
-[const.Novice] = {fixedMin = 0, fixedMax = 0, variableMin = 1, variableMax = 4, },
-[const.Expert] = {fixedMin = 0, fixedMax = 0, variableMin = 1, variableMax = 4, },
-[const.Master] = {fixedMin = 0, fixedMax = 0, variableMin = 1, variableMax = 4, },
-},
--- Incinerate
-[11] =
-{
-[const.Novice] = {fixedMin = 32, fixedMax = 32, variableMin = 1, variableMax = 21, },
-[const.Expert] = {fixedMin = 32, fixedMax = 32, variableMin = 1, variableMax = 21, },
-[const.Master] = {fixedMin = 32, fixedMax = 32, variableMin = 1, variableMax = 21, },
-},
--- Sparks
-[15] =
-{
-[const.Novice] = {fixedMin = 3, fixedMax = 3, variableMin = 1, variableMax = 2, },
-[const.Expert] = {fixedMin = 3, fixedMax = 3, variableMin = 1, variableMax = 2, },
-[const.Master] = {fixedMin = 3, fixedMax = 3, variableMin = 1, variableMax = 2, },
-},
-
--- Lightning Bolt
-[18] =
-{
-[const.Novice] = {fixedMin = 15, fixedMax = 15, variableMin = 1, variableMax = 9, },
-[const.Expert] = {fixedMin = 15, fixedMax = 15, variableMin = 1, variableMax = 9, },
-[const.Master] = {fixedMin = 15, fixedMax = 15, variableMin = 1, variableMax = 9, },
-},
--- Implosion
-[20] =
-{
-[const.Novice] = {fixedMin = 18, fixedMax = 18, variableMin = 1, variableMax = 13, },
-[const.Expert] = {fixedMin = 18, fixedMax = 18, variableMin = 1, variableMax = 13, },
-[const.Master] = {fixedMin = 18, fixedMax = 18, variableMin = 1, variableMax = 13, },
-},
--- Poison Spray
-[26] =
-{
-[const.Novice] = {fixedMin = 4, fixedMax = 4, variableMin = 1, variableMax = 2, },
-[const.Expert] = {fixedMin = 4, fixedMax = 4, variableMin = 1, variableMax = 2, },
-[const.Master] = {fixedMin = 4, fixedMax = 4, variableMin = 1, variableMax = 2, },
-},
--- Ice Bolt
-[28] =
-{
-[const.Novice] = {fixedMin = 12, fixedMax = 12, variableMin = 1, variableMax = 8, },
-[const.Expert] = {fixedMin = 12, fixedMax = 12, variableMin = 1, variableMax = 8, },
-[const.Master] = {fixedMin = 20, fixedMax = 20, variableMin = 1, variableMax = 13, },
-},
--- Acid Burst
-[30] =
-{
-[const.Novice] = {fixedMin = 20, fixedMax = 20, variableMin = 1, variableMax = 12, },
-[const.Expert] = {fixedMin = 20, fixedMax = 20, variableMin = 1, variableMax = 12, },
-[const.Master] = {fixedMin = 20, fixedMax = 20, variableMin = 1, variableMax = 12, },
-},
--- Ice Blast
-[32] =
-{
-[const.Novice] = {fixedMin = 6, fixedMax = 6, variableMin = 1, variableMax = 9, },
-[const.Expert] = {fixedMin = 6, fixedMax = 6, variableMin = 1, variableMax = 9, },
-[const.Master] = {fixedMin = 6, fixedMax = 6, variableMin = 1, variableMax = 9, },
-},
---[[
---]]
--- Deadly Swarm
-[37] =
-{
-[const.Novice] = {fixedMin = 8, fixedMax = 8, variableMin = 1, variableMax = 5, },
-[const.Expert] = {fixedMin = 8, fixedMax = 8, variableMin = 1, variableMax = 5, },
-[const.Master] = {fixedMin = 8, fixedMax = 8, variableMin = 1, variableMax = 5, },
-},
-
--- Blades
-[39] =
-{
-[const.Novice] = {fixedMin = 12, fixedMax = 12, variableMin = 1, variableMax = 8, },
-[const.Expert] = {fixedMin = 12, fixedMax = 12, variableMin = 1, variableMax = 8, },
-[const.Master] = {fixedMin = 12, fixedMax = 12, variableMin = 1, variableMax = 8, },
-},
--- Death Blossom
-[43] =
-{
-[const.Novice] = {fixedMin = 0, fixedMax = 0, variableMin = 1, variableMax = 10, },
-[const.Expert] = {fixedMin = 0, fixedMax = 0, variableMin = 1, variableMax = 10, },
-[const.Master] = {fixedMin = 0, fixedMax = 0, variableMin = 1, variableMax = 10, },
-},
--- Mind Blast
-[58] =
-{
-[const.Novice] = {fixedMin = 6, fixedMax = 6, variableMin = 1, variableMax = 5, },
-[const.Expert] = {fixedMin = 6, fixedMax = 6, variableMin = 1, variableMax = 5, },
-[const.Master] = {fixedMin = 6, fixedMax = 6, variableMin = 1, variableMax = 5, },
-},
--- Psychic Shock
-[65] =
-{
-[const.Novice] = {fixedMin = 39, fixedMax = 39, variableMin = 1, variableMax = 24, },
-[const.Expert] = {fixedMin = 39, fixedMax = 39, variableMin = 1, variableMax = 24, },
-[const.Master] = {fixedMin = 39, fixedMax = 39, variableMin = 1, variableMax = 24, },
-},
--- Harm
-[70] =
-{
-[const.Novice] = {fixedMin = 8, fixedMax = 8, variableMin = 1, variableMax = 4, },
-[const.Expert] = {fixedMin = 8, fixedMax = 8, variableMin = 1, variableMax = 4, },
-[const.Master] = {fixedMin = 8, fixedMax = 8, variableMin = 1, variableMax = 4, },
-},
--- Flying Fist
-[76] =
-{
-[const.Novice] = {fixedMin = 30, fixedMax = 30, variableMin = 1, variableMax = 15, },
-[const.Expert] = {fixedMin = 30, fixedMax = 30, variableMin = 1, variableMax = 15, },
-[const.Master] = {fixedMin = 30, fixedMax = 30, variableMin = 1, variableMax = 15, },
-},
--- Destroy Undead
-[82] =
-{
-[const.Novice] = {fixedMin = 50, fixedMax = 50, variableMin = 1, variableMax = 40, },
-[const.Expert] = {fixedMin = 50, fixedMax = 50, variableMin = 1, variableMax = 40, },
-[const.Master] = {fixedMin = 50, fixedMax = 50, variableMin = 1, variableMax = 40, },
-},
---
--- Prismatic Light
-[84] =
-{
-[const.Novice] = {fixedMin = 25, fixedMax = 25, variableMin = 1, variableMax = 7, },
-[const.Expert] = {fixedMin = 25, fixedMax = 25, variableMin = 1, variableMax = 7, },
-[const.Master] = {fixedMin = 25, fixedMax = 25, variableMin = 1, variableMax = 7, },
-},
---]]
--- Sun Ray
-[87] =
-{
-[const.Novice] = {fixedMin = 60, fixedMax = 60, variableMin = 1, variableMax = 40, },
-[const.Expert] = {fixedMin = 60, fixedMax = 60, variableMin = 1, variableMax = 40, },
-[const.Master] = {fixedMin = 60, fixedMax = 60, variableMin = 1, variableMax = 40, },
-},
--- Toxic Cloud
-[90] =
-{
-[const.Novice] = {fixedMin = 20, fixedMax = 20, variableMin = 1, variableMax = 20, },
-[const.Expert] = {fixedMin = 20, fixedMax = 20, variableMin = 1, variableMax = 20, },
-[const.Master] = {fixedMin = 20, fixedMax = 20, variableMin = 1, variableMax = 20, },
-},
---[[
--- Shrapmetal
-[92] =
-{
-[const.Novice] = {fixedMin = 3, fixedMax = 3, variableMin = 1, variableMax = 5, },
-[const.Expert] = {fixedMin = 3, fixedMax = 3, variableMin = 1, variableMax = 5, },
-[const.Master] = {fixedMin = 3, fixedMax = 3, variableMin = 1, variableMax = 5, },
-},
---]]
--- Flame Arrow
-[2] =
-{
-[const.Novice] = {fixedMin = 6, fixedMax = 6, variableMin = 1, variableMax = 2, },
-[const.Expert] = {fixedMin = 6, fixedMax = 6, variableMin = 1, variableMax = 2, },
-[const.Master] = {fixedMin = 6, fixedMax = 6, variableMin = 1, variableMax = 2, },
-},
--- Magic Arrow
-[35] =
-{
-[const.Novice] = {fixedMin = 6, fixedMax = 6, variableMin = 1, variableMax = 4, },
-[const.Expert] = {fixedMin = 6, fixedMax = 6, variableMin = 1, variableMax = 4, },
-[const.Master] = {fixedMin = 6, fixedMax = 6, variableMin = 1, variableMax = 4, },
-},
--- Spirit Arrow
-[45] =
-{
-[const.Novice] = {fixedMin = 0, fixedMax = 0, variableMin = 1, variableMax = 5, },
-[const.Expert] = {fixedMin = 0, fixedMax = 0, variableMin = 1, variableMax = 5, },
-[const.Master] = {fixedMin = 0, fixedMax = 0, variableMin = 1, variableMax = 5, },
-},
--- Cold Beam
-[24] =
-{
-[const.Novice] = {fixedMin = 0, fixedMax = 0, variableMin = 1, variableMax = 3, },
-[const.Expert] = {fixedMin = 0, fixedMax = 0, variableMin = 1, variableMax = 3, },
-[const.Master] = {fixedMin = 0, fixedMax = 0, variableMin = 1, variableMax = 3, },
-},
--- Static Charge
-[13] =
-{
-[const.Novice] = {fixedMin = 5, fixedMax = 5, variableMin = 1, variableMax = 1, },
-[const.Expert] = {fixedMin = 12, fixedMax = 12, variableMin = 1, variableMax = 1, },
-[const.Master] = {fixedMin = 20, fixedMax = 20, variableMin = 1, variableMax = 1, },
-},
-}
-
-
-
-local spellBuffPowers =
-{
-	-- Stone Skin
-	["StoneSkin"] =
-	{
-		["fixed"] = 5,
-		["proportional"] = 2,
-	},
-	-- Bless
-	["Bless"] =
-	{
-		["fixed"] = 5,
-		["proportional"] = 1,
-	},
-	-- Heroism
-	["Heroism"] =
-	{
-		["fixed"] = 5,
-		["proportional"] = 2,
-	},
-}
-local spellStatsBuffPowers =
-{
-	["StatsBuff"] =
-	{
-		["fixed"] = 10,
-		["proportional"] = 2,
-	},
-}
+-- Spell Overrides:spellPowers{} was externalized as of 0.8.3 to skem-spell-overrides
 
 -- monster engagement distance
 
@@ -697,117 +398,6 @@ local housePrices =
 	["Wolf's Den"] = 50,
 	["Royal Gymnasium"] = 100,
 	["The Sparring Ground"] = 150,
-}
-
--- modified book values
-
-local modifiedBookValues =
-{
-	[0] = 100,
-	[1] = 200,
-	[2] = 300,
-	[3] = 500,
-	[4] = 1000,
-	[5] = 2000,
-	[6] = 4000,
-	[7] = 6000,
-	[8] = 20000,
-	[9] = 40000,
-	[10] = 60000,
-}
-
--- custom monster modifications
-
-local monsterInfos =
-{
-	--Maddening Eye
-	[12] = {["SpellChance"] = 2, ["SpellName"] = "Dispell Magic", ["SpellSkill"] = JoinSkill(10, const.Novice), },
-	--Priest of Baa
-	[16] = 
-	{["Name"]= "Priest of Baa",["FullHP"] = 220,["Level"] = 40, ["ArmorClass"]=40,["Experience"]= 1144,["Attack1"] = {["Type"] = const.Damage.Elec, ["DamageDiceCount"] = 6, ["DamageDiceSides"] = 6, ["DamageAdd"] = 0, ["Missile"] = missiles["Elec"], },},
-	--Bishop of Baa
-	[17] = 
-	{["Name"]= "Bishop of Baa",["FullHP"] = 340,["Level"] = 50,["ArmorClass"]=50,["Experience"]= 2375,["Attack1"] = {["Type"] = const.Damage.Elec, ["DamageDiceCount"] = 7, ["DamageDiceSides"] = 6, ["DamageAdd"] = 5, ["Missile"] = missiles["Elec"], },["SpellName"] = "Harm", ["SpellSkill"] = JoinSkill(6, const.Master),},
-	--Cardinal of Baa
-	[18] = 
-	{["Name"]= "Cardinal of Baa",["FullHP"] = 510,["Level"] =60,["ArmorClass"]=60,["Experience"]= 4000,["Attack1"] = {["Type"] = const.Damage.Elec, ["DamageDiceCount"] = 10, ["DamageDiceSides"] = 6, ["DamageAdd"] = 10, ["Missile"] = missiles["Elec"], },["SpellName"] = "Flying Fist", ["SpellSkill"] = JoinSkill(6, const.Master),},
-	--devil captain
-	[25] = {["FullHP"] = 650,["Level"] = 70,["ArmorClass"]=60, ["Attack1"] = {["Type"] = const.Damage.Phys, ["DamageDiceCount"] = 6, ["DamageDiceSides"] = 6, ["DamageAdd"] = 0,},},
-	--Devil Master
-	[26] = {["FullHP"] = 850,["Level"] = 85,["ArmorClass"]=80, ["Attack1"] = {["Type"] = const.Damage.Phys, ["DamageDiceCount"] = 7, ["DamageDiceSides"] = 8, ["DamageAdd"] = 20,},["SpellChance"] = 20, ["SpellName"] = "Meteor Shower", ["SpellSkill"] = JoinSkill(3, const.Master),},	
-	--Devil King
-	[27] = { ["FullHP"] = 1050,["Level"] = 100,["ArmorClass"]=100, ["Attack1"] = {["Type"] = const.Damage.Phys, ["DamageDiceCount"] = 10, ["DamageDiceSides"] = 8, ["DamageAdd"] = 20,},},
-	--devil Spawn
-	[28] = {["FullHP"] = 190,["Level"] = 50,["ArmorClass"]=40,["Experience"]= 2800, ["Attack1"] = {["Type"] = const.Damage.Phys, ["DamageDiceCount"] = 4, ["DamageDiceSides"] = 6, ["DamageAdd"] = 8,},["SpellChance"] = 20, ["SpellName"] = "Fire Bolt", ["SpellSkill"] = JoinSkill(8, const.Master),},
-	--devil Worker
-	[29] = {["FullHP"] = 580,["Level"] = 70,["ArmorClass"]=60,["Experience"]= 6800, ["Attack1"] = {["Type"] = const.Damage.Phys, ["DamageDiceCount"] = 5, ["DamageDiceSides"] = 6, ["DamageAdd"] = 20,},["SpellChance"] = 20, ["SpellName"] = "Fire Bolt", ["SpellSkill"] = JoinSkill(14, const.Master),},
-	--devil Warrior
-	[30] = {["FullHP"] = 900,["Level"] = 90,["ArmorClass"]=80,["Experience"]= 9500, ["Attack1"] = {["Type"] = const.Damage.Phys, ["DamageDiceCount"] = 5, ["DamageDiceSides"] = 6, ["DamageAdd"] = 30,},["SpellChance"] = 20, ["SpellName"] = "Fireball", ["SpellSkill"] = JoinSkill(12, const.Master),},
-	--Defender of VARN
-	[88] = {["SpellChance"] = 20, ["SpellName"] = "Psychic Shock", ["SpellSkill"] = JoinSkill(4, const.Master), },
-	--Sentinel of VARN
-	[89] = {["SpellChance"] = 20, ["SpellName"] = "Psychic Shock", ["SpellSkill"] = JoinSkill(6, const.Master), },
-	--Guardian of VARN
-	[90] = {["SpellChance"] = 20, ["SpellName"] = "Psychic Shock", ["SpellSkill"] = JoinSkill(7, const.Master), },
-	--Lich
-	[94] = {["SpellChance"] = 1, ["SpellName"] = "Dispell Magic", ["SpellSkill"] = JoinSkill(10, const.Novice), },
-	--Greater Lich
-	[95] = {["SpellChance"] = 1, ["SpellName"] = "Dispell Magic", ["SpellSkill"] = JoinSkill(10, const.Novice), },
-	--Gorgon
-	[102] = {["SpellChance"] = 30, ["SpellName"] = "Psychic Shock", ["SpellSkill"] = JoinSkill(5, const.Master), },
-	--Minotaur
-	[106] = {["Attack1"] = {["Type"] = const.Damage.Phys, ["DamageDiceCount"] = 3, ["DamageDiceSides"] = 7, ["DamageAdd"] = 25,},},
-	--Minotaur Mage
-	[107] = {["Attack1"] = {["Type"] = const.Damage.Phys, ["DamageDiceCount"] = 6, ["DamageDiceSides"] = 7, ["DamageAdd"] = 28,},},
-	--Minotaur King
-	[108] = {["Attack1"] = {["Type"] = const.Damage.Phys, ["DamageDiceCount"] = 9, ["DamageDiceSides"] = 7, ["DamageAdd"] = 36,},},
-	--Titan
-	[166] = {["Attack1"] = {["Type"] = const.Damage.Elec, ["DamageDiceCount"] = 7, ["DamageDiceSides"] = 20, ["DamageAdd"] = 10,["Missile"] = missiles["Elec"],},["SpellChance"] = 50, ["SpellName"] = "Psychic Shock", ["SpellSkill"] = JoinSkill(8, const.Master), },
-	--Noble Titan
-	[167] = {["Attack1"] = {["Type"] = const.Damage.Elec, ["DamageDiceCount"] = 8, ["DamageDiceSides"] = 20, ["DamageAdd"] = 20,["Missile"] = missiles["Elec"],},["SpellChance"] = 50, ["SpellName"] = "Psychic Shock", ["SpellSkill"] = JoinSkill(9, const.Master), },
-	--Supreme Titan
-	[168] = {["Attack1"] = {["Type"] = const.Damage.Elec, ["DamageDiceCount"] = 11, ["DamageDiceSides"] = 20, ["DamageAdd"] = 30,["Missile"] = missiles["Elec"],},["SpellChance"] = 50, ["SpellName"] = "Psychic Shock", ["SpellSkill"] = JoinSkill(13, const.Master), },
-	-- Follower of Baa
-	[139] = {["SpellChance"] = 10, ["SpellName"] = "Mind Blast", ["SpellSkill"] = JoinSkill(1, const.Novice), },
-	-- Mystic of Baa
-	[140] = {["SpellChance"] = 30, ["SpellName"] = "Mind Blast", ["SpellSkill"] = JoinSkill(2, const.Novice), },
-	-- Fanatic of Baa
-	[141] = {["SpellChance"] = 50, ["SpellName"] = "Mind Blast", ["SpellSkill"] = JoinSkill(3, const.Novice), },
-	-- Cannibal (female)
-	[130] = {["SpellChance"] = 10, ["SpellName"] = "Deadly Swarm", ["SpellSkill"] = JoinSkill(1, const.Novice), },
-	-- Head Hunter (female)
-	[131] = {["SpellChance"] = 20, ["SpellName"] = "Deadly Swarm", ["SpellSkill"] = JoinSkill(2, const.Novice), },
-	-- Witch Doctor (female)
-	[132] = {["SpellChance"] = 30, ["SpellName"] = "Deadly Swarm", ["SpellSkill"] = JoinSkill(3, const.Novice), },
-	-- Cannibal (male)
-	[142] = {["SpellChance"] = 10, ["SpellName"] = "Fire Bolt", ["SpellSkill"] = JoinSkill(1, const.Novice), },
-	-- Head Hunter (male)
-	[143] = {["SpellChance"] = 20, ["SpellName"] = "Fire Bolt", ["SpellSkill"] = JoinSkill(2, const.Novice), },
-	-- Witch Doctor (male)
-	[144] = {["SpellChance"] = 30, ["SpellName"] = "Fire Bolt", ["SpellSkill"] = JoinSkill(3, const.Novice), },
-	--Malekith rebalance
-	--skeleton
-	[154] = {["SpellChance"] = 10, ["SpellName"] = "Flame Arrow", ["SpellSkill"] = JoinSkill(1, const.Novice), },
-	-- Skeleton Knight
-	[155] = {["SpellChance"] = 20, ["SpellName"] = "Flame Arrow", ["SpellSkill"] = JoinSkill(2, const.Novice), },
-	-- Skeleton Lord
-	[156] = {["SpellChance"] = 30, ["SpellName"] = "Flame Arrow", ["SpellSkill"] = JoinSkill(3, const.Novice), },
-	--Magyar
-	[  4] = {["SpellChance"] = 10, ["SpellName"] = "Lightning Bolt", ["SpellSkill"] = JoinSkill(4, const.Master), },
-	-- Magyar Soldier
-	[  5] = {["SpellChance"] = 20, ["SpellName"] = "Lightning Bolt", ["SpellSkill"] = JoinSkill(6, const.Master), },
-	-- Goblin
-	[ 76] = {["SpellChance"] = 10, ["SpellName"] = "Fire Bolt", ["SpellSkill"] = JoinSkill(1, const.Novice), },
-	-- Goblin Shaman
-	[ 77] = {["SpellChance"] = 20, ["SpellName"] = "Fire Bolt", ["SpellSkill"] = JoinSkill(2, const.Novice), },
-	-- Goblin King
-	[ 78] = {["SpellChance"] = 30, ["SpellName"] = "Fire Bolt", ["SpellSkill"] = JoinSkill(3, const.Novice), },
-	-- Ghost
-	[ 73] = {["SpellChance"] = 10, ["SpellName"] = "Spirit Arrow", ["SpellSkill"] = JoinSkill(1, const.Novice), },
-	-- Evil Spirit
-	[ 74] = {["SpellChance"] = 20, ["SpellName"] = "Spirit Arrow", ["SpellSkill"] = JoinSkill(2, const.Novice), },
-	-- Specter
-	[ 75] = {["SpellChance"] = 30, ["SpellName"] = "Spirit Arrow", ["SpellSkill"] = JoinSkill(3, const.Novice), },
 }
 
 -- set melee recovery cap
@@ -1236,15 +826,7 @@ local function getWeaponRecoveryCorrection(equipmentData1, equipmentData2)
 	
 end
 
--- generate random spell power
-
-local function randomSpellPower(spellPower, level)
-	local r = math.random(spellPower.fixedMin, spellPower.fixedMax)
-	for i = 1, level do
-		r = r + math.random(spellPower.variableMin, spellPower.variableMax)
-	end
-	return r
-end
+-- Spell Overrides:function randomSpellPower(spellPower, level) was externalized as of 0.8.3 to skem-spell-overrides
 
 -- calculate distance from party to monster side
 
@@ -1601,7 +1183,7 @@ function events.CalcStatBonusBySkills(t)
 				if classMeleeWeaponSkillDamageBonus[t.Player.Class] ~= nil then
 					t.Result = t.Result + (classMeleeWeaponSkillDamageBonus[t.Player.Class] * shield.level)
 				end
-end
+			end
 			-- single wield
 			
 			if not equipmentData.dualWield then
@@ -1945,194 +1527,7 @@ local function applySpecialWeaponSkill(d, def, TextBuffer, delay)
 end
 mem.hookcall(0x00431358, 2, 0, applySpecialWeaponSkill)
 
--- all spells always hit
-
-mem.asmpatch(0x0043188D, "jmp     0x23", 2)
-
--- spell damage modification
-
-function events.CalcSpellDamage(t)
-
-	if spellPowers[t.Spell] ~= nil then
-	
-		-- custom spell power
-	
-		local spellPower = spellPowers[t.Spell][t.Mastery]
-		t.Result = randomSpellPower(spellPower, t.Skill)
-		
-	end
-	
-end
-
--- spell buffs
-
-local function calculateSpellBuffPower(spellBuffName, level)
-	return spellBuffPowers[spellBuffName]["fixed"] + level * spellBuffPowers[spellBuffName]["proportional"]
-end
-
--- StoneSkin
-
-local function setStoneSkinPowerNovice(d)
-	d.eax = calculateSpellBuffPower("StoneSkin", d.eax - 5)
-end
-mem.autohook(0x00426284, setStoneSkinPowerNovice, 0x8)
-local function setStoneSkinPowerExpert(d)
-	d.ecx = calculateSpellBuffPower("StoneSkin", d.ecx - 5)
-end
-mem.autohook(0x0042617F, setStoneSkinPowerExpert, 0x8)
-
--- Bless
-local function setBlessPowerNovice(d)
-	d.eax = calculateSpellBuffPower("Bless", d.eax - 5)
-end
-mem.autohook(0x0042680C, setBlessPowerNovice, 0x8)
-local function setBlessPowerExpert(d)
-	d.ecx = calculateSpellBuffPower("Bless", d.ecx - 5)
-end
-mem.autohook(0x00426712, setBlessPowerExpert, 0x8)
-
--- Heroism
-local function setHeroismPowerNovice(d)
-	d.ecx = calculateSpellBuffPower("Heroism", d.ecx - 5)
-end
-mem.autohook(0x00426D4C, setHeroismPowerNovice, 0x8)
-local function setHeroismPowerExpert(d)
-	d.ecx = calculateSpellBuffPower("Heroism", d.ecx - 5)
-end
-mem.autohook(0x00426C4F, setHeroismPowerExpert, 0x8)
-
--- Healing Touch
-mem.asmpatch(0x00426917, "mov     edx, 5", 5)
-mem.asmpatch(0x00426926, "add     eax, 25", 3)
-mem.asmpatch(0x00426903, "mov     edx, 11", 5)
-mem.asmpatch(0x00426912, "add     eax, 65", 3)
-
--- First Aid
-mem.bytecodepatch(0x00427E46, "\005", 1)
-mem.bytecodepatch(0x00427E3C, "\010", 1)
-mem.bytecodepatch(0x00427E32, "\040", 1)
-
--- Cure Wounds
-mem.asmpatch(0x00427FA2, "lea     edx, [ecx+ecx+10]", 4)
-mem.asmpatch(0x00427F94, "lea     eax, [edx+edx*2+20]", 4)
-mem.asmpatch(0x00427F86, "lea     ecx, [eax+eax*4+40]", 4)
-
--- Power Cure
-mem.asmpatch(0x00428596, "lea     ecx, [eax+eax*2]", 4)
-
--- Protection from Fire
-mem.asmpatch(
-	0x004236E3,
-	"mov    eax, DWORD [esp+0x10]\n" ..
-	"mov    ecx, esi\n" ..
-	string.format("add    ecx,%d\n", protectionSpellExtraMultiplier) ..
-	"imul   ecx, eax\n" ..
-	"mov    DWORD [esp+0x14], ecx\n",
-	0x2D
-)
--- duration = skill * 2 hours
-mem.asmpatch(0x00423719, "shl     eax, 5", 3)
-
--- Protection from Electricity
-mem.asmpatch(
-	0x0042439D,
-	"mov    eax, DWORD[esp+0x10]\n" ..
-	"mov    ecx, esi\n" ..
-	"inc    ecx\n" ..
-	"inc    ecx\n" ..
-	"imul   ecx, eax\n" ..
-	"mov    DWORD [esp+0x14], ecx\n",
-	0x2D
-)
-
--- duration = skill * 2 hours
-mem.asmpatch(0x004243D4, "shl     eax, 5", 3)
-
--- Protection from Cold
-mem.asmpatch(
-	0x00424F99,
-	"mov    eax, DWORD[esp+0x10]\n" ..
-	"mov    ecx, esi\n" ..
-	string.format("add    ecx,%d\n", protectionSpellExtraMultiplier) ..
-	"imul   ecx, eax\n" ..
-	"mov    DWORD [esp+0x14], ecx\n",
-	0x2D
-)
-
--- duration = skill * 2 hours
-mem.asmpatch(0x00424FD0, "shl     eax, 5", 3)
-
--- Protection from Magic
-mem.asmpatch(
-	0x00426087,
-	"mov    eax, DWORD[esp+0x10]\n" ..
-	"mov    ecx, esi\n" ..
-	string.format("add    ecx,%d\n", protectionSpellExtraMultiplier) ..
-	"imul   ecx, eax\n" ..
-	"mov    DWORD [esp+0x14], ecx\n",
-	0x2D
-)
-
--- duration = skill * 2 hours
-mem.asmpatch(0x004260BE, "shl     eax, 5", 3)
-
--- Protection from Poison
-mem.asmpatch(
-	0x00427EBB,
-	"mov    eax, DWORD[esp+0x10]\n" ..
-	"mov    ecx, esi\n" ..
-	string.format("add    ecx,%d\n", protectionSpellExtraMultiplier) ..
-	"imul   ecx, eax\n" ..
-	"mov    DWORD [esp+0x14], ecx\n",
-	0x2D
-)
-
--- duration = skill * 2 hours
-mem.asmpatch(0x00427EF1, "shl     eax, 5", 3)
-
--- Day of Protection
-
--- Novice power = 2 (same as in vanilla - no change)
--- Expert power = 2
-mem.asmpatch(0x0042961A, "lea    edx,[eax+eax*1]", 3)
--- Master power = 2
-mem.asmpatch(0x0042960D, "lea    ecx,[eax*2+0x0]", 7)
-
--- duration = 1 hour * skill
-mem.asmpatch(0x0042962E, [[
-		lea    eax,[eax+eax*2]
-		nop
-	]], 4)
-
--- Day of the Gods
-
--- Novice power = 05 + skill * 1
-mem.asmpatch(0x00428A90, [[
-		lea    edx,[ecx+0x5]
-		nop
-	]], 4)
--- Expert power = 10 + skill * 1
-mem.asmpatch(0x00428A7B, [[
-		lea    ecx,[ecx+0xa]
-		nop
-	]], 4)
--- Master power = 15 + skill * 1
-mem.asmpatch(0x00428A62, [[
-		lea    eax,[ecx+0xf]
-		nop
-		nop
-		nop
-		nop
-	]], 7)
-
--- Novice duration = skill * 1 hour
-mem.asmpatch(0x00428A9E, "shl     eax, 4", 3)
--- Expert duration = skill * 1 hour
-mem.asmpatch(0x00428A75, "imul    eax, 3600", 6)
--- Novice duration = skill * 1 hour
-mem.asmpatch(0x00428A5B, "shl     eax, 4", 3)
-
-
+-- Spell Overrides - a bunch of stuff that was here was externalized as of 0.8.3 to skem-spell-overrides
 
 ----------------------------------------------------------------------------------------------------
 -- game initialization
@@ -2140,327 +1535,22 @@ mem.asmpatch(0x00428A5B, "shl     eax, 4", 3)
 
 function events.GameInitialized2()
 
-	-- Healing Spell SP Cost
-	-- Cure Wounds
-	Game.Spells[71].SpellPointsNormal = 5
-	Game.Spells[71].SpellPointsExpert = 8
-	Game.Spells[71].SpellPointsMaster = 15
-	Game.SpellsTxt[71].SpellPointsNormal = 5
-	Game.SpellsTxt[71].SpellPointsExpert = 8
-	Game.SpellsTxt[71].SpellPointsMaster = 15
-
-	-- Healing Touch
-	Game.Spells[47].SpellPointsNormal = 3
-	Game.Spells[47].SpellPointsExpert = 6
-	Game.Spells[47].SpellPointsMaster = 12
-	Game.SpellsTxt[47].SpellPointsNormal = 3
-	Game.SpellsTxt[47].SpellPointsExpert = 6
-	Game.SpellsTxt[47].SpellPointsMaster = 12
-	
-	-- Share spirit
-	Game.Spells[54].SpellPointsNormal = 10
-	Game.Spells[54].SpellPointsExpert = 10
-	Game.Spells[54].SpellPointsMaster = 10
-	Game.SpellsTxt[54].SpellPointsNormal = 10
-	Game.SpellsTxt[54].SpellPointsExpert = 10
-	Game.SpellsTxt[54].SpellPointsMaster = 10
-	
-	--damaging spells sp cost
-	--Fireball
-	Game.Spells[6].SpellPointsMaster = 16
-	Game.SpellsTxt[6].SpellPointsMaster = 16
-	--Ice Bolt
-	Game.Spells[28].SpellPointsMaster = 20
-	Game.SpellsTxt[28].SpellPointsMaster = 20
-	
+	-- spell cost overrides were externalized as of 0.8.3 to skem-spell-overrides
 
 	----------------------------------------------------------------------------------------------------
 	-- populate global references
 	----------------------------------------------------------------------------------------------------
 	
-	-- spellTxt id resolver
+	-- spellTxt id resolver - need to externalize to a module since multiple subcomponents need/want this
 	
 	for spellTxtId = 1, Game.SpellsTxt.high do
 		spellTxtIds[Game.SpellsTxt[spellTxtId].Name] = spellTxtId
 	end
 	
 	----------------------------------------------------------------------------------------------------
-	-- monster customization
-	----------------------------------------------------------------------------------------------------
-	
-	for monsterTxtId, monsterInfo in pairs(monsterInfos) do
-		
-		-- get monster
-		
-		local monsterTxt = Game.MonstersTxt[monsterTxtId]
-		
-		-- Attack1
-		
-		if monsterInfo.Attack1 ~= nil then
-			for key, value in pairs(monsterInfo.Attack1) do
-				monsterTxt.Attack1[key] = value
-			end
-		end
-			
-		-- Attack2
-		
-		if monsterInfo.Attack2Chance ~= nil then
-			monsterTxt.Attack2Chance = monsterInfo.Attack2.Chance
-			if monsterInfo.Attack2 ~= nil then
-				for key, value in pairs(monsterInfo.Attack2) do
-					monsterTxt.Attack2[key] = value
-				end
-			end
-		end
-		
-		-- Spell
-		
-		if monsterInfo.SpellChance ~= nil then
-			monsterTxt.SpellChance = monsterInfo.SpellChance
-			if monsterInfo.SpellName ~= nil then
-				monsterTxt.Spell = spellTxtIds[monsterInfo.SpellName]
-			end
-			if monsterInfo.SpellSkill ~= nil then
-				monsterTxt.SpellSkill = monsterInfo.SpellSkill
-			end
-		end
-				-- process other custom values in monsterInfo
-
-		for key, value in pairs(monsterInfo) do
-
-			-- skip Attack1, Attack2, Spell
-
-			if key == "Attack1" or key == "Attack2Chance" or key == "Attack2" or key == "SpellChance" or key == "Spell" or key == "SpellSkill" then
-
-				-- do nothing - it is already processed
-
-			elseif key == "Resistances" then
-
-				-- apply custom resistances
-
-				for resistanceDamageType, resistanceValue in pairs(value) do
-					monsterTxt.Resistances[resistanceDamageType] = resistanceValue
-				end
-
-			else
-
-				-- apply all other flat values
-
-				monsterTxt[key] = value
-
-			end
-
-		end
-		
-	end
-	
-	----------------------------------------------------------------------------------------------------
-	-- modify monster statistics
-	----------------------------------------------------------------------------------------------------
-	
-	for monsterTxtIndex = 3,Game.MonstersTxt.high,3 do
-		
-		--TYPE A
-		local monsterTxt = Game.MonstersTxt[monsterTxtIndex-2]
-		
-		-- multiply monster hit points
-		
-		monsterTxt.FullHitPoints = monsterTxt.FullHitPoints * monsterHitPointsMultiplier
-		if Game.MonstersTxt[monsterTxtIndex].Level/Game.MonstersTxt[monsterTxtIndex-2].Level>1.9 then
-		monsterTxt.FullHitPoints= monsterTxt.FullHitPoints * (Game.MonstersTxt[monsterTxtIndex].Level/Game.MonstersTxt[monsterTxtIndex-2].Level*0.2+1) end
-		-- multiply monster damage
-		local monsterLevel = Game.MonstersTxt[monsterTxtIndex-1].Level
-		monsterTxt.Attack1.DamageDiceSides = math.round(monsterTxt.Attack1.DamageDiceSides * ((monsterLevel+5)/20 +1.75))
-		if (math.round(monsterTxt.Attack1.DamageAdd * ((monsterLevel+5)/20 +1.75))) >= 250 then monsterTxt.Attack1.DamageAdd = 250 
-		else monsterTxt.Attack1.DamageAdd =  math.round(monsterTxt.Attack1.DamageAdd * ((monsterLevel+5)/20 +1.75))
-		end
-		monsterTxt.Attack2.DamageDiceSides = math.round(monsterTxt.Attack2.DamageDiceSides * ((monsterLevel+5)/20 +1.75))
-		if (math.round(monsterTxt.Attack2.DamageAdd * ((monsterLevel+5)/20 +1.75))) >= 250 then monsterTxt.Attack2.DamageAdd = 250 
-		else monsterTxt.Attack2.DamageAdd =  math.round(monsterTxt.Attack2.DamageAdd * ((monsterLevel+5)/20 +1.75))
-		end
-		local skillLevel, skillMastery = SplitSkill(monsterTxt.SpellSkill)
-		monsterTxt.SpellSkill = math.round(JoinSkill(skillLevel * ((monsterLevel+5)/30 +1)), skillMastery)
-		
-		-- modify multiply monster armor class
-		
-		local monsterArmorClass = monsterTxt.ArmorClass
-		monsterArmorClass = math.round(monsterArmorClass * (1 + (100 - monsterArmorClass) / 100)) * monsterArmorClassMultiplier
-		monsterTxt.ArmorClass = monsterArmorClass
-		
-		--[[ modify and multiply monster level
-		
-		local monsterLevel = monsterTxt.Level
-		monsterLevel = math.round(monsterLevel * (1 + (100 - monsterLevel) / 100)) * monsterLevelMultiplier
-		monsterTxt.Level = monsterLevel
-		]]
-		-- monster movement speed is increased
-		
-		local monsterMoveSpeed = monsterTxt.MoveSpeed
-		if Game.MonstersTxt[monsterTxtIndex].Attack1.Missile==0
-		then
-		monsterMoveSpeed = monsterMoveSpeed + (400 - monsterMoveSpeed) / 2 + 100
-		monsterTxt.MoveSpeed = monsterMoveSpeed
-		end
-		-- monster resistance
-
-		for damageType = const.Damage.Phys, const.Damage.Energy do
-			-- reduce former immunity resistance level
-			if (monsterTxt.Resistances[damageType] == 200) then
-				monsterTxt.Resistances[damageType] = 120
-			end
-		end
-		-- monster experience
-		
-		monsterTxt.Experience = monsterTxt.Experience * monsterExperienceMultiplier
-		
-		-- monster energy attack
-		
-		if monsterTxt.Attack1.Type == const.Damage.Energy then
-			monsterTxt.Attack1.DamageDiceSides = math.round(monsterTxt.Attack1.DamageDiceSides * monsterEnergyAttackStrengthMultiplier)
-			monsterTxt.Attack1.DamageAdd = math.round(monsterTxt.Attack1.DamageAdd * monsterEnergyAttackStrengthMultiplier)
-		end
-		
-		if monsterTxt.Attack2Chance ~= nil and monsterTxt.Attack2.Type == const.Damage.Energy then
-			monsterTxt.Attack2.DamageDiceSides = math.round(monsterTxt.Attack2.DamageDiceSides * monsterEnergyAttackStrengthMultiplier)
-			monsterTxt.Attack2.DamageAdd = math.round(monsterTxt.Attack2.DamageAdd * monsterEnergyAttackStrengthMultiplier)
-		end
-		
-		
-		-- TYPE B
-		local monsterTxt = Game.MonstersTxt[monsterTxtIndex-1]
-		
-		-- multiply monster hit points
-		
-		monsterTxt.FullHitPoints = monsterTxt.FullHitPoints * monsterHitPointsMultiplier
-		if Game.MonstersTxt[monsterTxtIndex].Level/Game.MonstersTxt[monsterTxtIndex-2].Level>1.9 then 
-		monsterTxt.FullHitPoints= monsterTxt.FullHitPoints * (Game.MonstersTxt[monsterTxtIndex].Level/Game.MonstersTxt[monsterTxtIndex-1].Level*0.2+1) end
-		
-		-- multiply monster damage
-		local monsterLevel = Game.MonstersTxt[monsterTxtIndex-1].Level
-		monsterTxt.Attack1.DamageDiceSides = math.round(monsterTxt.Attack1.DamageDiceSides * ((monsterLevel+5)/20 +1.75))
-		if (math.round(monsterTxt.Attack1.DamageAdd * ((monsterLevel+5)/20 +1.75))) >= 250 then monsterTxt.Attack1.DamageAdd = 250 
-		else monsterTxt.Attack1.DamageAdd =  math.round(monsterTxt.Attack1.DamageAdd * ((monsterLevel+5)/20 +1.75))
-		end
-		monsterTxt.Attack2.DamageDiceSides = math.round(monsterTxt.Attack2.DamageDiceSides * ((monsterLevel+5)/20 +1.75))
-		if (math.round(monsterTxt.Attack2.DamageAdd * ((monsterLevel+5)/20 +1.75))) >= 250 then monsterTxt.Attack2.DamageAdd = 250 
-		else monsterTxt.Attack2.DamageAdd =  math.round(monsterTxt.Attack2.DamageAdd * ((monsterLevel+5)/20 +1.75))
-		end
-		local skillLevel, skillMastery = SplitSkill(monsterTxt.SpellSkill)
-		monsterTxt.SpellSkill = math.round(JoinSkill(skillLevel * ((monsterLevel+5)/30 +1)), skillMastery)
-		
-		-- modify multiply monster armor class
-		
-		local monsterArmorClass = monsterTxt.ArmorClass
-		monsterArmorClass = math.round(monsterArmorClass * (1 + (100 - monsterArmorClass) / 100)) * monsterArmorClassMultiplier
-		monsterTxt.ArmorClass = monsterArmorClass
-		
-		--[[ modify and multiply monster level
-		
-		local monsterLevel = monsterTxt.Level
-		monsterLevel = math.round(monsterLevel * (1 + (100 - monsterLevel) / 100)) * monsterLevelMultiplier
-		monsterTxt.Level = monsterLevel
-		]]
-		-- monster movement speed is increased
-		
-		local monsterMoveSpeed = monsterTxt.MoveSpeed
-		if Game.MonstersTxt[monsterTxtIndex].Attack1.Missile==0
-		then
-		monsterMoveSpeed = monsterMoveSpeed + (400 - monsterMoveSpeed) / 2 + 100
-		monsterTxt.MoveSpeed = monsterMoveSpeed
-		end
-		-- monster resistance
-
-		for damageType = const.Damage.Phys, const.Damage.Energy do
-			-- reduce former immunity resistance level
-			if (monsterTxt.Resistances[damageType] == 200) then
-				monsterTxt.Resistances[damageType] = 120
-			end
-		end
-		-- monster experience
-		
-		monsterTxt.Experience = monsterTxt.Experience * monsterExperienceMultiplier
-		
-		-- monster energy attack
-		
-		if monsterTxt.Attack1.Type == const.Damage.Energy then
-			monsterTxt.Attack1.DamageDiceSides = math.round(monsterTxt.Attack1.DamageDiceSides * monsterEnergyAttackStrengthMultiplier)
-			monsterTxt.Attack1.DamageAdd = math.round(monsterTxt.Attack1.DamageAdd * monsterEnergyAttackStrengthMultiplier)
-		end
-		
-		if monsterTxt.Attack2Chance ~= nil and monsterTxt.Attack2.Type == const.Damage.Energy then
-			monsterTxt.Attack2.DamageDiceSides = math.round(monsterTxt.Attack2.DamageDiceSides * monsterEnergyAttackStrengthMultiplier)
-			monsterTxt.Attack2.DamageAdd = math.round(monsterTxt.Attack2.DamageAdd * monsterEnergyAttackStrengthMultiplier)
-		end
-		
-		
-		--type C
-		local monsterTxt = Game.MonstersTxt[monsterTxtIndex]
-		
-		-- multiply monster hit points
-		
-		monsterTxt.FullHitPoints = monsterTxt.FullHitPoints * monsterHitPointsMultiplier
-		
-		-- multiply monster damage
-		local monsterLevel = Game.MonstersTxt[monsterTxtIndex-1].Level
-		monsterTxt.Attack1.DamageDiceSides = math.round(monsterTxt.Attack1.DamageDiceSides * ((monsterLevel+5)/20 +1.75))
-		if (math.round(monsterTxt.Attack1.DamageAdd * ((monsterLevel+5)/20 +1.75))) >= 250 then monsterTxt.Attack1.DamageAdd = 250 
-		else monsterTxt.Attack1.DamageAdd =  math.round(monsterTxt.Attack1.DamageAdd * ((monsterLevel+5)/20 +1.75))
-		end
-		monsterTxt.Attack2.DamageDiceSides = math.round(monsterTxt.Attack2.DamageDiceSides * ((monsterLevel+5)/20 +1.75))
-		if (math.round(monsterTxt.Attack2.DamageAdd * ((monsterLevel+5)/20 +1.75))) >= 250 then monsterTxt.Attack2.DamageAdd = 250 
-		else monsterTxt.Attack2.DamageAdd =  math.round(monsterTxt.Attack2.DamageAdd * ((monsterLevel+5)/20 +1.75))
-		end
-		local skillLevel, skillMastery = SplitSkill(monsterTxt.SpellSkill)
-		monsterTxt.SpellSkill = math.round(JoinSkill(skillLevel * ((monsterLevel+5)/30 +1)), skillMastery)
-		
-		-- modify multiply monster armor class
-		
-		local monsterArmorClass = monsterTxt.ArmorClass
-		monsterArmorClass = math.round(monsterArmorClass * (1 + (100 - monsterArmorClass) / 100)) * monsterArmorClassMultiplier
-		monsterTxt.ArmorClass = monsterArmorClass
-		
-		--[[ modify and multiply monster level
-		
-		local monsterLevel = monsterTxt.Level
-		monsterLevel = math.round(monsterLevel * (1 + (100 - monsterLevel) / 100)) * monsterLevelMultiplier
-		monsterTxt.Level = monsterLevel
-		]]
-		-- monster movement speed is increased
-		
-		local monsterMoveSpeed = monsterTxt.MoveSpeed
-		if Game.MonstersTxt[monsterTxtIndex].Attack1.Missile==0
-		then
-		monsterMoveSpeed = monsterMoveSpeed + (400 - monsterMoveSpeed) / 2 + 100
-		monsterTxt.MoveSpeed = monsterMoveSpeed
-		end
-		
-		-- monster experience
-		
-		monsterTxt.Experience = monsterTxt.Experience * monsterExperienceMultiplier
-		
-		-- monster energy attack
-		
-		if monsterTxt.Attack1.Type == const.Damage.Energy then
-			monsterTxt.Attack1.DamageDiceSides = math.round(monsterTxt.Attack1.DamageDiceSides * monsterEnergyAttackStrengthMultiplier)
-			monsterTxt.Attack1.DamageAdd = math.round(monsterTxt.Attack1.DamageAdd * monsterEnergyAttackStrengthMultiplier)
-		end
-		
-		if monsterTxt.Attack2Chance ~= nil and monsterTxt.Attack2.Type == const.Damage.Energy then
-			monsterTxt.Attack2.DamageDiceSides = math.round(monsterTxt.Attack2.DamageDiceSides * monsterEnergyAttackStrengthMultiplier)
-			monsterTxt.Attack2.DamageAdd = math.round(monsterTxt.Attack2.DamageAdd * monsterEnergyAttackStrengthMultiplier)
-		end
-		-- monster resistance
-
-		for damageType = const.Damage.Phys, const.Damage.Energy do
-			-- reduce former immunity resistance level
-			if (monsterTxt.Resistances[damageType] == 200) then
-				monsterTxt.Resistances[damageType] = 120
-			end
-		end
-		
-	end
-	
-	----------------------------------------------------------------------------------------------------
+	-- monster customization was moved to skem-monster-overrides.lua as of 0.8.1
+	-- modify monster statistics was moved to skem-monster-overrides.lua as of 0.8.1
+	--	
 	-- house prices
 	----------------------------------------------------------------------------------------------------
 
@@ -2476,34 +1566,8 @@ function events.GameInitialized2()
 	end
 
 	----------------------------------------------------------------------------------------------------
-	-- book values
-	----------------------------------------------------------------------------------------------------
-	
-	-- normal books
-	
-	local normalBookBaseIndex = 300
-	for itemTxtIndex = 300, 376 do
-
-		local itemTxt = Game.ItemsTxt[itemTxtIndex]
-		local bookLevel = math.fmod((itemTxtIndex - normalBookBaseIndex), 11)
-		
-		itemTxt.Value = modifiedBookValues[bookLevel]
-			
-	end
-
-	-- mirror books
-	
-	local mirrorBookBaseIndex = 377
-	for itemTxtIndex = 377, 398 do
-
-		local itemTxt = Game.ItemsTxt[itemTxtIndex]
-		local bookLevel = math.fmod((itemTxtIndex - mirrorBookBaseIndex), 11)
-		
-		itemTxt.Value = modifiedBookValues[bookLevel] * 10
-			
-	end
-
-	----------------------------------------------------------------------------------------------------
+	-- book values adjustments were moved to skem-item-overrides.lua as of 0.8.2
+	-- 
 	-- class descriptions
 	----------------------------------------------------------------------------------------------------
 	
@@ -2721,119 +1785,10 @@ formatSkillRankNumber(Game.SkillRecoveryTimes[const.Skills.Shield + 1] * (rank =
 				learningSkillMultiplierByMastery[rank]
 			)
 	end
-	
+
 	----------------------------------------------------------------------------------------------------
-	-- spell descriptions
-	----------------------------------------------------------------------------------------------------
+	-- spell descriptions - externalized to spell-overrides as of 0.8.3
 	
-	-- protections
-
-	Game.SpellsTxt[3].Description = "Increases all your characters' resistance to Fire. Lasts one hour per point of skill in Fire Magic."
-	Game.SpellsTxt[3].Normal = string.format("resistance = %d * level", (const.Novice + protectionSpellExtraMultiplier))
-	Game.SpellsTxt[3].Expert = string.format("resistance = %d * level", (const.Expert + protectionSpellExtraMultiplier))
-	Game.SpellsTxt[3].Master = string.format("resistance = %d * level", (const.Master + protectionSpellExtraMultiplier))
-	
-	Game.SpellsTxt[14].Description = "Increases all your characters' resistance to Electricity. Lasts one hour per point of skill in Air Magic."
-	Game.SpellsTxt[14].Normal = string.format("resistance = %d * level", (const.Novice + protectionSpellExtraMultiplier))
-	Game.SpellsTxt[14].Expert = string.format("resistance = %d * level", (const.Expert + protectionSpellExtraMultiplier))
-	Game.SpellsTxt[14].Master = string.format("resistance = %d * level", (const.Master + protectionSpellExtraMultiplier))
-	
-	Game.SpellsTxt[25].Description = "Increases all your characters' resistance to Cold. Lasts one hour per point of skill in Water Magic."
-	Game.SpellsTxt[25].Normal = string.format("resistance = %d * level", (const.Novice + protectionSpellExtraMultiplier))
-	Game.SpellsTxt[25].Expert = string.format("resistance = %d * level", (const.Expert + protectionSpellExtraMultiplier))
-	Game.SpellsTxt[25].Master = string.format("resistance = %d * level", (const.Master + protectionSpellExtraMultiplier))
-	
-	Game.SpellsTxt[36].Description = "Increases all your characters' resistance to Magic. Lasts one hour per point of skill in Earth Magic."
-	Game.SpellsTxt[36].Normal = string.format("resistance = %d * level", (const.Novice + protectionSpellExtraMultiplier))
-	Game.SpellsTxt[36].Expert = string.format("resistance = %d * level", (const.Expert + protectionSpellExtraMultiplier))
-	Game.SpellsTxt[36].Master = string.format("resistance = %d * level", (const.Master + protectionSpellExtraMultiplier))
-	
-	Game.SpellsTxt[69].Description = "Increases all your characters' resistance to Poison. Lasts one hour per point of skill in Body Magic."
-	Game.SpellsTxt[69].Normal = string.format("resistance = %d * level", (const.Novice + protectionSpellExtraMultiplier))
-	Game.SpellsTxt[69].Expert = string.format("resistance = %d * level", (const.Expert + protectionSpellExtraMultiplier))
-	Game.SpellsTxt[69].Master = string.format("resistance = %d * level", (const.Master + protectionSpellExtraMultiplier))
-	
-	-- stats buffs
-	
-	-- Lucky day
-	Game.SpellsTxt[48].Description = string.format("Temporarily increases all party characters' Luck statistic by 10 points plus %d per point of skill in Spirit Magic.", spellStatsBuffPowers["StatsBuff"]["proportional"])
-	Game.SpellsTxt[48].Normal = "same"
-	Game.SpellsTxt[48].Expert = "same"
-	Game.SpellsTxt[48].Master = "same"
-	
-	-- Meditation
-	Game.SpellsTxt[56].Description = string.format("Temporarily increases all party characters' Intellect and Personality statistics by 10 points plus %d per point of skill in Mind Magic.", spellStatsBuffPowers["StatsBuff"]["proportional"])
-	Game.SpellsTxt[56].Normal = "same"
-	Game.SpellsTxt[56].Expert = "same"
-	Game.SpellsTxt[56].Master = "same"
-	
-	-- Precision
-	Game.SpellsTxt[59].Description = string.format("Temporarily increases all party characters' Accuracy statistic by 10 points plus %d per point of skill in Mind Magic.", spellStatsBuffPowers["StatsBuff"]["proportional"])
-	Game.SpellsTxt[59].Normal = "same"
-	Game.SpellsTxt[59].Expert = "same"
-	Game.SpellsTxt[59].Master = "same"
-	
-	-- Speed
-	Game.SpellsTxt[73].Description = string.format("Temporarily increases all party characters' Speed statistic by 10 points plus %d per point of skill in Body Magic.", spellStatsBuffPowers["StatsBuff"]["proportional"])
-	Game.SpellsTxt[73].Normal = "same"
-	Game.SpellsTxt[73].Expert = "same"
-	Game.SpellsTxt[73].Master = "same"
-	
-	-- Power day
-	Game.SpellsTxt[75].Description = string.format("Temporarily increases all party characters' Might and Endurance by 10 points plus %d per point of skill in Body Magic.", spellStatsBuffPowers["StatsBuff"]["proportional"])
-	Game.SpellsTxt[75].Normal = "same"
-	Game.SpellsTxt[75].Expert = "same"
-	Game.SpellsTxt[75].Master = "same"
-	
-	-- direct buffs
-	
-	-- Stone Skin
-	Game.SpellsTxt[38].Description = string.format("Increases the armor class of a character by %d + %d point per point of skill in Earth Magic.", spellBuffPowers["StoneSkin"]["fixed"], spellBuffPowers["StoneSkin"]["proportional"])
-	
-	-- Bless
-	Game.SpellsTxt[46].Description = string.format("Increases the attack/shoot of a character by %d + %d per point of skill in Spirit Magic.", spellBuffPowers["Bless"]["fixed"], spellBuffPowers["Bless"]["proportional"])
-	
-	-- Heroism
-	Game.SpellsTxt[51].Description = string.format("Increases the damage a character does on a successful attack by %d + %d point per point of skill in Spirit Magic.", spellBuffPowers["Heroism"]["fixed"], spellBuffPowers["Heroism"]["proportional"])
-	
-	-- healing spells
-	
-	-- Healing Touch
-	Game.SpellsTxt[47].Description = string.format("Cheaply heals a single character. Skill increases the recovery rate of this spell.")
-	Game.SpellsTxt[47].Normal = string.format("Heals 3-7 points of damage")
-	Game.SpellsTxt[47].Expert = string.format("Casting costs 6 spell points. Heals around 30 points of damage")
-	Game.SpellsTxt[47].Master = string.format("Casting costs 12 spell points. Heals around 70 points of damage")
-
-	-- First Aid
-	Game.SpellsTxt[68].Description = string.format("Cures single character. Recovery is reduced by an amount equal to the caster's skill in Body Magic.")
-	Game.SpellsTxt[68].Normal = string.format("Cures 5 hit points")
-	Game.SpellsTxt[68].Expert = string.format("Cures 10 hit points")
-	Game.SpellsTxt[68].Master = string.format("Cures 20 hit points")
-
-	-- Cure Wounds
-	Game.SpellsTxt[71].Description = string.format("Cures hit points on a single target when cast. The number cured is equal to 10+2 per point of skill in Body Magic.")
-	Game.SpellsTxt[71].Normal = string.format("Casting costs 5 spell points. Cures 10+2 hit points per point of skill")
-	Game.SpellsTxt[71].Expert = string.format("Casting costs 8 spell points. Cures 20+3 hit points per point of skill")
-	Game.SpellsTxt[71].Master = string.format("Casting costs 15 spell points. Cures 40+5 hit points per point of skill")
-	-- Power Cure
-	Game.SpellsTxt[77].Description = string.format("Cures hit points of all characters in your party at once. The number cured is equal to 3 per point of skill in Body Magic.")
-	
-	--Fireball
-	Game.SpellsTxt[6].Master = string.format("Casting costs 16 spell points. Deals 12+1-9 damage per point of skill")
-	-- Ice Bolt
-	Game.SpellsTxt[28].Master = string.format("Casting costs 20 spell points. Deals 20+1-13 damage per point of skill")
-
-	-- direct damage spells
-	
-	for spellIndex, spellPower in pairs(spellPowers) do
-		Game.SpellsTxt[spellIndex].Description = Game.SpellsTxt[spellIndex].Description .. string.format("\n\nmodified damage = %d + %d-%d per point of skill", spellPowers[spellIndex][const.Novice].fixedMin, spellPowers[spellIndex][const.Novice].variableMin, spellPowers[spellIndex][const.Novice].variableMax)
-	end
-	
-	-- guardian angel
-	
-	Game.SpellsTxt[spellTxtIds["Guardian Angel"]].Description = string.replace(Game.SpellsTxt[spellTxtIds["Guardian Angel"]].Description, "Guardian Angel lasts for 1 hour per point of skill in Spirit Magic", "Guardian Angel lasts for 1 hour plus 5 minutes per point of skill in Spirit Magic") .. string.format("\n\nWhile active Guardian Angel lowers death HP threshold by 1000 for all characters protecting them from dying of HP loss.")
-	
-	----------------------------------------------------------------------------------------------------
 	-- professions
 	----------------------------------------------------------------------------------------------------
 	
@@ -2943,69 +1898,8 @@ formatSkillRankNumber(Game.SkillRecoveryTimes[const.Skills.Shield + 1] * (rank =
 	Game.ClassKinds.SPBase[4] = 8
 	
 	----------------------------------------------------------------------------------------------------
-	-- item stats
+	-- item stats were externalized to skem-item-overrides.lua as of 0.8.2
 	----------------------------------------------------------------------------------------------------
-	
-	for itemId = 1, Game.ItemsTxt.high do
-	
-		local itemTxt = Game.ItemsTxt[itemId]
-		
-		-- 2h staffs
-		if itemTxt.Skill - 1 == const.Skills.Staff and itemTxt.Mod1DiceCount == 2 and itemTxt.Mod1DiceSides == 4 and itemTxt.Mod2 == 3 then
-			itemTxt.Mod2 = 5
-		elseif itemTxt.Skill - 1 == const.Skills.Staff and itemTxt.Mod1DiceCount == 2 and itemTxt.Mod1DiceSides == 4 and itemTxt.Mod2 == 7 then
-			itemTxt.Mod2 = 10
-		-- 2h swords
-		elseif itemTxt.Skill - 1 == const.Skills.Sword and itemTxt.Mod1DiceCount == 4 and itemTxt.Mod1DiceSides == 5 and itemTxt.Mod2 == 2 then
-			itemTxt.Mod2 = 12
-		elseif itemTxt.Skill - 1 == const.Skills.Sword and itemTxt.Mod1DiceCount == 4 and itemTxt.Mod1DiceSides == 5 and itemTxt.Mod2 == 8 then
-			itemTxt.Mod2 = 24
-		-- 2h axes
-		elseif itemTxt.Skill - 1 == const.Skills.Axe and itemTxt.Mod1DiceCount == 3 and itemTxt.Mod1DiceSides == 7 and itemTxt.Mod2 == 3 then
-			itemTxt.Mod2 = 12
-		elseif itemTxt.Skill - 1 == const.Skills.Axe and itemTxt.Mod1DiceCount == 3 and itemTxt.Mod1DiceSides == 7 and itemTxt.Mod2 == 9 then
-			itemTxt.Mod2 = 24
-		-- 1h/2h spears
-		elseif itemTxt.Skill - 1 == const.Skills.Spear and itemTxt.Mod1DiceCount == 1 and itemTxt.Mod1DiceSides == 9 and itemTxt.Mod2 == 1 then
-			itemTxt.Mod2 = 3
-		elseif itemTxt.Skill - 1 == const.Skills.Spear and itemTxt.Mod1DiceCount == 1 and itemTxt.Mod1DiceSides == 9 and itemTxt.Mod2 == 5 then
-			itemTxt.Mod2 = 6
-		elseif itemTxt.Skill - 1 == const.Skills.Spear and itemTxt.Mod1DiceCount == 1 and itemTxt.Mod1DiceSides == 9 and itemTxt.Mod2 == 9 then
-			itemTxt.Mod2 = 9
-		elseif itemTxt.Skill - 1 == const.Skills.Spear and itemTxt.Mod1DiceCount == 1 and itemTxt.Mod1DiceSides == 9 and itemTxt.Mod2 == 13 then
-			itemTxt.Mod2 = 12
-		elseif itemTxt.Skill - 1 == const.Skills.Spear and itemTxt.Mod1DiceCount == 2 and itemTxt.Mod1DiceSides == 6 and itemTxt.Mod2 == 4 then
-			itemTxt.Mod2 = 6
-		elseif itemTxt.Skill - 1 == const.Skills.Spear and itemTxt.Mod1DiceCount == 3 and itemTxt.Mod1DiceSides == 6 and itemTxt.Mod2 == 4 then
-			itemTxt.Mod2 = 6
-		elseif itemTxt.Skill - 1 == const.Skills.Spear and itemTxt.Mod1DiceCount == 3 and itemTxt.Mod1DiceSides == 6 and itemTxt.Mod2 == 10 then
-			itemTxt.Mod2 = 12
-		end
-			
-	end
-	
-	for itemId = 1, Game.ItemsTxt.high do
-
-		local itemTxt = Game.ItemsTxt[itemId]
-		
-		-- spear base damage
-		if itemTxt.Skill - 1 == const.Skills.Spear and itemTxt.Mod1DiceCount == 1 and itemTxt.Mod1DiceSides == 9 then
-			itemTxt.Mod1DiceCount = 1
-			itemTxt.Mod1DiceSides = 11
-			itemTxt.Notes = string.gsub(itemTxt.Notes, "+1D9", "extra dice roll")
-		-- trident base damage
-		elseif itemTxt.Skill - 1 == const.Skills.Spear and itemTxt.Mod1DiceCount == 2 and itemTxt.Mod1DiceSides == 6 then
-			itemTxt.Mod1DiceCount = 2
-			itemTxt.Mod1DiceSides = 6
-			itemTxt.Notes = string.gsub(itemTxt.Notes, "+1D6", "extra dice roll")
-		-- halberd base damage
-		elseif itemTxt.Skill - 1 == const.Skills.Spear and itemTxt.Mod1DiceCount == 3 and itemTxt.Mod1DiceSides == 6 then
-			itemTxt.Mod1DiceCount = 4
-			itemTxt.Mod1DiceSides = 3
-			itemTxt.Notes = string.gsub(itemTxt.Notes, "+1D6", "extra dice roll")
-		end
-		
-	end
 	
 end
 
@@ -3063,44 +1957,7 @@ mem.asmpatch(0x0045A4AB, "test   BYTE [ebp+0x61],0xFF", 0x4)
 -- allow to hold dagger in left hand at novice rank
 mem.asmpatch(0x0045A3E8, "test   BYTE [ebp+0x62],0xFF", 0x4)
 
--- stat boosts
--- Lucky day does not create pointer
-mem.asmpatch(0x004220D5, "test   BYTE [eax+0x70],0xFF", 0x4)
--- Lucky day affects whole party
-mem.asmpatch(0x004269CD, "cmp    esi,esi", 0x3)
--- Lucky day multiplier = 5
-mem.asmpatch(0x004269B4, "lea     ecx, [eax+eax*" .. (spellStatsBuffPowers["StatsBuff"]["proportional"] - 1) .. "+0Ah]", 0x4)
-mem.asmpatch(0x004269A6, "lea     edx, [eax+eax*" .. (spellStatsBuffPowers["StatsBuff"]["proportional"] - 1) .. "+0Ah]", 0x4)
-mem.asmpatch(0x0042699C, "lea     ecx, [eax+eax*" .. (spellStatsBuffPowers["StatsBuff"]["proportional"] - 1) .. "+0Ah]", 0x4)
--- Meditation/Precision does not create pointer
-mem.asmpatch(0x004220E3, "test   BYTE [eax+0x71],0xFF", 0x4)
--- Meditation affects whole party
-mem.asmpatch(0x00427399, "cmp    esi,esi", 0x3)
--- Meditation multiplier = 5
-mem.asmpatch(0x00427380, "lea     ecx, [eax+eax*" .. (spellStatsBuffPowers["StatsBuff"]["proportional"] - 1) .. "+0Ah]", 0x4)
-mem.asmpatch(0x00427372, "lea     edx, [eax+eax*" .. (spellStatsBuffPowers["StatsBuff"]["proportional"] - 1) .. "+0Ah]", 0x4)
-mem.asmpatch(0x00427368, "lea     ecx, [eax+eax*" .. (spellStatsBuffPowers["StatsBuff"]["proportional"] - 1) .. "+0Ah]", 0x4)
--- Precision affects whole party
-mem.asmpatch(0x0042760D, "cmp    esi,esi", 0x3)
--- Precision multiplier = 5
-mem.asmpatch(0x004275F4, "lea     ecx, [eax+eax*" .. (spellStatsBuffPowers["StatsBuff"]["proportional"] - 1) .. "+0Ah]", 0x4)
-mem.asmpatch(0x004275E6, "lea     edx, [eax+eax*" .. (spellStatsBuffPowers["StatsBuff"]["proportional"] - 1) .. "+0Ah]", 0x4)
-mem.asmpatch(0x004275DC, "lea     ecx, [eax+eax*" .. (spellStatsBuffPowers["StatsBuff"]["proportional"] - 1) .. "+0Ah]", 0x4)
--- Speed/Power does not create pointer
-mem.asmpatch(0x004220F6, "test   BYTE [eax+0x72],0xFF", 0x4)
--- Speed affects whole party
-mem.asmpatch(0x00428154, "cmp    esi,esi", 0x3)
--- Speed multiplier = 5
-mem.asmpatch(0x0042813B, "lea     ecx, [eax+eax*" .. (spellStatsBuffPowers["StatsBuff"]["proportional"] - 1) .. "+0Ah]", 0x4)
-mem.asmpatch(0x0042812D, "lea     edx, [eax+eax*" .. (spellStatsBuffPowers["StatsBuff"]["proportional"] - 1) .. "+0Ah]", 0x4)
-mem.asmpatch(0x00428123, "lea     ecx, [eax+eax*" .. (spellStatsBuffPowers["StatsBuff"]["proportional"] - 1) .. "+0Ah]", 0x4)
--- Power affects whole party
-mem.asmpatch(0x004283F8, "cmp    esi,esi", 0x3)
--- Power multiplier = 5
-mem.asmpatch(0x004283DF, "lea     ecx, [eax+eax*" .. (spellStatsBuffPowers["StatsBuff"]["proportional"] - 1) .. "+0Ah]", 0x4)
-mem.asmpatch(0x004283D1, "lea     edx, [eax+eax*" .. (spellStatsBuffPowers["StatsBuff"]["proportional"] - 1) .. "+0Ah]", 0x4)
-mem.asmpatch(0x004283C7, "lea     ecx, [eax+eax*" .. (spellStatsBuffPowers["StatsBuff"]["proportional"] - 1) .. "+0Ah]", 0x4)
-
+-- stat boosts; externalized to spell-overrides as of 0.8.3 
 -- learning skill bonus multiplier
 local function setLearningSkillBonusMultiplier(d, def)
 	d.ecx = d.ecx + learningSkillExtraMultiplier
@@ -3132,6 +1989,7 @@ local function navigateMissile(object)
 		or
 		-- Ice Blast
 		object.SpellType == 32
+		-- also need to add Toxic Cloud and Rock Blast to this set
 	then
 		return
 	end
@@ -3160,6 +2018,7 @@ local function navigateMissile(object)
 			return
 		end
 	-- assume all objects not owned by party and without target are targetting party
+	-- this creates issues with cosmetic projectiles like CI Obelisk Arena Paralyze and Gharik/Baa lava fireballs
 	elseif ownerKind ~= const.ObjectRefKind.Party and targetKind == const.ObjectRefKind.Nothing  then
 		targetPosition = {["X"] = Party.X, ["Y"] = Party.Y, ["Z"] = Party.Z + 120, }
 	else
@@ -3206,36 +2065,7 @@ function events.Tick()
 	
 end
 
--- Feeblemind fix
-local function disableFeeblemindedMonsterCasting(d, def)
-	-- get default random value
-	local randomRoll = def()
-	-- get monster
-	local monsterIndex, monster = GetMonster(d.esi)
-	
-		-- check monster is feebleminded
-	if monster.SpellBuffs[const.MonsterBuff.Feeblemind].ExpireTime ~= 0 then
-		-- set random roll to 100 to prevent casting
-		randomRoll = 99
-	end
-	return randomRoll
-end
-mem.hookcall(0x00421C5C, 0, 0, disableFeeblemindedMonsterCasting)
-
--- Feeblemind prevents monster to do bad things
-
-local function disableFeeblemindedMonsterSpecialAbility(d, def, playerPointer, thing)
-	-- get monster
-	local monsterIndex, monster = GetMonster(d.edi)
-	-- check monster is feebleminded
-	if monster.SpellBuffs[const.MonsterBuff.Feeblemind].ExpireTime ~= 0 then
-		-- do nothing
-	else
-		-- do bad thing
-		def(playerPointer, thing)
-	end
-end
-mem.hookcall(0x00431DE7, 1, 1, disableFeeblemindedMonsterSpecialAbility)
+-- feeblemind fix externalized to spell-overrides as of 0.8.3
 
 -- Summon hirelings
 local function bringMonsterToParty(monster)
@@ -3297,12 +2127,12 @@ function events.KeyDown(t)
 	end
 end
 
--- on load map
+--[[ on load map - this block was externalized to the separate Map scripts
 
 function events.LoadMap()
 	
 	-- disable stats fountains
-
+	-- externalized to the separate map scripts as of 0.8.4
 	-- Free Haven
 	if Game.Map.Name == "outc2.odm" then
 		-- Might fountain
@@ -3329,7 +2159,7 @@ function events.LoadMap()
 		Game.MapEvtLines:RemoveEvent(110)
 	end
 	
-end
+end]]
 
 -- modify monster engagement distance
 
@@ -3440,6 +2270,8 @@ mem.hookcall(0x0049ED16, 0, 0, modifiedInnRoomPrice)
 
 ----------------------------------------------------------------------------------------------------
 -- inn food quantity is constant
+-- need to fix: only affects dialog, not actual results. 
+-- re-evaluate pricing based on actual units of food sold?
 ----------------------------------------------------------------------------------------------------
 
 local function modifiedInnFoodQuantity(d, def)
@@ -3461,6 +2293,8 @@ mem.hookcall(0x0049EEF9, 0, 0, modifiedInnFoodQuantity)
 
 ----------------------------------------------------------------------------------------------------
 -- inn food price is scaled with party experience level
+-- need to modify this to be relative to amount of food inn is actually selling, so that food price
+-- is constant across towns regardless of the actual amount of food provided
 ----------------------------------------------------------------------------------------------------
 
 local function modifiedInnFoodPrice(d, def)
@@ -3735,208 +2569,13 @@ mem.hookcall(0x00414AD5, 2, 4, modifiedDisplayStatisticsRangedAttack)
 
 ----------------------------------------------------------------------------------------------------
 -- handle game actions
-----------------------------------------------------------------------------------------------------
 
-function events.Action(t)
-	
-	-- clicked on skill in skill screen
-	
-	if t.Action == 121 then
-	
-		-- get current player
-		
-		local currentPlayer = Party.Players[Party.CurrentPlayer]
-		
-		-- get skill
-		
-		local skill = t.Param
-	
-		-- check if skill is advanceable
-		
-		local skillLevel, skillMastery = SplitSkill(currentPlayer.Skills[skill])
-		local skillAdvanceable = (currentPlayer.SkillPoints >= skillLevel + 1)
-	
-		if skillAdvanceable then
-		
-			-- character linked skills
-			
-			for key, characterLinkedSkills in pairs(characterLinkedSkillGroups) do
-			
-				if characterLinkedSkills[skill] ~= nil then
-			
-					-- advance all other skills to at least same level
-					
-					for characterLinkedSkill, value in pairs(characterLinkedSkills) do
-					
-						if characterLinkedSkill ~= skill then
-						
-							local characterLinkedSkillLevel, characterLinkedSkillMastery = SplitSkill(currentPlayer.Skills[characterLinkedSkill])
-						
-							if characterLinkedSkillMastery ~= 0 and characterLinkedSkillLevel <= skillLevel then
-									currentPlayer.Skills[characterLinkedSkill] = JoinSkill(skillLevel + 1, characterLinkedSkillMastery)
-							end
-							
-						end
-						
-					end
-					
-				end
-				
-			end
-			
-			-- party linked skills
-			
-			if partyLinkedSkills[skill] ~= nil then
-		
-				-- advance same skill for other party members to at least same level
-				
-				for i = 0, 3 do
-				
-					if i ~= Party.CurrentPlayer then
-					
-						local player = Party.Players[i]
-					
-						local partyLinkedSkillLevel, partyLinkedSkillMastery = SplitSkill(player.Skills[skill])
-					
-						if partyLinkedSkillMastery ~= 0 and partyLinkedSkillLevel <= skillLevel then
-								player.Skills[skill] = JoinSkill(skillLevel + 1, partyLinkedSkillMastery)
-						end
-						
-					end
-					
-				end
-				
-			end
-			
-		end
-		
-	end
-		
-end
-
-----------------------------------------------------------------------------------------------------
--- draw monster info
-----------------------------------------------------------------------------------------------------
-
-function modifiedDrawMonsterInfoName(d, def, dialog, font, left, top, color, str, a6)
-
-	-- get monster
-	
-	local monsterIndex, monster = GetMonster(d.edi)
-	local monsterTxt = Game.MonstersTxt[monster.Id]
-	
-	-- invoke original function
-	
-	def(dialog, font, left, top, color, str, a6)
-	
-	-- display monster txt statistics
-	
-	local textLines = {}
-	
-	-- player damage rate on monster
-	if Game.CurrentPlayer >= 0 and Game.CurrentPlayer <= 3 then
-		local player = Party.Players[Game.CurrentPlayer]
-		local meleeDamageRate = getAverageDamageRate(player, false, monsterTxt.ArmorClass)
-		local rangedDamageRate = getAverageDamageRate(player, true, monsterTxt.ArmorClass)
-		table.insert(textLines, {["key"] = "Damage Rate melee", ["value"] = string.format("%d", meleeDamageRate), ["type"] = "damageRate", })
-		table.insert(textLines, {["key"] = "Damage Rate ranged", ["value"] = string.format("%d", rangedDamageRate), ["type"] = "damageRate", })
-		table.insert(textLines, {["key"] = "", ["value"] = "", })
-	else
-		table.insert(textLines, {["key"] = "", ["value"] = "", })
-		table.insert(textLines, {["key"] = "", ["value"] = "", })
-		table.insert(textLines, {["key"] = "", ["value"] = "", })
-	end
-	
-	table.insert(textLines, {["key"] = "Full Hit Points", ["value"] = string.format("%d", monsterTxt.FullHitPoints)})
-	table.insert(textLines, {["key"] = "Armor Class", ["value"] = string.format("%d", monsterTxt.ArmorClass)})
-	table.insert(textLines, {["key"] = "Level", ["value"] = string.format("%d", monsterTxt.Level)})
-	table.insert(textLines, {["key"] = "Recovery", ["value"] = string.format("%d", monsterTxt.AttackRecovery)})
-	table.insert(textLines, {["key"] = string.format("Att 1: %s %s", attackTypes[monsterTxt.Attack1.Type], (monsterTxt.Attack1.Missile == 0) and "melee" or "ranged"), ["value"] = string.format("%d-%d", monsterTxt.Attack1.DamageAdd + monsterTxt.Attack1.DamageDiceCount, monsterTxt.Attack1.DamageAdd + monsterTxt.Attack1.DamageDiceCount * monsterTxt.Attack1.DamageDiceSides)})
-	if monsterTxt.Attack2Chance == 0 then
-		table.insert(textLines, {["key"] = "Att 2:", ["value"] = ""})
-	else
-		table.insert(textLines, {["key"] = string.format("Att 2: %s %s", attackTypes[monsterTxt.Attack2.Type], (monsterTxt.Attack2.Missile == 0) and "melee" or "ranged"), ["value"] = string.format("%d-%d", monsterTxt.Attack2.DamageAdd + monsterTxt.Attack2.DamageDiceCount, monsterTxt.Attack2.DamageAdd + monsterTxt.Attack2.DamageDiceCount * monsterTxt.Attack2.DamageDiceSides)})
-	end
-	if monsterTxt.SpellChance == 0 then
-		table.insert(textLines, {["key"] = "Spell:", ["value"] = ""})
-	else
-		local spellLevel, spellMastery = SplitSkill(monsterTxt.SpellSkill)
-		table.insert(textLines, {["key"] = string.format("Spell: %s (%s.%d)", string.replace(Game.SpellsTxt[monsterTxt.Spell].ShortName, "\"", ""), masteries[spellMastery], spellLevel), ["value"] = ""})
-	end
-	table.insert(textLines, {["key"] = "Fire", ["value"] = string.format("%d", monsterTxt.FireResistance), ["type"] = "resistance", })
-	table.insert(textLines, {["key"] = "Elec", ["value"] = string.format("%d", monsterTxt.ElecResistance), ["type"] = "resistance", })
-	table.insert(textLines, {["key"] = "Cold", ["value"] = string.format("%d", monsterTxt.ColdResistance), ["type"] = "resistance", })
-	table.insert(textLines, {["key"] = "Poison", ["value"] = string.format("%d", monsterTxt.PoisonResistance), ["type"] = "resistance", })
-	table.insert(textLines, {["key"] = "Magic", ["value"] = string.format("%d", monsterTxt.MagicResistance), ["type"] = "resistance", })
-	table.insert(textLines, {["key"] = "Phys", ["value"] = string.format("%d", monsterTxt.PhysResistance), ["type"] = "resistance", })
-	
-	-- draw info
-	
-	font = Game.Smallnum_fnt
-	local top = 36
-	local lineHeight = 11
-	local normalKeyMargin = 20
-	local normalKeyColor = 0x0000					-- white
-	local resistanceKeyMargin = 180
-	local resistanceKeyColor = 0xFFC0			-- yellow
-	local damageRateKeyMargin = normalKeyMargin
-	local damageRateKeyColor = 0x07C0
-	local valueRightMargin = 230
-	local valueNumberShift = 8
-	local normalValueColor = 0x07FE				-- cyan
-	local damageRateValueColor = 0xF8C6		-- reddish
-	
-	for index, tuple in pairs(textLines) do
-	
-		-- draw key
-	
-		local keyMargin;
-		local keyColor;
-	
-		if tuple.type == "resistance" then
-			keyMargin = resistanceKeyMargin
-			keyColor = resistanceKeyColor
-		elseif tuple.type == "damageRate" then
-			keyMargin = damageRateKeyMargin
-			keyColor = damageRateKeyColor
-		else
-			keyMargin = normalKeyMargin
-			keyColor = normalKeyColor
-		end
-		
-		Game.TextBuffer = tuple.key .. string.rep(" ", 100)
-		def(dialog, font, keyMargin, top + lineHeight * index, keyColor, str, 0)
-		
-		-- draw value
-		
-		local valueColor;
-	
-		if tuple.type == "damageRate" then
-			valueColor = damageRateValueColor
-		else
-			valueColor = normalValueColor
-		end
-		
-		local valueMargin = valueRightMargin - valueNumberShift * string.len(tuple.value)
-		for c in string.gmatch(tuple.value, ".") do
-			valueMargin = valueMargin + valueNumberShift
-			local adjustedValueMargin = valueMargin
-			if c == "-" then
-				adjustedValueMargin = adjustedValueMargin + 1
-			elseif c == "4" then
-				adjustedValueMargin = adjustedValueMargin - 1
-			end
-			Game.TextBuffer = c .. string.rep(" ", 100)
-			def(dialog, font, adjustedValueMargin, top + lineHeight * index, valueColor, str, 0)
-		end
-		
-	end
-	
-end
-mem.hookcall(0x0041D18D, 2, 5, modifiedDrawMonsterInfoName)
-
-----------------------------------------------------------------------------------------------------
--- raise immunity threshold
+-- Skill Linking code was externalized to skem-skill-linking.lua as of 0.8.1
+-- The skill linking code was the only code injected into evt.Action(t), so the whole function has been removed 
+--
+-- Monster Infobox code was externalized to skem-monster-infobox.lua as of 0.8.1
+--
+-- raise immunity threshold (revert for RA)
 ----------------------------------------------------------------------------------------------------
 
 mem.asmpatch(0x00421DD9, string.format("cmp     eax, %d", 1000), 5)
@@ -3958,7 +2597,7 @@ function configureShrineEvent(eventId, shrineIndex, statisticsName, hintStringIn
 
 	-- calculate number of blessings available
 
-	local availableBlessings = Game.Year - Game.BaseYear + 1
+	local availableBlessings = 1 + (Game.Year - Game.BaseYear)
 
 	-- rewrite event
 
@@ -4006,7 +2645,7 @@ local function meleeAttackMonster(d, def, attackStructure, monsterIndex, knockba
 	
 	-- process extra hits
 	
-		local attackType = bit.band(attackStructure, 7)
+	local attackType = bit.band(attackStructure, 7)
 	local playerIndex = bit.rshift(attackStructure, 2)
 	
 
@@ -4015,52 +2654,9 @@ end
 mem.hookcall(0x0042A228, 2, 1, meleeAttackMonster)
 
 ----------------------------------------------------------------------------------------------------
--- guardian angel adds to endurance to preserve character
-----------------------------------------------------------------------------------------------------
+-- guardian angel changes externalized to spell-overrides as of 0.8.3
 
-local guardianAngelPower
-
---mem.asmpatch(0x00406886, string.format("cmp    eax,%d", meleeRecoveryCap), 3)
---mem.asmpatch(0x00406886, string.format("cmp    eax,%d", meleeRecoveryCap), 3)
-
-local function guardianAngelCharacterTrySubtractSpellPoints(d, def, characterPointer, spellPoints)
-	-- get caster
-	local playerIndex, player = GetPlayer(d.ebp)
-	-- get caster skill
-	local level, rank = SplitSkill(player.Skills[const.Skills.Spirit])
-	-- store spell power
-	guardianAngelPower = level
-	-- execute original method
-	return def(characterPointer, spellPoints)
-end
-mem.hookcall(0x00426BB0, 1, 1, guardianAngelCharacterTrySubtractSpellPoints)
-
-local function guardianAngelSetSpellBuff(d, def, spellBuffAddress, expireTimeLow, expireTimeHigh, skill, strength, overlay, caster)
-	-- set correct duration
-	local duration = guardianAngelPower * 300 + 3600
-	expireTimeLow = Game.Time + duration * 128 / 30
-	-- set spell buff with correct power
-	def(spellBuffAddress, expireTimeLow, expireTimeHigh, skill, guardianAngelPower, overlay, caster)
-end
-mem.hookcall(0x00426C0F, 1, 6, guardianAngelSetSpellBuff)
-
-local guardianAngelEnduranceBonus = 1000
-local function changedCharacterCalcStatBonusByItems(d, def, characterPointer, statId)
-	-- calculate default bonus
-	local statBonus = def(characterPointer, statId)
-	-- guardian angel buff
-	local guardianAngelBuff = Party.SpellBuffs[const.PartyBuff.GuardianAngel]
-	-- increase bonus to make it positive so character doesn't die with guardian angel
-	if guardianAngelBuff.ExpireTime ~= 0 then
-		statBonus = statBonus + guardianAngelEnduranceBonus
-	end
-	return statBonus
-end
-mem.hookcall(0x0047FF37, 1, 1, changedCharacterCalcStatBonusByItems)
-mem.hookcall(0x0048875B, 1, 1, changedCharacterCalcStatBonusByItems)
-
-----------------------------------------------------------------------------------------------------
--- Monster_CalculateDamage
+--[[ Monster_CalculateDamage externalized to spell-overrides as of 0.8.3
 ----------------------------------------------------------------------------------------------------
 
 local function modifiedMonsterCalculateDamage(d, def, monsterPointer, attackType)
@@ -4096,3 +2692,4 @@ local function modifiedMonsterCalculateDamage(d, def, monsterPointer, attackType
 end
 mem.hookcall(0x00431D4F, 1, 1, modifiedMonsterCalculateDamage)
 mem.hookcall(0x00431EE3, 1, 1, modifiedMonsterCalculateDamage)
+]]

@@ -2,27 +2,22 @@
 
 [This document in nice formatting](https://github.com/tnevolin/mm6-skill-emphasis-mod/blob/master/Installation.md)
 
-This mod requires GrayFace patch.
+This mod requires GrayFace patch and Might and Magic Extension (MMExt).
 
 ## Install GrayFace patch
 
-https://github.com/GrayFace/Misc/releases/download/MM6Patch-2.4/MM6.Patch.v2.4.exe
+https://github.com/GrayFace/Misc/releases
 
-* Download patch by link above.
-* Run it and follow instructions.
+* From the above link, download the most recent version of the MM6 Patch (as of 2022-09-08, that is v2.5.7).
+* Run it and follow instructions.  
+
+## Install Might and Magic Extension
+
+https://github.com/GrayFace/MMExtension/archive/refs/heads/master.zip
+
+* Download the above and extract it into your patched Might and Magic 6 folder.
 
 ## Install this mod
 
-https://github.com/tnevolin/mm6-skill-emphasis-mod/tree/master/_releases
-
-* Go to the release directory by the link above.
-* Download latest release.
-* Unpack it to a separate folder.
-* Copy everything into game directory overriding existing folders/files if needed.
-* Open mm6.ini in game directory and add following lines at the bottom
-<pre>
-[ExeMods]
-MMExtension=(path to the game directory)\ExeMods\MMExtension.dll
-</pre>
-* Run game. MMExtension will generate data tables at first run. You'll see black screen for a minute or so. Don't panic and let it finish. Then play game normally.
+* Lastly, simply extract this mod into your Might and Magic 6 folder.
 

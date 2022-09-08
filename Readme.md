@@ -2,6 +2,7 @@
 raekuul's experimental fork (forked from Malekitsu/mm6-skill-emphasis-mod Beta-0.8.0 on 2022-09-08)
 Version 0.8.0 as of 2022-09-08
 
+
 # Features:
 Externalized overrides for items, monsters, mapstats, spells
 Optional Monster Randomization mode
