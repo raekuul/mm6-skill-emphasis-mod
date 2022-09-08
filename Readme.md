@@ -1,7 +1,7 @@
 # Might and Magic 6 Skill Emphasis Mod
 * raekuul's experimental fork 
 * Version 0.8.5a as of 2022-09-08
-** forked from Malekitsu/mm6-skill-emphasis-mod Beta-0.8.0 on 2022-09-08
+* forked from Malekitsu/mm6-skill-emphasis-mod Beta-0.8.0 on 2022-09-08
 
 
 # Features:
