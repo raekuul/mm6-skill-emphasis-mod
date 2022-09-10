@@ -1,4 +1,4 @@
-excelString = '\t=sum($C$2:indirect("C"&row()))\t=indirect("D"&row())/sum(C:C)\t=average($C$2:indirect("C"&row()))\n'
+dumps_folder = "dumps"
 
 sortableMonsters = { }
 
@@ -23,7 +23,7 @@ function gatherMapMonsterLevels()
 	msIndex = Map.MapStatsIndex
 
 	mapName = Game.MapStats[msIndex].Name
-	folderName = "dumps"
+	folderName = dumps_folder
 
 	file = io.open(folderName .. '/' .. mapName .. '.txt',"w+")
 	
@@ -60,5 +60,9 @@ function gatherMapMonsterLevels()
 end
 
 function events.LoadMap()
-	gatherMapMonsterLevels()
+	if pcall(gatherMapMonsterLevels) then
+		gatherMapMonsterLevels()
+	else
+		
+	end
 end
