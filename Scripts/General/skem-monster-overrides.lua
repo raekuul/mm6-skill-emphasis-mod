@@ -1,10 +1,9 @@
 -- Monster Customization stuff from Skill Emphasis Mod
 -- supersedes lines 2279 - 2479 in skill-mod.lua
 
---[[ 0.8.5
-	added adaptive multiplier modes
-	fixed a bug where EASY was not increasing spell ranks by the calculated multiplier
-	refactoring
+--[[ 2022-09-08
+	Added override entries for Merchant and PeasantF2.
+
 ]] 
 
 --[[ EASY MODE
@@ -197,6 +196,15 @@ local monsterInfos =
 	[164] = {["Bonus"] = 0, ["BonusMul"] = 0},
 	-- Rogue
 	[165] = {["Bonus"] = 0, ["BonusMul"] = 0},
+
+	--The Unpeasanting
+	[103] = {["Name"] = "Manservant", ["Level"] = 4,},
+	[104] = {["Name"] = "Craftsman", ["Level"] = 6,},
+	[105] = {["Name"] = "Merchantman", ["Level"] = 10, },
+
+	[124] = {["Name"] = "Maidservant", ["Level"] = 2, },
+	[125] = {["Name"] = "Craftswoman", ["Level"] = 6, },
+	[126] = {["Name"] = "Merchantess", ["Level"] = 10, },
 }
 
 function traverseTable(input)

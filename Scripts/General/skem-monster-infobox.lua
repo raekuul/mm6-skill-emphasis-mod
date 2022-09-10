@@ -7,7 +7,17 @@
 -- resistances table by default shows the average reduction.
 -- set CHANCE to true to show the chance to reduce damage instead.
 
-CHANCE = false
+CHANCE = true
+
+if CHANCE == true
+then
+	rezstr = "Resist Chance"
+elseif CHANCE == false
+then
+	rezstr = "Usefulness"
+else
+	rezstr = "Resistances"
+end
 
 -- if using with Skill Emphasis, comment out lines 3818 - 3933 in skill-mod.lua
 
@@ -71,8 +81,11 @@ local function getDodgeChance(player, monsterLevel)
 	return string.format("%d%%",100 * rate)
 end
 
-function calculateMonsterDebuffRate(level,magicResist)
-	rate = 30/(30 + level + magicResist)
+function calculateMonsterDebuffRate(level,magicResist,is_resist)
+	rate = 30/(30 + (level / 4) + magicResist)
+	if (is_resist == true) then
+		rate = 1 - rate
+	end
 	return string.format("%d%%",100 * rate)
 end
 
@@ -80,10 +93,14 @@ function calculateResistanceAverageReduction(resist, show_chance)
 	if (show_chance == true)
 	then
 		rate = 1 - (30/(30 + resist))
-	else
+		return string.format("%d%%",100 * rate)
+	elseif (show_chance == false)
+	then
 		rate = (30/(30+resist)+(30/(30+resist))*(1-(30/(30+resist)))/2+(30/(30+resist))*(1-(30/(30+resist)))^2/4+(30/(30+resist))*(1-(30/(30+resist)))^3/8+(1-(30/(30+resist)))^4/16)
+		return string.format("%d%%",100 * rate)
+	else
+		return string.format("%u",resist)
 	end
-	return string.format("%d%%",100 * rate)
 end
 
 function calculateAverageDiceRoll(dice, sides)
@@ -179,7 +196,7 @@ function modifiedDrawMonsterInfoName(d, def, dialog, font, left, top, color, str
 		table.insert(textLines, {["key"] = string.format("Spell: %s (%s.%d)", Game.SpellsTxt[monster.Spell].Name, masteries[spellMastery], spellLevel), ["value"] = ""})
 	end
 
-	table.insert(textLines,{["key"] = "Resistances:", ["value"] = "", ["type"] = "resistance"})
+	table.insert(textLines,{["key"] = "", ["value"] = rezstr})
 
 	for k,v in pairs(attackTypes) do
 		if not (v == "Energy")
@@ -187,8 +204,8 @@ function modifiedDrawMonsterInfoName(d, def, dialog, font, left, top, color, str
 			table.insert(textLines,{["key"] = v, ["value"] = calculateResistanceAverageReduction(monster[v.."Resistance"], CHANCE), ["type"] = "resistance", })
 		end
 	end
-
-	table.insert(textLines, {["key"] = "Debuffs", ["value"] = string.format("%s", calculateMonsterDebuffRate(monster.Level,monster.MagicResistance)), ["type"] = "resistance",})
+	
+	table.insert(textLines, {["key"] = "Debuffs", ["value"] = string.format("%s", calculateMonsterDebuffRate(monster.Level,monster.MagicResistance,CHANCE)), ["type"] = "resistance",})
 
 	-- draw info
 	
