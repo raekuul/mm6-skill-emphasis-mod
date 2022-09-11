@@ -571,7 +571,7 @@ local function getPlayerEquipmentData(player)
 		equipmentData.bow.item = player.Items[player.ItemBow]
 		local itemBowTxt = Game.ItemsTxt[equipmentData.bow.item.Number]
 		equipmentData.bow.equipStat = itemBowTxt.EquipStat + 1
-		equipmentData.bow.skill = itemBowTxt.Skill - 1
+		equipmentData.bow.skill = itemBowTxt.Skill
 		
 		if equipmentData.bow.skill >= 0 then
 			equipmentData.bow.level, equipmentData.bow.rank = SplitSkill(player.Skills[equipmentData.bow.skill])
@@ -592,7 +592,7 @@ local function getPlayerEquipmentData(player)
 		equipmentData.main.item = player.Items[player.ItemMainHand]
 		equipmentData.main.itemTxt = Game.ItemsTxt[equipmentData.main.item.Number]
 		equipmentData.main.equipStat = equipmentData.main.itemTxt.EquipStat + 1
-		equipmentData.main.skill = equipmentData.main.itemTxt.Skill - 1
+		equipmentData.main.skill = equipmentData.main.itemTxt.Skill
 		
 		if equipmentData.main.skill >= 0 then
 			equipmentData.main.level, equipmentData.main.rank = SplitSkill(player.Skills[equipmentData.main.skill])
@@ -613,7 +613,7 @@ local function getPlayerEquipmentData(player)
 		equipmentData.extra.item = player.Items[player.ItemExtraHand]
 		equipmentData.extra.itemTxt = Game.ItemsTxt[equipmentData.extra.item.Number]
 		equipmentData.extra.equipStat = equipmentData.extra.itemTxt.EquipStat + 1
-		equipmentData.extra.skill = equipmentData.extra.itemTxt.Skill - 1
+		equipmentData.extra.skill = equipmentData.extra.itemTxt.Skill
 		
 		if equipmentData.extra.skill >= 0 then
 			equipmentData.extra.level, equipmentData.extra.rank = SplitSkill(player.Skills[equipmentData.extra.skill])
@@ -642,7 +642,7 @@ local function getPlayerEquipmentData(player)
 		equipmentData.extra.item = player.Items[player.ItemExtraHand]
 		local itemExtraHandTxt = Game.ItemsTxt[equipmentData.extra.item.Number]
 		equipmentData.extra.equipStat = itemExtraHandTxt.EquipStat + 1
-		equipmentData.extra.skill = itemExtraHandTxt.Skill - 1
+		equipmentData.extra.skill = itemExtraHandTxt.Skill
 		
 		if equipmentData.extra.skill == const.Skills.Shield then
 			equipmentData.shield.equipped = true
@@ -660,7 +660,7 @@ local function getPlayerEquipmentData(player)
 		
 		equipmentData.armor.item = player.Items[player.ItemArmor]
 		local itemArmorTxt = Game.ItemsTxt[equipmentData.armor.item.Number]
-		equipmentData.armor.skill = itemArmorTxt.Skill - 1
+		equipmentData.armor.skill = itemArmorTxt.Skill
 		equipmentData.armor.level, equipmentData.armor.rank = SplitSkill(player.Skills[equipmentData.armor.skill])
 		
 	end
@@ -1439,7 +1439,7 @@ local function applySpecialWeaponSkill(d, def, TextBuffer, delay)
 		
 		-- Staff in main hand
 		
-		if	(Game.ItemsTxt[player.Items[player.ItemMainHand].Number].Skill - 1) == const.Skills.Staff then
+		if	(Game.ItemsTxt[player.Items[player.ItemMainHand].Number].Skill) == const.Skills.Staff then
 			
 			-- Staff skill
 			
@@ -1488,7 +1488,7 @@ local function applySpecialWeaponSkill(d, def, TextBuffer, delay)
 		
 		-- Mace in main hand
 		
-		if	(Game.ItemsTxt[player.Items[player.ItemMainHand].Number].Skill - 1) == const.Skills.Mace then
+		if	(Game.ItemsTxt[player.Items[player.ItemMainHand].Number].Skill) == const.Skills.Mace then
 			
 			-- Mace skill
 			

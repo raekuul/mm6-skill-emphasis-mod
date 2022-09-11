@@ -35,7 +35,7 @@ EnergyMod = 2
 
 -- base multipliers
 -- these multipliers are applied after monster customizations and EZ-exclusive tech are applied
--- defaults are 2 for Health and Treasure, 1 for Armor, 1.09 for Experience
+-- defaults are 2 for Health, 2 for Gold, 1 for Armor, 1.09 for Experience
 -- Health/Armor/Gold functions will set the larger of vanilla or calculated, so base multipliers less than 1 do not apply 
 
 baseHealthMultiplier = 2
@@ -286,6 +286,22 @@ function calculatePartyAverage()
 	return level
 end
 
+function calculateAdjustedAverage(total_levels, total_monsters)
+	naive = (total_levels / total_monsters)
+	local total = 0
+	local sd = 0
+	for i = 0, Map.Monsters.High do
+		monster = Map.Monsters[i]
+		name = monster.Name
+		if not (name == "Peasant")
+		then
+			level = monster.Level
+			sd = sd + (level - naive)^2
+		end
+	end
+	return (naive + (sd/total_monsters) ^(1/2) * 0.68)
+end
+
 function calculateMapAverage()
 	total_levels = 0
 	total_monsters = 0
@@ -295,13 +311,12 @@ function calculateMapAverage()
 	do
 		if not (Map.Monsters[i].Name == "Peasant")
 		then
-
 			total_monsters = total_monsters + 1
 			total_levels = total_levels + Map.Monsters[i].Level
 		end
 	end
 
-	mapAvgLevel = total_levels / total_monsters
+	mapAvgLevel = calculateAdjustedAverage(total_levels, total_monsters)
 	return mapAvgLevel
 end
 
@@ -359,8 +374,8 @@ function calculateMonsterHealth(monsterArray)
 		healthMod = 0
 	end
 		
-	newHealth = oldHealth * (baseHealthMultiplier + healthMod)
-	return newHealth
+	newHealth = level * (3 * level / 10) * (baseHealthMultiplier + healthMod)
+	return math.max(newHealth, 1)
 end
 
 function calculateMonsterDamageMultipliers(monsterArray, easy_flag)
@@ -525,7 +540,7 @@ function applyAdaptiveMonsterOverrides(monsterID, monsterArray, adaptive_level)
 	local damageMultiplier, rankMultiplier = calculateMonsterDamageMultipliers(monsterArray, easy_flag)
 	applyMonsterDamageMultipliers(monsterArray, damageMultiplier, rankMultiplier, easy_flag)
 
-	monsterArray["FullHP"] = newLevel * (3 + (newLevel/10)) * baseHealthMultiplier
+	monsterArray["FullHP"] = calculateMonsterHealth(monsterArray)
 
 	monsterArray["HP"] = monsterArray["FullHP"]
 
@@ -588,7 +603,10 @@ function events.LoadMap()
 		end
 		for monsterID = 0, Map.Monsters.high do
 			monsterArray = Map.Monsters[monsterID]
-			applyAdaptiveMonsterOverrides(monsterID, monsterArray, adaptive_level)
+			if not (monsterArray.Name == "Peasant")
+			then
+				applyAdaptiveMonsterOverrides(monsterID, monsterArray, adaptive_level)
+			end
 		end
 	end
 end
