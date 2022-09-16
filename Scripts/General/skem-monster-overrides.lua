@@ -1,9 +1,9 @@
 -- Monster Customization stuff from Skill Emphasis Mod
 -- supersedes lines 2279 - 2479 in skill-mod.lua
 
---[[ 2022-09-08
-	Added override entries for Merchant and PeasantF2.
-
+--[[ 2022-09-16
+	Removed potential duplication of EXP multipliers
+	Reverted HP calculations to pre-0.8.1 methods (fully derived version was yielding too low numbers)
 ]] 
 
 --[[ EASY MODE
@@ -36,14 +36,14 @@ EnergyMod = 2
 -- base multipliers
 -- these multipliers are applied after monster customizations and EZ-exclusive tech are applied
 -- defaults are 2 for Health, 2 for Gold, 1 for Armor, 1.09 for Experience
--- Health/Armor/Gold functions will set the larger of vanilla or calculated, so base multipliers less than 1 do not apply 
+-- Health and Armor use the greater of the original or calculated values; multipliers less than 1 have no effect.
 
 baseHealthMultiplier = 2
 baseArmorMultiplier = 1
-baseGoldMultiplier = 2
 
--- Experience will always set calculated (to permit Zero Monster EXP games)
--- default is 1.09
+-- Gold and Experience will always set calculated (to permit Zero Monster EXP games)
+
+baseGoldMultiplier = 2
 baseExperienceMultiplier = 1.09
 
 -- masteries text
@@ -247,7 +247,7 @@ end
 function calculateMonsterArmor(monsterArray)
 	oldArmor = monsterArray["ArmorClass"]
 	newArmor = oldArmor * baseArmorMultiplier
-	return newArmor
+	return math.max(newArmor, oldArmor)
 end
 
 function calculateMovespeed(monsterArray) 
@@ -373,9 +373,9 @@ function calculateMonsterHealth(monsterArray)
 	else
 		healthMod = 0
 	end
-		
-	newHealth = level * (3 * level / 10) * (baseHealthMultiplier + healthMod)
-	return math.max(newHealth, 1)
+	
+	newHealth = oldHealth * (baseHealthMultiplier + healthMod)
+	return math.max(newHealth, oldHealth)
 end
 
 function calculateMonsterDamageMultipliers(monsterArray, easy_flag)
@@ -499,7 +499,6 @@ function applyStaticMonsterOverrides(monsterID, easy_flag)
 	
 	-- other static adjustments
 	monsterArray["Experience"] = calculateMonsterExperience(monsterArray)
-	monsterArray["Exp"] = monsterArray["Experience"]
 	monsterArray["TreasureDiceCount"], monsterArray["TreasureDiceSides"] = calculateMonsterTreasures(monsterArray, easy_flag)
 	monsterArray["FullHitPoints"] = calculateMonsterHealth(monsterArray)
 	monsterArray["ArmorClass"] = calculateMonsterArmor(monsterArray)
@@ -541,15 +540,13 @@ function applyAdaptiveMonsterOverrides(monsterID, monsterArray, adaptive_level)
 	local damageMultiplier, rankMultiplier = calculateMonsterDamageMultipliers(monsterArray, easy_flag)
 	applyMonsterDamageMultipliers(monsterArray, damageMultiplier, rankMultiplier, easy_flag)
 
-	monsterArray["FullHP"] = calculateMonsterHealth(monsterArray)
+	monsterArray["FullHP"] = genericForm["FullHP"] * levelMultiplier
 
 	monsterArray["HP"] = monsterArray["FullHP"]
 
 	monsterArray["ArmorClass"] = genericForm["ArmorClass"] * levelMultiplier
 
 	monsterArray["Experience"] = genericForm["Experience"] * levelMultiplier
-	monsterArray["Exp"] = genericForm["Experience"]
-
 	monsterArray["TreasureDiceCount"] = genericForm["TreasureDiceCount"] * levelMultiplier
 	
 	if (adaptive_level > genericForm["Level"])
