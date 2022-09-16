@@ -499,6 +499,7 @@ function applyStaticMonsterOverrides(monsterID, easy_flag)
 	
 	-- other static adjustments
 	monsterArray["Experience"] = calculateMonsterExperience(monsterArray)
+	monsterArray["Exp"] = calculateMonsterExperience(monsterArray)
 	monsterArray["TreasureDiceCount"], monsterArray["TreasureDiceSides"] = calculateMonsterTreasures(monsterArray, easy_flag)
 	monsterArray["FullHitPoints"] = calculateMonsterHealth(monsterArray)
 	monsterArray["ArmorClass"] = calculateMonsterArmor(monsterArray)
@@ -547,6 +548,8 @@ function applyAdaptiveMonsterOverrides(monsterID, monsterArray, adaptive_level)
 	monsterArray["ArmorClass"] = genericForm["ArmorClass"] * levelMultiplier
 
 	monsterArray["Experience"] = genericForm["Experience"] * levelMultiplier
+	monsterArray["Exp"] = monsterArray["Exp"] * levelMultiplier
+
 	monsterArray["TreasureDiceCount"] = genericForm["TreasureDiceCount"] * levelMultiplier
 	
 	if (adaptive_level > genericForm["Level"])
