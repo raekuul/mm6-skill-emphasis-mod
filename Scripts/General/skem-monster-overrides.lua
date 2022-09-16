@@ -499,7 +499,7 @@ function applyStaticMonsterOverrides(monsterID, easy_flag)
 	
 	-- other static adjustments
 	monsterArray["Experience"] = calculateMonsterExperience(monsterArray)
-	monsterArray["Exp"] = calculateMonsterExperience(monsterArray)
+	monsterArray["Exp"] = monsterArray["Experience"]
 	monsterArray["TreasureDiceCount"], monsterArray["TreasureDiceSides"] = calculateMonsterTreasures(monsterArray, easy_flag)
 	monsterArray["FullHitPoints"] = calculateMonsterHealth(monsterArray)
 	monsterArray["ArmorClass"] = calculateMonsterArmor(monsterArray)
