@@ -28,7 +28,7 @@ Spell	DelayNormal	DelayExpert	DelayMaster
 26  Poison Spray	110	100	90
 27  Water Walk	150	120	120
 28  Ice Bolt	110	100	50
-29  Enchant Item	140	140	140
+29  Enchant Item	14	14	14
 30  Acid Burst	110	100	90
 31  Town Portal	200	200	200
 32  Ice Blast	120	100	80
@@ -53,7 +53,7 @@ Spell	DelayNormal	DelayExpert	DelayMaster
 51  Heroism	120	120	120
 52  Turn Undead	140	120	100
 53  Raise Dead	240	240	240
-54  Shared Life	150	150	50
+54  Shared Life	50	40	30
 55  Resurrection	1000	1000	1000
 56  Meditation	120	120	120
 57  Remove Fear	120	120	120

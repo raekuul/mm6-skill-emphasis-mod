@@ -238,14 +238,14 @@ local spellPowers =
 		[const.Expert] = {fixedMin = 47, fixedMax = 47, variableMin = 1, variableMax = 30, },
 		[const.Master] = {fixedMin = 47, fixedMax = 47, variableMin = 1, variableMax = 30, },
 	},
-	--[[ Harm
+	--[[ Harm deals physical damage, so should use vanilla numbers
 	[70] =
 	{
 		[const.Novice] = {fixedMin = 8, fixedMax = 8, variableMin = 1, variableMax = 4, },
 		[const.Expert] = {fixedMin = 8, fixedMax = 8, variableMin = 1, variableMax = 4, },
 		[const.Master] = {fixedMin = 8, fixedMax = 8, variableMin = 1, variableMax = 4, },
 	},
-	-- Flying Fist
+	-- Flying Fist deals physical damage, so should use vanilla numbers
 	[76] =
 	{
 		[const.Novice] = {fixedMin = 30, fixedMax = 30, variableMin = 1, variableMax = 15, },
@@ -280,13 +280,13 @@ local spellPowers =
 		[const.Expert] = {fixedMin = 20, fixedMax = 20, variableMin = 1, variableMax = 20, },
 		[const.Master] = {fixedMin = 20, fixedMax = 20, variableMin = 1, variableMax = 20, },
 	},
-	-- Shrapmetal
+	--[[ Shrapmetal deals physical damage, so should use vanilla numbers
 	[92] =
 	{
 		[const.Novice] = {fixedMin = 3, fixedMax = 3, variableMin = 1, variableMax = 5, },
 		[const.Expert] = {fixedMin = 3, fixedMax = 3, variableMin = 1, variableMax = 5, },
 		[const.Master] = {fixedMin = 3, fixedMax = 3, variableMin = 1, variableMax = 5, },
-	}, 
+	}, ]]
 }
 
 local spellBuffPowers =
