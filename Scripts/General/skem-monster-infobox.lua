@@ -166,8 +166,7 @@ function modifiedDrawMonsterInfoName(d, def, dialog, font, left, top, color, str
 	local textLines = {}
 
 	if (DEBUG == true) then
-		table.insert(textLines, {["key"] = "Max HP", ["value"] = string.format("%d", monster["FullHP"])})
-		table.insert(textLines, {["key"] = "Experience", ["value"] = string.format("%d;%d", monster["Experience"],monster["Exp"])})
+		table.insert(textLines, {["key"] = "Experience", ["value"] = string.format("%d", monster["Experience"])})
 	end
 	
 	-- player damage rate on monster
@@ -188,6 +187,7 @@ function modifiedDrawMonsterInfoName(d, def, dialog, font, left, top, color, str
 	end
 	
 	table.insert(textLines, {["key"] = "Level", ["value"] = string.format("%d", monster.Level)})
+	table.insert(textLines, {["key"] = "Max HP", ["value"] = string.format("%d", monster["FullHP"])})
 	table.insert(textLines, {["key"] = "Armor Class", ["value"] = string.format("%d", monster.ArmorClass)})
 	table.insert(textLines, {["key"] = string.format("%s %s %s", damageString[1], attackTypes[element[1]], (missile[1] == 0) and "melee" or "ranged"), ["value"] = string.format("%d-%d", add[1] + low[1], add[1] + high[1])})
 	if ((monster.Attack2Chance == 0) and (monster.SpellChance == 0)) 
