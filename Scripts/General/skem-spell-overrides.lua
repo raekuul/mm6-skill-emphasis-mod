@@ -63,7 +63,7 @@ local spellResists =
 --	[80] = const.Damage.Energy
 }
 
-local spellDelays =
+local spellCosts =
 {
 	
 }
@@ -671,7 +671,18 @@ function events.GameInitialized2()
 	
 	-- SP Cost Overrides
 	-- supersedes skill-mod.lua:1997-2028
+	--
 	
+	--[[ updated spell cost assignments code
+	for spellID = 1, Game.SpellsTxt.high do
+		if not (spellCosts[spellID] == nil) then
+			for _,mastery in {"Normal","Expert","Master"} do
+				Game.Spells[spellID]["SpellPoints"..mastery] = spellCosts[spellID][mastery]
+			end
+		end
+	end
+	]] 
+
 	--healing spells
 	-- Healing Touch
 	Game.Spells[47].SpellPointsNormal = 3
