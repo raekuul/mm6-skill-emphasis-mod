@@ -3,6 +3,19 @@
 	Supersedes various parts of Core; segments list lines to remove from 0.8.2
 ]]
 
+-- set to true to show damage in the spell descriptions as a dice string
+local SHOW_DAMAGE_AS_DICE = false
+
+-- NOT IMPLEMENTED YET
+-- set to true to show "dynamic" damage in spell descriptions, rather than generic damage.
+local DYNAMIC_DESCRIPTION_DAMAGE = false
+
+local training = {
+	["Normal"] = "Novice", 
+	["Expert"] = "Expert", 
+	["Master"] = "Master"
+}
+
 local spellTxtIds = {}
 
 
@@ -58,13 +71,112 @@ local protectionSpellExtraMultiplier = 1
 
 local spellResists =
 {
-	[70] = const.Damage.Phys,
-	[76] = const.Damage.Phys,
---	[80] = const.Damage.Energy
+	["Harm"] = const.Damage.Phys,
+	["Flying Fist"] = const.Damage.Phys,
+}
+
+local spellBuffPowers =
+{
+	-- Stone Skin
+	["StoneSkin"] =
+	{
+		["fixed"] = 5,
+		["proportional"] = 2,
+	},
+	-- Bless
+	["Bless"] =
+	{
+		["fixed"] = 5,
+		["proportional"] = 1,
+	},
+	-- Heroism
+	["Heroism"] =
+	{
+		["fixed"] = 5,
+		["proportional"] = 2,
+	},
+}
+local spellStatsBuffPowers =
+{
+	["StatsBuff"] =
+	{
+		["fixed"] = 10,
+		["proportional"] = 2,
+	},
+}
+
+local function setProtectionSpellDescriptions(name, page, resist)
+	id = spellTxtIds[name]
+	Game.SpellsTxt[id].Description = "Increases all your characters' resistance to " .. resist .. " damage.  Lasts one hour per point of skill in " .. page .. " magic."
+	for k,v in pairs(training) do
+		Game.SpellsTxt[id][k] = string.format("Adds %d resistance per point of skill.", (const[v] + protectionSpellExtraMultiplier))
+	end
+end
+
+local function setStatSpellDescriptions(name, page, stat)
+	id = spellTxtIds[name]
+	Game.SpellsTxt[id].Description = "Temporarily increases all your characters' " .. stat .. string.format(" by 10 + %d per point of skill.",spellStatsBuffPowers["StatsBuff"]["proportional"]) .. "  Lasts one hour per point of skill in " .. page .. " magic."
+	Game.SpellsTxt[id].Normal = "Slow Recovery Time."
+	Game.SpellsTxt[id].Expert = "Faster Recovery Time."
+	Game.SpellsTxt[id].Master = "Fastest Recovery Time." 
+end
+
+local function getSkillAndBookForSpell(name)
+	id = spellTxtIds[name]
+	position = 1 + (id % 11)
+	book = id + 299
+	skill = math.floor(id / 11) + 12
+	return skill,position,book
+end
+
+local function dynamicSpellDescriptions(spell, player)
+	
+end
+
+
+
+local dayOfProtection = {
+	["Protection from Fire"] = {["School"] = "Fire", ["Type"] = "Fire"},
+	["Protection from Electricity"] = {["School"] = "Air", ["Type"] = "Electricity"},
+	["Protection from Cold"] = {["School"] = "Water", ["Type"] = "Cold"},
+	["Protection from Magic"] = {["School"] = "Earth", ["Type"] = "Magic"},
+	["Protection from Poison"] = {["School"] = "Body", ["Type"] = "Poison"}
+}
+
+local dayOfTheGods = {
+	["Lucky Day"] = {["School"] = "Spirit", ["Stat"] = "Luck"},
+	["Meditation"] = {["School"] = "Mind", ["Stat"] = "Intellect and Personality"},
+	["Precision"] = {["School"] = "Mind", ["Stat"] = "Accuracy"},
+	["Speed"] = {["School"] = "Body", ["Stat"] = "Speed"},
+	["Power"] = {["School"] = "Body", ["Stat"] = "Might and Endurance"}
+}
+
+local hourOfPower = {
+	["Haste"] = {["School"] = "Fire", ["flat"] = true, ["Duration"] = {["Novice"] = 1, ["Master"] = 3}},
+	["Shield"] = {["School"] = "Air", ["flat"] = true, ["Duration"] = {["Novice"] = 5, ["Master"] = 15}},
+	["Stone Skin"] = {["School"] = "Earth", ["flat"] = false, ["Duration"] = {["Novice"] = 5, ["Master"] = 15}},
+	["Bless"] = {["School"] = "Spirit", ["flat"] = false, ["Duration"] = {["Novice"] = 5, ["Master"] = 15}},
+	["Heroism"] = {["School"] = "Spirit", ["flat"] = false, ["Duration"] = {["Novice"] = 5, ["Master"] = 15}},
+}
+
+local spellDescs = {
+	
 }
 
 local spellCosts =
 {
+	-- healing spells
+	["Healing Touch"] = {["Normal"] = 3, ["Expert"] = 6, ["Master"] = 12},
+	["Cure Wounds"] = {["Normal"] = 5, ["Expert"] = 8, ["Master"] = 15},
+	["Shared Life"] = {["Normal"] = 10, ["Expert"] = 10, ["Master"] = 12},
+	
+	-- damage spells
+	["Fireball"] = {["Master"] = 16},
+	["Ice Bolt"] = {["Master"] = 11},
+	["Fire Bolt"] = {["Master"] = 8},
+	["Deadly Swarm"] = {["Master"] = 6},
+	["Mind Blast"] = {["Master"] = 1},
+	["Lightning Bolt"] = {["Master"] = 14},
 	
 }
 
@@ -289,35 +401,6 @@ local spellPowers =
 	}, ]]
 }
 
-local spellBuffPowers =
-{
-	-- Stone Skin
-	["StoneSkin"] =
-	{
-		["fixed"] = 5,
-		["proportional"] = 2,
-	},
-	-- Bless
-	["Bless"] =
-	{
-		["fixed"] = 5,
-		["proportional"] = 1,
-	},
-	-- Heroism
-	["Heroism"] =
-	{
-		["fixed"] = 5,
-		["proportional"] = 2,
-	},
-}
-local spellStatsBuffPowers =
-{
-	["StatsBuff"] =
-	{
-		["fixed"] = 10,
-		["proportional"] = 2,
-	},
-}
 
 -- Spell Overrides, ASM Patches, set 1
 -- supersedes skill-mod.lua:1802-1987
@@ -661,184 +744,80 @@ mem.hookcall(0x00431D4F, 1, 1, modifiedMonsterCalculateDamage)
 mem.hookcall(0x00431EE3, 1, 1, modifiedMonsterCalculateDamage)
 
 
+local function setAttackSpellDescriptions(name)
+	
+end
+
+
 -- spell overrides that depend on lodfiles/txtfiles loaded
 function events.GameInitialized2()
 	
-	-- Spell Name Resolver
+	-- Spell Txt Iterator 
 	for spellTxtId = 1, Game.SpellsTxt.high do
-		spellTxtIds[Game.SpellsTxt[spellTxtId].Name] = spellTxtId
-	end
-	
-	-- SP Cost Overrides
-	-- supersedes skill-mod.lua:1997-2028
-	--
-	
-	--[[ updated spell cost assignments code
-	for spellID = 1, Game.SpellsTxt.high do
-		if not (spellCosts[spellID] == nil) then
-			for _,mastery in {"Normal","Expert","Master"} do
-				Game.Spells[spellID]["SpellPoints"..mastery] = spellCosts[spellID][mastery]
+		
+		-- Spell Name resolver
+		spellName = Game.SpellsTxt[spellTxtId].Name
+		spellTxtIds[spellName] = spellTxtId
+		
+		-- updated costs
+		if not (spellCosts[spellName] == nil) then
+			for _,mastery in pairs({"Normal","Expert","Master"}) do
+				if not (spellCosts[spellName][mastery] == nil) then
+					Game.SpellsTxt[spellTxtId]["SpellPoints"..mastery] = spellCosts[spellName][mastery]
+					Game.Spells[spellTxtId]["SpellPoints"..mastery] = spellCosts[spellName][mastery]
+				end
 			end
 		end
-	end
-	]] 
+		
+		
+		-- updated spell descriptions; attack spells
+		if not (spellPowers[spellTxtId] == nil) then
+			for k1,v1 in pairs(spellPowers[spellTxtId]) do
+				for k2,v2 in pairs(training) do
+					Game.SpellsTxt[spellTxtId][k2] = string.format("Cost: %d SP.",Game.SpellsTxt[spellTxtId]["SpellPoints" .. k2])
+					if (SHOW_DAMAGE_AS_DICE == false) then
+						if not (spellPowers[spellTxtId][const[v2]].fixedMin == 0) then 
+							Game.SpellsTxt[spellTxtId][k2] = Game.SpellsTxt[spellTxtId][k2] .. string.format("\nDamage: %d + %d-%d per point of skill", spellPowers[spellTxtId][const[v2]].fixedMin, spellPowers[spellTxtId][const[v2]].variableMin, spellPowers[spellTxtId][const[v2]].variableMax)
+						else
+							Game.SpellsTxt[spellTxtId][k] = Game.SpellsTxt[spellTxtId][k] .. string.format("\nDamage: %d-%d per point of skill", spellPowers[spellTxtId][const[v]].variableMin, spellPowers[spellTxtId][const[v]].variableMax)
+						end
+					elseif (SHOW_DAMAGE_AS_DICE == true) then 
+						if not (spellPowers[spellTxtId][const[v]].fixedMin == 0) then
+							Game.SpellsTxt[spellTxtId][k] = Game.SpellsTxt[spellTxtId][k] .. string.format("\nDamage: d%d + %d", spellPowers[spellTxtId][const[v]].variableMax, spellPowers[spellTxtId][const[v]].fixedMin)
+						else
+							Game.SpellsTxt[spellTxtId][k] = Game.SpellsTxt[spellTxtId][k] .. string.format("\nDamage: d%d", spellPowers[spellTxtId][const[v]].variableMax)
+						end
+					end	
+				end
+			end
+		end
 
-	--healing spells
-	-- Healing Touch
-	Game.Spells[47].SpellPointsNormal = 3
-	Game.Spells[47].SpellPointsExpert = 6
-	Game.Spells[47].SpellPointsMaster = 12
-	Game.SpellsTxt[47].SpellPointsNormal = 3
-	Game.SpellsTxt[47].SpellPointsExpert = 6
-	Game.SpellsTxt[47].SpellPointsMaster = 12
-
-	-- Cure Wounds
-	Game.Spells[71].SpellPointsNormal = 5
-	Game.Spells[71].SpellPointsExpert = 8
-	Game.Spells[71].SpellPointsMaster = 15
-	Game.SpellsTxt[71].SpellPointsNormal = 5
-	Game.SpellsTxt[71].SpellPointsExpert = 8
-	Game.SpellsTxt[71].SpellPointsMaster = 15
-
-	-- Shared Life
-	Game.Spells[54].SpellPointsNormal = 10
-	Game.Spells[54].SpellPointsExpert = 10
-	Game.Spells[54].SpellPointsMaster = 12
-	Game.SpellsTxt[54].SpellPointsNormal = 10
-	Game.SpellsTxt[54].SpellPointsExpert = 10
-	Game.SpellsTxt[54].SpellPointsMaster = 12
-	
-	--damaging spells
-	--Fireball
-	Game.Spells[6].SpellPointsMaster = 16
-	Game.SpellsTxt[6].SpellPointsMaster = 16
-	--Ice Bolt
-	Game.Spells[28].SpellPointsMaster = 11
-	Game.SpellsTxt[28].SpellPointsMaster = 11
-		--Fire Bolt
-	Game.Spells[4].SpellPointsMaster = 8
-	Game.SpellsTxt[4].SpellPointsMaster = 8
-		--Deadly swarm
-	Game.Spells[37].SpellPointsMaster = 6
-	Game.SpellsTxt[37].SpellPointsMaster = 6
-		--mind blast
-	Game.Spells[58].SpellPointsMaster = 1
-	Game.SpellsTxt[58].SpellPointsMaster = 1
-		--lightning bolt
-	Game.Spells[18].SpellPointsMaster = 14
-	Game.SpellsTxt[18].SpellPointsMaster = 14
-	
-
-	----------------------------------------------------------------------------------------------------
-	-- spell descriptions
-	-- supersedes skill-mod.lua:2280-2389
-	----------------------------------------------------------------------------------------------------
-	
-	-- protections
-
-	Game.SpellsTxt[3].Description = "Increases all your characters' resistance to Fire. Lasts one hour per point of skill in Fire Magic."
-	Game.SpellsTxt[3].Normal = string.format("resistance = %d * level", (const.Novice + protectionSpellExtraMultiplier))
-	Game.SpellsTxt[3].Expert = string.format("resistance = %d * level", (const.Expert + protectionSpellExtraMultiplier))
-	Game.SpellsTxt[3].Master = string.format("resistance = %d * level", (const.Master + protectionSpellExtraMultiplier))
-	
-	Game.SpellsTxt[14].Description = "Increases all your characters' resistance to Electricity. Lasts one hour per point of skill in Air Magic."
-	Game.SpellsTxt[14].Normal = string.format("resistance = %d * level", (const.Novice + protectionSpellExtraMultiplier))
-	Game.SpellsTxt[14].Expert = string.format("resistance = %d * level", (const.Expert + protectionSpellExtraMultiplier))
-	Game.SpellsTxt[14].Master = string.format("resistance = %d * level", (const.Master + protectionSpellExtraMultiplier))
-	
-	Game.SpellsTxt[25].Description = "Increases all your characters' resistance to Cold. Lasts one hour per point of skill in Water Magic."
-	Game.SpellsTxt[25].Normal = string.format("resistance = %d * level", (const.Novice + protectionSpellExtraMultiplier))
-	Game.SpellsTxt[25].Expert = string.format("resistance = %d * level", (const.Expert + protectionSpellExtraMultiplier))
-	Game.SpellsTxt[25].Master = string.format("resistance = %d * level", (const.Master + protectionSpellExtraMultiplier))
-	
-	Game.SpellsTxt[36].Description = "Increases all your characters' resistance to Magic. Lasts one hour per point of skill in Earth Magic."
-	Game.SpellsTxt[36].Normal = string.format("resistance = %d * level", (const.Novice + protectionSpellExtraMultiplier))
-	Game.SpellsTxt[36].Expert = string.format("resistance = %d * level", (const.Expert + protectionSpellExtraMultiplier))
-	Game.SpellsTxt[36].Master = string.format("resistance = %d * level", (const.Master + protectionSpellExtraMultiplier))
-	
-	Game.SpellsTxt[69].Description = "Increases all your characters' resistance to Poison. Lasts one hour per point of skill in Body Magic."
-	Game.SpellsTxt[69].Normal = string.format("resistance = %d * level", (const.Novice + protectionSpellExtraMultiplier))
-	Game.SpellsTxt[69].Expert = string.format("resistance = %d * level", (const.Expert + protectionSpellExtraMultiplier))
-	Game.SpellsTxt[69].Master = string.format("resistance = %d * level", (const.Master + protectionSpellExtraMultiplier))
-	
-	-- stats buffs
-	
-	-- Lucky day
-	Game.SpellsTxt[48].Description = string.format("Temporarily increases all party characters' Luck statistic by 10 points plus %d per point of skill in Spirit Magic.", spellStatsBuffPowers["StatsBuff"]["proportional"])
-	Game.SpellsTxt[48].Normal = "same"
-	Game.SpellsTxt[48].Expert = "same"
-	Game.SpellsTxt[48].Master = "same"
-	
-	-- Meditation
-	Game.SpellsTxt[56].Description = string.format("Temporarily increases all party characters' Intellect and Personality statistics by 10 points plus %d per point of skill in Mind Magic.", spellStatsBuffPowers["StatsBuff"]["proportional"])
-	Game.SpellsTxt[56].Normal = "same"
-	Game.SpellsTxt[56].Expert = "same"
-	Game.SpellsTxt[56].Master = "same"
-	
-	-- Precision
-	Game.SpellsTxt[59].Description = string.format("Temporarily increases all party characters' Accuracy statistic by 10 points plus %d per point of skill in Mind Magic.", spellStatsBuffPowers["StatsBuff"]["proportional"])
-	Game.SpellsTxt[59].Normal = "same"
-	Game.SpellsTxt[59].Expert = "same"
-	Game.SpellsTxt[59].Master = "same"
-	
-	-- Speed
-	Game.SpellsTxt[73].Description = string.format("Temporarily increases all party characters' Speed statistic by 10 points plus %d per point of skill in Body Magic.", spellStatsBuffPowers["StatsBuff"]["proportional"])
-	Game.SpellsTxt[73].Normal = "same"
-	Game.SpellsTxt[73].Expert = "same"
-	Game.SpellsTxt[73].Master = "same"
-	
-	-- Power day
-	Game.SpellsTxt[75].Description = string.format("Temporarily increases all party characters' Might and Endurance by 10 points plus %d per point of skill in Body Magic.", spellStatsBuffPowers["StatsBuff"]["proportional"])
-	Game.SpellsTxt[75].Normal = "same"
-	Game.SpellsTxt[75].Expert = "same"
-	Game.SpellsTxt[75].Master = "same"
-	
-	-- direct buffs
-	
-	-- Stone Skin
-	Game.SpellsTxt[38].Description = string.format("Increases the armor class of a character by %d + %d point per point of skill in Earth Magic.", spellBuffPowers["StoneSkin"]["fixed"], spellBuffPowers["StoneSkin"]["proportional"])
-	
-	-- Bless
-	Game.SpellsTxt[46].Description = string.format("Increases the attack/shoot of a character by %d + %d per point of skill in Spirit Magic.", spellBuffPowers["Bless"]["fixed"], spellBuffPowers["Bless"]["proportional"])
-	
-	-- Heroism
-	Game.SpellsTxt[51].Description = string.format("Increases the damage a character does on a successful attack by %d + %d point per point of skill in Spirit Magic.", spellBuffPowers["Heroism"]["fixed"], spellBuffPowers["Heroism"]["proportional"])
-	
-	-- healing spells
-	
-	-- Healing Touch
-	Game.SpellsTxt[47].Description = string.format("Cheaply heals a single character. Skill increases the recovery rate of this spell.")
-	Game.SpellsTxt[47].Normal = string.format("Heals 3-7 points of damage")
-	Game.SpellsTxt[47].Expert = string.format("Casting costs 6 spell points. Heals around 30 points of damage")
-	Game.SpellsTxt[47].Master = string.format("Casting costs 12 spell points. Heals around 70 points of damage")
-
-	-- First Aid
-	Game.SpellsTxt[68].Description = string.format("Cures single character. Recovery is reduced by an amount equal to the caster's skill in Body Magic.")
-	Game.SpellsTxt[68].Normal = string.format("Cures 5 hit points")
-	Game.SpellsTxt[68].Expert = string.format("Cures 10 hit points")
-	Game.SpellsTxt[68].Master = string.format("Cures 20 hit points")
-
-	-- Cure Wounds
-	Game.SpellsTxt[71].Description = string.format("Cures hit points on a single target when cast. The number cured is equal to 10+2 per point of skill in Body Magic.")
-	Game.SpellsTxt[71].Normal = string.format("Casting costs 5 spell points. Cures 10+2 hit points per point of skill")
-	Game.SpellsTxt[71].Expert = string.format("Casting costs 8 spell points. Cures 20+3 hit points per point of skill")
-	Game.SpellsTxt[71].Master = string.format("Casting costs 15 spell points. Cures 40+5 hit points per point of skill")
-	-- Power Cure
-	Game.SpellsTxt[77].Description = string.format("Cures hit points of all characters in your party at once. The number cured is equal to 3 per point of skill in Body Magic.")
-	
-	--Fireball
-	Game.SpellsTxt[6].Master = string.format("Casting costs 16 spell points. Deals 12+1-9 damage per point of skill")
-	-- Ice Bolt
-	Game.SpellsTxt[28].Master = string.format("Casting costs 20 spell points. Deals 20+1-13 damage per point of skill")
-
-	-- direct damage spells
-	
-	for spellIndex, resistType in pairs(spellResists) do
-		Game.SpellsTxt[spellIndex].DamageType = resistType
+		
+		
+		-- updated spell descriptions; manual entries 
+		if not (spellDescs[spellName] == nil) then
+			for k,v in pairs(spellDescs[spellName]) do
+				
+			end
+		end
+		
+		-- spell resists
+		
+		if not (spellResists[spellName] == nil) then
+			Game.SpellsTxt[spellTxtIds[spellName]].DamageType = spellResists[spellName]
+		end
 	end
 	
-	for spellIndex, spellPower in pairs(spellPowers) do
-		Game.SpellsTxt[spellIndex].Description = Game.SpellsTxt[spellIndex].Description .. string.format("\n\nmodified damage = %d + %d-%d per point of skill", spellPowers[spellIndex][const.Novice].fixedMin, spellPowers[spellIndex][const.Novice].variableMin, spellPowers[spellIndex][const.Novice].variableMax)
+	
+
+	-- updated spell descriptions; protection spells not DoP
+	for k,t in pairs(dayOfProtection) do
+		setProtectionSpellDescriptions(k, t.School, t.Type)
+	end
+		
+	-- updated spell descriptions; stat spells not DoG
+	for k, t in pairs(dayOfTheGods) do
+		setStatSpellDescriptions(k, t.School, t.Stat)
 	end
 	
 	-- guardian angel
