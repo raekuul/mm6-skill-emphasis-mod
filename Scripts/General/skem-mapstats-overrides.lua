@@ -180,6 +180,22 @@ function applyRandomMonsters(i)
 	end
 end
 
+
+-- Monsters award EXP based on Map.Monsters[index].Experience instead of Game.MonstersTxt[Map.Monsters[index].Id].Experience
+-- Patch by Eksekk
+
+mem.asmpatch(0x431A7D, [[
+	mov ecx, dword [esi + 0x64] ; ecx - total experience award, esi - monster pointer, 0x64 - experience field offset
+	jmp short ]] .. (0x431A8C - 0x431A7D), 0xF)
+
+mem.asmpatch(0x431299, [[
+	mov ecx, dword [esi + 0x64]
+	jmp short ]] .. (0x4312A8 - 0x431299), 0xF)
+
+mem.asmpatch(0x401937, [[
+	mov ecx, dword [esi - 0x3C]
+	jmp short ]] .. (0x401946 - 0x401937), 0xF)
+
 function checkSeed()
 	if (vars["Seed"] == nil)
 	then
