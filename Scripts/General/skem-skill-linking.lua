@@ -2,7 +2,7 @@
 -- if using with Skill Emphasis, comment out lines 3737 - 3812 in skill-mod.lua
 
 -- set EASY_SKILLS to true to enable linked Spell groups, and to link Bows/Blasters across the party
-local EASY_SKILLS = false
+local EASY_SKILLS = SETTINGS["MoreLinkedSkills"]
 
 -- Skill groups linked "vertically" - within only one character
 local characterLinkedSkillGroups =
@@ -29,7 +29,7 @@ local characterLinkedSkillGroups =
 			[const.Skills.Leather] = true,
 			[const.Skills.Chain] = true,
 			[const.Skills.Plate] = true,
-			[const.Skills.Bodybuilding] = EASY_SKILLS,
+			-- [const.Skills.Bodybuilding] = EASY_SKILLS,
 		},
 	["elemental"] = 
 		{

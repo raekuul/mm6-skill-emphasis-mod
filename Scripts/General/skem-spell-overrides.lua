@@ -4,7 +4,7 @@
 ]]
 
 -- set to true to show damage in the spell descriptions as a dice string
-local SHOW_DAMAGE_AS_DICE = false
+local SHOW_DAMAGE_AS_DICE = SETTINGS["ShowDiceInSpellDescription"]
 
 -- NOT IMPLEMENTED YET
 -- set to true to show "dynamic" damage in spell descriptions, rather than generic damage.
@@ -42,7 +42,7 @@ local function GetMonsterTxt(p)
 	local i = (p - Game.MonstersTxt["?ptr"]) / Game.MonstersTxt[0]["?size"]
 	return i, Game.MonstersTxt[i]
 end
---[[ for more precise spell description code; need to figure out tech for this
+--[[ for player-centered spell description code; need to figure out tech for this
 local function getAttackSpellRange(p,spellID)
 	player = GetPlayer(p)
 	spell = Game.Spells[spellID]
@@ -160,7 +160,42 @@ local hourOfPower = {
 }
 
 local spellDescs = {
-	
+	["Guardian Angel"] = {
+		["Description"] = "The Guardian Angel spell helps to reduce the effects of death upon the party.  First, the body is preserved from destruction by massive damage, such that only the mightiest of monsters will be able to kill characters outright.  Secondly, it sets up a compact with Higher Powers to revive the Party at the last Temple that was visited (the cost of this service is half of the gold that the party has on hand upon death).\nThis compact lasts for one hour, plus five minutes per point of skill in Spirit Magic.", 
+		["Normal"] = "Party is revived at 1 HP each.", 
+		["Expert"] = "Party is revived at half HP.",
+		["Master"] = "Party is revived at full HP."
+	},
+	["Stone Skin"] = {
+		["Description"] = string.format("Increases the Armor Class of a character by %d + %d per point of skill in Earth Magic.", spellBuffPowers["StoneSkin"]["fixed"], spellBuffPowers["StoneSkin"]["proportional"])
+	},
+	["Bless"] = {
+		["Description"] = string.format("Increases the Attack Bonus (both Melee and Bow) of a character by %d + %d per point of skill in Spirit Magic.",spellBuffPowers["Bless"]["fixed"], spellBuffPowers["Bless"]["proportional"])
+	},
+	["Heroism"] = {
+		["Description"] = string.format("Increases the melee damage of a character by %d + %d per point of skill in Spirit Magic.", spellBuffPowers["Heroism"]["fixed"], spellBuffPowers["Heroism"]["proportional"])
+	},
+	["Healing Touch"] = {
+		["Description"] = "Heals a single character.  Skill increases the recovery rate of this spell.",
+		["Normal"] = "Costs 3 SP.\nHeals around 5 HP.",
+		["Expert"] = "Costs 6 SP.\nHeals around 30 HP.",
+		["Master"] = "Costs 12 SP.\nHeals around 70 HP.",
+	},
+	["First Aid"] = {
+		["Description"] = "Cheaply heals a single character for a fixed amount.  Skill increases the recovery rate of this spell.",
+		["Normal"] = "Heals 5 HP",
+		["Expert"] = "Heals 10 HP",
+		["Master"] = "Heals 20 HP",
+	},
+	["Cure Wounds"] = {
+		["Description"] = "Heals a single character.  Potency increases relative to the caster's skill in Body Magic.",
+		["Normal"] = "Costs 5 SP.\nHeals 10 HP + 2 per point of skill.",
+		["Expert"] = "Costs 8 SP.\nHeals 20 HP + 3 per point of skill.",
+		["Master"] = "Costs 15 SP.\nHeals 40 HP + 5 per point of skill.",
+	},
+	["Power Cure"] = {
+		["Description"] = "Heals every member of the party for 3 HP per point of skill in Body Magic.",
+	},
 }
 
 local spellCosts =
@@ -770,22 +805,35 @@ function events.GameInitialized2()
 		end
 		
 		
+		-- updated spell descriptions; manual entries 
+		if not (spellDescs[spellName] == nil) then
+			for k,v in pairs(spellDescs[spellName]) do
+				Game.SpellsTxt[spellTxtId][k] = v
+			end
+		end
+		
 		-- updated spell descriptions; attack spells
 		if not (spellPowers[spellTxtId] == nil) then
 			for k1,v1 in pairs(spellPowers[spellTxtId]) do
 				for k2,v2 in pairs(training) do
+					local vlow = spellPowers[spellTxtId][const[v2]].variableMin
+					local vhigh = spellPowers[spellTxtId][const[v2]].variableMax
+					local flow = spellPowers[spellTxtId][const[v2]].fixedMin
+					local fhigh = spellPowers[spellTxtId][const[v2]].fixedMax
+					
 					Game.SpellsTxt[spellTxtId][k2] = string.format("Cost: %d SP.",Game.SpellsTxt[spellTxtId]["SpellPoints" .. k2])
+					
 					if (SHOW_DAMAGE_AS_DICE == false) then
-						if not (spellPowers[spellTxtId][const[v2]].fixedMin == 0) then 
-							Game.SpellsTxt[spellTxtId][k2] = Game.SpellsTxt[spellTxtId][k2] .. string.format("\nDamage: %d + %d-%d per point of skill", spellPowers[spellTxtId][const[v2]].fixedMin, spellPowers[spellTxtId][const[v2]].variableMin, spellPowers[spellTxtId][const[v2]].variableMax)
+						if not (fhigh == 0) then 
+							Game.SpellsTxt[spellTxtId][k2] = Game.SpellsTxt[spellTxtId][k2] .. string.format("\nDamage: %d + %d-%d per point of skill", flow, vlow, vhigh)
 						else
-							Game.SpellsTxt[spellTxtId][k] = Game.SpellsTxt[spellTxtId][k] .. string.format("\nDamage: %d-%d per point of skill", spellPowers[spellTxtId][const[v]].variableMin, spellPowers[spellTxtId][const[v]].variableMax)
+							Game.SpellsTxt[spellTxtId][k2] = Game.SpellsTxt[spellTxtId][k2] .. string.format("\nDamage: %d-%d per point of skill", vlow, vhigh)
 						end
 					elseif (SHOW_DAMAGE_AS_DICE == true) then 
-						if not (spellPowers[spellTxtId][const[v]].fixedMin == 0) then
-							Game.SpellsTxt[spellTxtId][k] = Game.SpellsTxt[spellTxtId][k] .. string.format("\nDamage: d%d + %d", spellPowers[spellTxtId][const[v]].variableMax, spellPowers[spellTxtId][const[v]].fixedMin)
+						if not (fhigh == 0) then
+							Game.SpellsTxt[spellTxtId][k2] = Game.SpellsTxt[spellTxtId][k2] .. string.format("\nDamage: d%d + %d", vhigh, fhigh)
 						else
-							Game.SpellsTxt[spellTxtId][k] = Game.SpellsTxt[spellTxtId][k] .. string.format("\nDamage: d%d", spellPowers[spellTxtId][const[v]].variableMax)
+							Game.SpellsTxt[spellTxtId][k2] = Game.SpellsTxt[spellTxtId][k2] .. string.format("\nDamage: d%d", vhigh)
 						end
 					end	
 				end
@@ -793,13 +841,6 @@ function events.GameInitialized2()
 		end
 
 		
-		
-		-- updated spell descriptions; manual entries 
-		if not (spellDescs[spellName] == nil) then
-			for k,v in pairs(spellDescs[spellName]) do
-				
-			end
-		end
 		
 		-- spell resists
 		
@@ -822,6 +863,5 @@ function events.GameInitialized2()
 	
 	-- guardian angel
 	
-	Game.SpellsTxt[spellTxtIds["Guardian Angel"]].Description = string.replace(Game.SpellsTxt[spellTxtIds["Guardian Angel"]].Description, "Guardian Angel lasts for 1 hour per point of skill in Spirit Magic", "Guardian Angel lasts for 1 hour plus 5 minutes per point of skill in Spirit Magic") .. string.format("\n\nWhile active Guardian Angel lowers death HP threshold by 1000 for all characters protecting them from dying of HP loss.")
 	
 end

@@ -13,7 +13,7 @@
 	Forces all flying monsters to attempt to engage in melee 
 ]]
 
-local EASY_OVERRIDES = false
+local EASY_OVERRIDES = SETTINGS["EasierMonsters"]
 
 --[[ ADAPTIVE MODE
 	ADAPTIVE = false -- adaptive monster multipliers, relative to derived average map level.  This is the default as of 0.8.5
@@ -21,30 +21,30 @@ local EASY_OVERRIDES = false
 	ADAPTIVE = nil -- static monster multipliers relative to monster level; this is the pre-0.8.5 behavior
 ]]
 
-local ADAPTIVE = false
+local ADAPTIVE = SETTINGS["AdaptiveMonsterStats"]
 
 -- the resist_cap is the highest resistance that generic monsters are allowed to have
 -- in the absence of core Skill Emphasis (or other immunity removal mods), "Unique" monsters are still allowed to be immune to stuff
-resist_cap = 120
+local resist_cap = 120
 
 -- EnergyMod
 -- This is a divisor applied to Energy attacks
 -- the larger this number, the weaker Energy attacks become
 -- if EASY_OVERRIDES == true, this is ignored entirely (under Easy Mode, energy attacks are not multiplied at all)
-EnergyMod = 2
+local EnergyMod = 2
 
 -- base multipliers
 -- these multipliers are applied after monster customizations and EZ-exclusive tech are applied
 -- defaults are 2 for Health, 2 for Gold, 1 for Armor, 1.09 for Experience
 -- Health and Armor use the greater of the original or calculated values; multipliers less than 1 have no effect.
 
-baseHealthMultiplier = 2
-baseArmorMultiplier = 1
+local baseHealthMultiplier = 2
+local baseArmorMultiplier = 1
 
 -- Gold and Experience will always set calculated (to permit Zero Monster EXP games)
 
-baseGoldMultiplier = 2
-baseExperienceMultiplier = 1.09
+local baseGoldMultiplier = 2
+local baseExperienceMultiplier = SETTINGS["MonsterExperienceMultiplier"]
 
 -- masteries text
 
@@ -91,9 +91,7 @@ local missiles =
 	["Rock"] = 9,
 }
 
-spellTxtIds = { }
-
-
+local spellTxtIds = { }
 
 local monsterInfos =
 {
@@ -321,18 +319,21 @@ function calculateMapAverage()
 end
 
 function getAdaptiveMultiplier(switch)
-	if (switch == true)
-	then
-		mode = "Party"
-		output = calculatePartyAverage()
-	elseif (switch == false)
+	if ((switch == "default") or (switch == "map-average"))
 	then
 		mode = "Map"
 		output = calculateMapAverage()
-	else
+	elseif (switch == "party-average")
+	then
+		mode = "Party"
+		output = calculateMapAverage()
+	elseif (switch == "map-preset")
+	then
 		mode = "Unknown"
 		error("Recoverable error - Adaptive Mode ".. tostring(switch) .. " not yet handled.",2) 
 		output = 1
+	else
+		getAdaptiveMultiplier("map-preset")
 	end
 	
 	return output
@@ -491,7 +492,7 @@ function applyStaticMonsterOverrides(monsterID, easy_flag)
 	applyMonsterResistanceAdjustments(monsterID, easy_flag)
 	
 	-- damage multipliers; calculated using a different level for Adaptive mode
-	if ADAPTIVE == nil
+	if ADAPTIVE == "disabled"
 	then
 		local damageMultiplier, rankMultiplier = calculateMonsterDamageMultipliers(monsterArray, easy_flag)
 		applyMonsterDamageMultipliers(monsterArray, damageMultiplier, rankMultiplier, easy_flag)

@@ -4,12 +4,10 @@
 -- removed the Flute entry, since it needs an ASM hack to work right
 -- removed the Horn of Ros entry, since the vanilla descriptions are now getting appended to instead of overwritten
 
---[[ 0.8.5 
--- fixed a scope collision against mapstats-overrides
--- rando overrides now write into the items table instead of being a separate override
--- last updated 2022-08-24
+--[[ 0.8.6
+-- The initialization project begins!
 ]]
-local RANDO = true
+local RANDO = SETTINGS["ImprovedQuestItems"]
 
 local modifiedBookValues =
 {

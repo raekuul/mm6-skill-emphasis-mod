@@ -8,12 +8,12 @@
 -- set CHANCE to true to show the chance to reduce damage instead.
 
 local DEBUG = true
-local CHANCE = true
+local CHANCE = SETTINGS["ResistancesDisplayMode"]
 
-if CHANCE == true
+if CHANCE == "default"
 then
 	rezstr = "Resist Chance"
-elseif CHANCE == false
+elseif CHANCE == "effect"
 then
 	rezstr = "Usefulness"
 else
