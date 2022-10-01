@@ -8,35 +8,35 @@ local UPDATE_INI = false
 local PRESETS = {
 	["ImprovedQuestItems"] = true,
 	["RandomizeMapClusters"] = false,
-	["AdaptiveMonsterStats"] = "disabled",
+	["AdaptiveMonsterMode"] = "default",
 	["ResistancesDisplayMode"] = "default",
 	["EasierMonsters"] = false,
 	["MoreLinkedSkills"] = false,
 	["ShowDiceInSpellDescription"] = false,
 	["MonsterExperienceMultiplier"] = 1.09,
+	["GlobalMapResetDays"] = "default",
 }
 
 SETTINGS = { }
 
 local INIT = ini.parse("mm6.ini")
 
-if not (INIT["Skill Emphasis"] == nil) then
-	for k,v in pairs(PRESETS) do
-		if (INIT["Skill Emphasis"][k] == nil) then
-			UPDATE_INI = true
-			v = PRESETS[k]
-		end
-		INIT["Skill Emphasis"][k] = v
-		SETTINGS[k] = v
-	end
-	ini.save("mm6.ini",INIT)
-else
+if (INIT["Skill Emphasis"] == nil) then
 	UPDATE_INI = true
 	INIT["Skill Emphasis"] = {}
 	for k,v in pairs(PRESETS) do
 		SETTINGS[k] = v
 		INIT["Skill Emphasis"][k] = v
 	end
+end
+
+for k,d in pairs(PRESETS) do
+	if (INIT["Skill Emphasis"][k] == nil) then
+		UPDATE_INI = true
+		INIT["Skill Emphasis"][k] = d
+	end
+	v = INIT["Skill Emphasis"][k]
+	SETTINGS[k] = v
 end
 
 if not (UPDATE_INI == false) then

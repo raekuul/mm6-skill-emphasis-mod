@@ -15,13 +15,14 @@
 
 local EASY_OVERRIDES = SETTINGS["EasierMonsters"]
 
---[[ ADAPTIVE MODE
-	ADAPTIVE = false -- adaptive monster multipliers, relative to derived average map level.  This is the default as of 0.8.5
-	ADAPTIVE = true -- adaptive monster multipliers, relative to derived average party level
-	ADAPTIVE = nil -- static monster multipliers relative to monster level; this is the pre-0.8.5 behavior
+--[[ ADAPTIVE MODE - Monsters are changed after spawn:
+	Preset (not implemented) - relative to preset "Map Level" values
+	Map Average (Default) - relative to average monster level for that map
+	Party Average - relative to party level
+	Disabled - monsters are not changed after spawn.
 ]]
 
-local ADAPTIVE = SETTINGS["AdaptiveMonsterStats"]
+local ADAPTIVE = SETTINGS["AdaptiveMonsterMode"]
 
 -- the resist_cap is the highest resistance that generic monsters are allowed to have
 -- in the absence of core Skill Emphasis (or other immunity removal mods), "Unique" monsters are still allowed to be immune to stuff
@@ -319,21 +320,20 @@ function calculateMapAverage()
 end
 
 function getAdaptiveMultiplier(switch)
-	if ((switch == "default") or (switch == "map-average"))
+	if (switch == "default") 
+	then
+		output = getAdaptiveMultiplier("map")
+	elseif (switch == "map") 
 	then
 		mode = "Map"
 		output = calculateMapAverage()
-	elseif (switch == "party-average")
+	elseif (switch == "party") 
 	then
 		mode = "Party"
-		output = calculateMapAverage()
-	elseif (switch == "map-preset")
-	then
-		mode = "Unknown"
-		error("Recoverable error - Adaptive Mode ".. tostring(switch) .. " not yet handled.",2) 
-		output = 1
+		output = calculatePartyAverage()
 	else
-		getAdaptiveMultiplier("map-preset")
+		error("Recoverable error - Adaptive Mode '".. tostring(switch) .. "' not yet handled.  Falling back to default.",2) 
+		output = getAdaptiveMultiplier("default")
 	end
 	
 	return output
@@ -574,6 +574,21 @@ function applyAdaptiveMonsterOverrides(monsterID, monsterArray, adaptive_level)
 	end
 end
 
+mem.asmpatch(0x431A7D, [[
+	mov ecx, dword [esi + 0x64] ; ecx - total experience award, esi - monster pointer, 0x64 - experience field offset
+	jmp short ]] .. (0x431A8C - 0x431A7D)
+, 0xF)
+
+mem.asmpatch(0x431299, [[
+	mov ecx, dword [esi + 0x64]
+	jmp short ]] .. (0x4312A8 - 0x431299)
+, 0xF)
+
+mem.asmpatch(0x401937, [[
+	mov ecx, dword [esi - 0x3C]
+	jmp short ]] .. (0x401946 - 0x401937)
+, 0xF)
+
 function events.GameInitialized2()
 	for spellTxtId = 1, Game.SpellsTxt.high do
 		spellTxtIds[Game.SpellsTxt[spellTxtId].Name] = spellTxtId
@@ -584,11 +599,11 @@ function events.GameInitialized2()
 end
 
 function events.LoadMap()
-	if ((ADAPTIVE == true) or (ADAPTIVE == false))
+	if not (ADAPTIVE == "disabled")
 	then
 		adaptive_level = getAdaptiveMultiplier(ADAPTIVE)
 		
-		if (ADAPTIVE == true) 
+		if (ADAPTIVE == "party") 
 		then 
 			if not (mapvars["adaptive"] == nil)
 			then

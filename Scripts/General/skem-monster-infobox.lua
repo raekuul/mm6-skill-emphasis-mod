@@ -7,7 +7,7 @@
 -- resistances table by default shows the average reduction.
 -- set CHANCE to true to show the chance to reduce damage instead.
 
-local DEBUG = true
+local DEBUG = false
 local CHANCE = SETTINGS["ResistancesDisplayMode"]
 
 if CHANCE == "default"
@@ -166,7 +166,7 @@ function modifiedDrawMonsterInfoName(d, def, dialog, font, left, top, color, str
 	local textLines = {}
 
 	if (DEBUG == true) then
-		table.insert(textLines, {["key"] = "Experience", ["value"] = string.format("%d", monster["Experience"])})
+		table.insert(textLines, {["key"] = "Experience", ["value"] = string.format("%d (%d)", monster["Experience"], monsterTxt["Experience"])})
 	end
 	
 	-- player damage rate on monster

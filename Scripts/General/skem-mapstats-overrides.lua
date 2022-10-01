@@ -21,7 +21,20 @@ local BATS = false
 -- this has no effect if BATS == true
 
 local RANDO = SETTINGS["RandomizeMapClusters"]
-local ADAPTIVE = SETTINGS["AdaptiveMonsterStats"]
+local ADAPTIVE = SETTINGS["AdaptiveMonsterMode"]
+
+local WEEK = 7
+local YEAR = WEEK * 52
+local CENTURY = YEAR * 100
+local NEVER = math.huge
+
+local globalReset = YEAR / 2
+
+if (type(SETTINGS["GlobalMapResetDays"]) == 'number' ) then
+	globalReset = SETTINGS["GlobalMapResetDays"]
+end
+
+
 
 -- Maps are ordered by ID, starting from 1
 
@@ -103,13 +116,6 @@ for i,v in ipairs(MAPS) do
 end
 
 -- Regional Reset stuff
-
-WEEK = 7
-YEAR = WEEK * 52
-CENTURY = YEAR * 100
-NEVER = math.huge
-
-globalReset = YEAR / 2
 
 localResets = {
 	[MapIDs["The Hive"]] = 0,
