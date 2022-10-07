@@ -19,7 +19,7 @@ end
 
 function events.Regeneration(t)
 	v = Party[t.PlayerIndex]
-	ko = v.Eradicated or v.Dead or v.Stoned or v.Paralyzed or v.Unconscious
+	ko = v.Eradicated or v.Dead or v.Stoned or v.Paralyzed or v.Unconscious or v.Asleep
 	if (ko == 0) then
 		for k=1, v.Items.High do
 			if (v.Items[k].Broken == true) then
