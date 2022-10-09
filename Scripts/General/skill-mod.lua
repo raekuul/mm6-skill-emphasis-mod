@@ -1899,7 +1899,7 @@ formatSkillRankNumber(Game.SkillRecoveryTimes[const.Skills.Shield + 1] * (rank =
 	Game.Classes.HPFactor[const.Class.Hero] = 6
 	Game.Classes.SPFactor[const.Class.Paladin] = 2
 	Game.Classes.SPFactor[const.Class.Crusader] = 3
-	Game.Classes.SPFactor[const.Class.Hero] = 4
+	Game.Classes.SPFactor[const.Class.Hero] = 3
 	Game.ClassKinds.SPBase[3] = 8
 	--Archer
 	Game.Classes.HPFactor[const.Class.Archer] = 4
