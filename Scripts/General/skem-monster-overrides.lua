@@ -144,46 +144,46 @@ local monsterInfos =
 	--Supreme Titan
 	[168] = {["Attack1"] = {["Type"] = const.Damage.Elec, ["DamageDiceCount"] = 11, ["DamageDiceSides"] = 20, ["DamageAdd"] = 30,["Missile"] = missiles["Elec"],},["SpellChance"] = 50, ["Spell"] = "Psychic Shock", ["SpellSkill"] = JoinSkill(13, const.Master), },
 	-- Follower of Baa
-	[139] = {["SpellChance"] = 10, ["Spell"] = "Mind Blast", ["SpellSkill"] = JoinSkill(1, const.Novice), },
+	[139] = {["SpellChance"] = 10, ["Spell"] = "Mind Blast", ["SpellSkill"] = JoinSkill(2, const.Novice), },
 	-- Mystic of Baa
-	[140] = {["SpellChance"] = 30, ["Spell"] = "Mind Blast", ["SpellSkill"] = JoinSkill(2, const.Novice), },
+	[140] = {["SpellChance"] = 30, ["Spell"] = "Mind Blast", ["SpellSkill"] = JoinSkill(4, const.Novice), },
 	-- Fanatic of Baa
-	[141] = {["SpellChance"] = 50, ["Spell"] = "Mind Blast", ["SpellSkill"] = JoinSkill(3, const.Novice), },
+	[141] = {["SpellChance"] = 50, ["Spell"] = "Mind Blast", ["SpellSkill"] = JoinSkill(6, const.Novice), },
 	-- Cannibal (female)
-	[130] = {["SpellChance"] = 10, ["Spell"] = "Deadly Swarm", ["SpellSkill"] = JoinSkill(1, const.Novice), },
+	[130] = {["SpellChance"] = 10, ["Spell"] = "Deadly Swarm", ["SpellSkill"] = JoinSkill(3, const.Novice), },
 	-- Head Hunter (female)
-	[131] = {["SpellChance"] = 20, ["Spell"] = "Deadly Swarm", ["SpellSkill"] = JoinSkill(2, const.Novice), },
+	[131] = {["SpellChance"] = 20, ["Spell"] = "Deadly Swarm", ["SpellSkill"] = JoinSkill(4, const.Novice), },
 	-- Witch Doctor (female)
-	[132] = {["SpellChance"] = 30, ["Spell"] = "Deadly Swarm", ["SpellSkill"] = JoinSkill(3, const.Novice), },
+	[132] = {["SpellChance"] = 30, ["Spell"] = "Deadly Swarm", ["SpellSkill"] = JoinSkill(6, const.Novice), },
 	-- Cannibal (male)
-	[142] = {["SpellChance"] = 10, ["Spell"] = "Fire Bolt", ["SpellSkill"] = JoinSkill(1, const.Novice), },
+	[142] = {["SpellChance"] = 10, ["Spell"] = "Fire Bolt", ["SpellSkill"] = JoinSkill(3, const.Novice), },
 	-- Head Hunter (male)
-	[143] = {["SpellChance"] = 20, ["Spell"] = "Fire Bolt", ["SpellSkill"] = JoinSkill(2, const.Novice), },
+	[143] = {["SpellChance"] = 20, ["Spell"] = "Fire Bolt", ["SpellSkill"] = JoinSkill(4, const.Novice), },
 	-- Witch Doctor (male)
-	[144] = {["SpellChance"] = 30, ["Spell"] = "Fire Bolt", ["SpellSkill"] = JoinSkill(3, const.Novice), },
+	[144] = {["SpellChance"] = 30, ["Spell"] = "Fire Bolt", ["SpellSkill"] = JoinSkill(6, const.Novice), },
 	--Malekith rebalance
 	--skeleton
-	[154] = {["SpellChance"] = 10, ["Spell"] = "Flame Arrow", ["SpellSkill"] = JoinSkill(1, const.Novice), },
+	[154] = {["SpellChance"] = 10, ["Spell"] = "Fire Bolt", ["SpellSkill"] = JoinSkill(3, const.Novice), },
 	-- Skeleton Knight
-	[155] = {["SpellChance"] = 20, ["Spell"] = "Flame Arrow", ["SpellSkill"] = JoinSkill(2, const.Novice), },
+	[155] = {["SpellChance"] = 20, ["Spell"] = "Fire Bolt", ["SpellSkill"] = JoinSkill(6, const.Novice), },
 	-- Skeleton Lord
-	[156] = {["SpellChance"] = 30, ["Spell"] = "Flame Arrow", ["SpellSkill"] = JoinSkill(3, const.Novice), },
+	[156] = {["SpellChance"] = 30, ["Spell"] = "Fire Bolt", ["SpellSkill"] = JoinSkill(9, const.Novice), },
 	--Magyar
-	 [  4] = {["SpellChance"] = 10, ["Spell"] = "Lightning Bolt", ["SpellSkill"] = JoinSkill(4, const.Master), },
+	 [  4] = {["SpellChance"] = 10, ["Spell"] = "Lightning Bolt", ["SpellSkill"] = JoinSkill(8, const.Master), },
 	-- Magyar Soldier
-	 [  5] = {["SpellChance"] = 20, ["Spell"] = "Lightning Bolt", ["SpellSkill"] = JoinSkill(6, const.Master), },
+	 [  5] = {["SpellChance"] = 20, ["Spell"] = "Lightning Bolt", ["SpellSkill"] = JoinSkill(12, const.Master), },
 	-- Goblin
-	[ 76] = {["SpellChance"] = 10, ["Spell"] = "Fire Bolt", ["SpellSkill"] = JoinSkill(1, const.Novice), },
+	[ 76] = {["SpellChance"] = 10, ["Spell"] = "Fire Bolt", ["SpellSkill"] = JoinSkill(3, const.Novice), },
 	-- Goblin Shaman
-	[ 77] = {["SpellChance"] = 20, ["Spell"] = "Fire Bolt", ["SpellSkill"] = JoinSkill(2, const.Novice), },
+	[ 77] = {["SpellChance"] = 20, ["Spell"] = "Fire Bolt", ["SpellSkill"] = JoinSkill(6, const.Novice), },
 	-- Goblin King
-	[ 78] = {["SpellChance"] = 30, ["Spell"] = "Fire Bolt", ["SpellSkill"] = JoinSkill(3, const.Novice), },
+	[ 78] = {["SpellChance"] = 30, ["Spell"] = "Fire Bolt", ["SpellSkill"] = JoinSkill(9, const.Novice), },
 	-- Ghost
-	[ 73] = {["SpellChance"] = 10, ["Spell"] = "Spirit Arrow", ["SpellSkill"] = JoinSkill(1, const.Novice), },
+	[ 73] = {["SpellChance"] = 10, ["Spell"] = "Mind Blast", ["SpellSkill"] = JoinSkill(5, const.Novice), },
 	-- Evil Spirit
-	[ 74] = {["SpellChance"] = 20, ["Spell"] = "Spirit Arrow", ["SpellSkill"] = JoinSkill(2, const.Novice), },
+	[ 74] = {["SpellChance"] = 20, ["Spell"] = "Mind Blast", ["SpellSkill"] = JoinSkill(9, const.Novice), },
 	-- Specter
-	[ 75] = {["SpellChance"] = 30, ["Spell"] = "Spirit Arrow", ["SpellSkill"] = JoinSkill(3, const.Novice), },
+	[ 75] = {["SpellChance"] = 30, ["Spell"] = "Mind Blast", ["SpellSkill"] = JoinSkill(15, const.Novice), },
 	-- steal crash workaround	
 	-- Cutpurse
 	[127] = {["Bonus"] = 0, ["BonusMul"] = 0},
