@@ -19,6 +19,13 @@ end
 
 function events.Regeneration(t)
 	v = Party[t.PlayerIndex]
+	class = v.Class
+	mediFactor = 1
+	if ((class == const.Class.Paladin) or (class == const.Class.Crusader) or (class == const.Class.Hero))
+	then
+		mediFactor = 3/2
+	end
+	
 	ko = v.Eradicated or v.Dead or v.Stoned or v.Paralyzed or v.Unconscious or v.Asleep
 	if (ko == 0) then
 		for k=1, v.Items.High do
@@ -31,6 +38,6 @@ function events.Regeneration(t)
 	r,m = SplitSkill(v.Skills[const.Skills.Meditation])
 	cap = v:GetFullSP()
 	cur = v.SpellPoints
-	gain = t.SP + calculateMeditationSPRegen(r, m, cap)
+	gain = t.SP + (calculateMeditationSPRegen(r, m, cap) * mediFactor)
 	v.SpellPoints = math.min(cap,cur+gain)
 end
