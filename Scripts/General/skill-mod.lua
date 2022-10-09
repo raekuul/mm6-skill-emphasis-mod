@@ -1,5 +1,5 @@
 -- Beta 0.8.5
--- added experimental medidation regeneration.  Disable by removing meditation-sp-regen.lua
+-- added experimental medidation regeneration.  Disable by removing meditation-sp-regen.lua. Added Eksekks bow and shield changes
 
 --[[ list of expected files:
 
@@ -16,6 +16,15 @@ meditation-sp-regen.lua
 ----------------------------------------------------------------------------------------------------
 -- global constants and lists
 ----------------------------------------------------------------------------------------------------
+
+local blastersUseClassMultipliers = true
+local shieldDoubleSkillEffectForKnights = true
+local knightClasses = {const.Class.Knight, const.Class.Cavalier, const.Class.Champion}
+
+local newMMExt
+function events.GameInitialized2()
+	newMMExt = Game.ItemsTxt[1].Skill == const.Skills.Sword and true or false -- hack
+end
 
 -- red distance
 
@@ -238,7 +247,7 @@ local oldWeaponSkillDamageBonuses =
 }
 local newWeaponSkillDamageBonuses =
 {
-	[const.Skills.Staff]	= {0, 0, 0, },
+	[const.Skills.Staff]	= {0, 0, 1, },
 	[const.Skills.Sword]	= {0, 0, 1, },
 	[const.Skills.Dagger]	= {0, 0, 0, },
 	[const.Skills.Axe]		= {0, 1, 2, },
@@ -571,7 +580,7 @@ local function getPlayerEquipmentData(player)
 		equipmentData.bow.item = player.Items[player.ItemBow]
 		local itemBowTxt = Game.ItemsTxt[equipmentData.bow.item.Number]
 		equipmentData.bow.equipStat = itemBowTxt.EquipStat + 1
-		equipmentData.bow.skill = itemBowTxt.Skill
+		equipmentData.bow.skill = itemBowTxt.Skill - (newMMExt and 0 or 1)
 		
 		if equipmentData.bow.skill >= 0 then
 			equipmentData.bow.level, equipmentData.bow.rank = SplitSkill(player.Skills[equipmentData.bow.skill])
@@ -592,7 +601,7 @@ local function getPlayerEquipmentData(player)
 		equipmentData.main.item = player.Items[player.ItemMainHand]
 		equipmentData.main.itemTxt = Game.ItemsTxt[equipmentData.main.item.Number]
 		equipmentData.main.equipStat = equipmentData.main.itemTxt.EquipStat + 1
-		equipmentData.main.skill = equipmentData.main.itemTxt.Skill
+		equipmentData.main.skill = equipmentData.main.itemTxt.Skill - (newMMExt and 0 or 1)
 		
 		if equipmentData.main.skill >= 0 then
 			equipmentData.main.level, equipmentData.main.rank = SplitSkill(player.Skills[equipmentData.main.skill])
@@ -613,7 +622,7 @@ local function getPlayerEquipmentData(player)
 		equipmentData.extra.item = player.Items[player.ItemExtraHand]
 		equipmentData.extra.itemTxt = Game.ItemsTxt[equipmentData.extra.item.Number]
 		equipmentData.extra.equipStat = equipmentData.extra.itemTxt.EquipStat + 1
-		equipmentData.extra.skill = equipmentData.extra.itemTxt.Skill
+		equipmentData.extra.skill = equipmentData.extra.itemTxt.Skill - (newMMExt and 0 or 1)
 		
 		if equipmentData.extra.skill >= 0 then
 			equipmentData.extra.level, equipmentData.extra.rank = SplitSkill(player.Skills[equipmentData.extra.skill])
@@ -642,7 +651,7 @@ local function getPlayerEquipmentData(player)
 		equipmentData.extra.item = player.Items[player.ItemExtraHand]
 		local itemExtraHandTxt = Game.ItemsTxt[equipmentData.extra.item.Number]
 		equipmentData.extra.equipStat = itemExtraHandTxt.EquipStat + 1
-		equipmentData.extra.skill = itemExtraHandTxt.Skill
+		equipmentData.extra.skill = itemExtraHandTxt.Skill - (newMMExt and 0 or 1)
 		
 		if equipmentData.extra.skill == const.Skills.Shield then
 			equipmentData.shield.equipped = true
@@ -660,7 +669,7 @@ local function getPlayerEquipmentData(player)
 		
 		equipmentData.armor.item = player.Items[player.ItemArmor]
 		local itemArmorTxt = Game.ItemsTxt[equipmentData.armor.item.Number]
-		equipmentData.armor.skill = itemArmorTxt.Skill
+		equipmentData.armor.skill = itemArmorTxt.Skill - (newMMExt and 0 or 1)
 		equipmentData.armor.level, equipmentData.armor.rank = SplitSkill(player.Skills[equipmentData.armor.skill])
 		
 	end
@@ -726,7 +735,7 @@ end
 
 -- calculate new and old recovery difference
 
-local function getWeaponRecoveryCorrection(equipmentData1, equipmentData2)
+local function getWeaponRecoveryCorrection(equipmentData1, equipmentData2, player)
 
 	local correction = 0
 	
@@ -752,8 +761,8 @@ local function getWeaponRecoveryCorrection(equipmentData1, equipmentData2)
 		
 		-- class bonus
 		
-		if equipmentData1.Skill == const.Skills.Bow or equipmentData1.Skill == const.Skills.Blaster then
-			local rangedWeaponSkillSpeedBonusMultiplier = classRangedWeaponSkillSpeedBonusMultiplier[t.Player.Class]
+		if equipmentData1.skill == const.Skills.Bow or (blastersUseClassMultipliers and equipmentData1.skill == const.Skills.Blaster) then
+			local rangedWeaponSkillSpeedBonusMultiplier = classRangedWeaponSkillSpeedBonusMultiplier[player.Class]
 			if rangedWeaponSkillSpeedBonusMultiplier ~= nil then
 				newRecoveryBonus = newRecoveryBonus * rangedWeaponSkillSpeedBonusMultiplier
 			end
@@ -937,7 +946,7 @@ function events.GetAttackDelay(t)
 	
 		if bow.weapon then
 		
-			t.Result = t.Result + getWeaponRecoveryCorrection(bow)
+			t.Result = t.Result + getWeaponRecoveryCorrection(bow, nil, t.Player)
 			
 		end
 		
@@ -951,17 +960,17 @@ function events.GetAttackDelay(t)
 			-- single wield
 			if not equipmentData.dualWield then
 				
-				t.Result = t.Result + getWeaponRecoveryCorrection(main)
+				t.Result = t.Result + getWeaponRecoveryCorrection(main, nil, t.Player)
 				
 			-- dual wield
 			else
 			
 				-- no axe and no sword in main hand and sword in extra hand = extra hand skill defines recovery
 				if main.skill ~= const.Skills.Axe and main.skill ~= const.Skills.Sword and extra.skill == const.Skills.Sword then
-					t.Result = t.Result + getWeaponRecoveryCorrection(extra, main)
+					t.Result = t.Result + getWeaponRecoveryCorrection(extra, main, t.Player)
 				-- everything else = main hand skill defines recovery
 				else
-					t.Result = t.Result + getWeaponRecoveryCorrection(main, extra)
+					t.Result = t.Result + getWeaponRecoveryCorrection(main, extra, t.Player)
 				end
 				
 			end
@@ -1127,7 +1136,7 @@ function events.CalcStatBonusBySkills(t)
 				
 				-- class bonus
 			
-				if main.skill == const.Skills.Blaster then
+				if main.skill == const.Skills.Blaster and blastersUseClassMultipliers then
 					local rangedWeaponSkillAttackBonusMultiplier = classRangedWeaponSkillAttackBonusMultiplier[t.Player.Class]
 					if rangedWeaponSkillAttackBonusMultiplier ~= nil then
 						newBonus = newBonus * rangedWeaponSkillAttackBonusMultiplier
@@ -1352,7 +1361,7 @@ function events.CalcStatBonusBySkills(t)
 			
 			-- add new bonus
 			
-			t.Result = t.Result + (newArmorSkillACBonuses[shield.skill][shield.rank] * shield.level)
+			t.Result = t.Result + (newArmorSkillACBonuses[shield.skill][shield.rank] * shield.level * (shieldDoubleSkillEffectForKnights and table.find(knightClasses, t.Player.Class) and 2 or 1))
 			
 		end
 		
@@ -1439,7 +1448,7 @@ local function applySpecialWeaponSkill(d, def, TextBuffer, delay)
 		
 		-- Staff in main hand
 		
-		if	(Game.ItemsTxt[player.Items[player.ItemMainHand].Number].Skill) == const.Skills.Staff then
+		if	(Game.ItemsTxt[player.Items[player.ItemMainHand].Number].Skill - (newMMExt and 0 or 1)) == const.Skills.Staff then
 			
 			-- Staff skill
 			
@@ -1488,7 +1497,7 @@ local function applySpecialWeaponSkill(d, def, TextBuffer, delay)
 		
 		-- Mace in main hand
 		
-		if	(Game.ItemsTxt[player.Items[player.ItemMainHand].Number].Skill) == const.Skills.Mace then
+		if	(Game.ItemsTxt[player.Items[player.ItemMainHand].Number].Skill - (newMMExt and 0 or 1)) == const.Skills.Mace then
 			
 			-- Mace skill
 			
@@ -2396,7 +2405,8 @@ local function modifiedCharacterStrikeWithDamageProjectile(d, def, playerPointer
 		local playerEquipmentData = getPlayerEquipmentData(player)
 		
 		if playerEquipmentData.shield.equipped then
-			damageMultiplier = damageMultiplier * math.pow(1 - shieldProjectileDamageReductionPerLevel, playerEquipmentData.shield.level)
+			local classMultiplier = table.find(knightClasses, player.Class) and (shieldDoubleSkillEffectForKnights and 2 or 4) or 1
+			damageMultiplier = damageMultiplier * math.pow(1 - (shieldProjectileDamageReductionPerLevel * classMultiplier), playerEquipmentData.shield.level)
 		end
 		
 	end
