@@ -1,10 +1,4 @@
 -- Monster Customization stuff from Skill Emphasis Mod
--- supersedes lines 2279 - 2479 in skill-mod.lua
-
---[[ 2022-09-16
-	Removed potential duplication of EXP multipliers
-	Reverted HP calculations to pre-0.8.1 methods (fully derived version was yielding too low numbers)
-]] 
 
 --[[ EASY MODE
 	Shallower curves for the Damage Multiplier, and Energy attacks are not multiplied
@@ -17,9 +11,9 @@ local EASY_OVERRIDES = SETTINGS["EasierMonsters"]
 
 --[[ ADAPTIVE MODE - Monsters are changed after spawn:
 	Preset (not implemented) - relative to preset "Map Level" values
-	Map Average (Default) - relative to average monster level for that map
+	Map Average - relative to average monster level for that map
 	Party Average - relative to party level
-	Disabled - monsters are not changed after spawn.
+	Disabled (default) - monsters are not changed after spawn.
 ]]
 
 local ADAPTIVE = SETTINGS["AdaptiveMonsterMode"]
@@ -38,12 +32,10 @@ local EnergyMod = 2
 -- these multipliers are applied after monster customizations and EZ-exclusive tech are applied
 -- defaults are 2 for Health, 2 for Gold, 1 for Armor, 1.09 for Experience
 -- Health and Armor use the greater of the original or calculated values; multipliers less than 1 have no effect.
-
 local baseHealthMultiplier = 2
 local baseArmorMultiplier = 1
 
 -- Gold and Experience will always set calculated (to permit Zero Monster EXP games)
-
 local baseGoldMultiplier = 2
 local baseExperienceMultiplier = SETTINGS["MonsterExperienceMultiplier"]
 
