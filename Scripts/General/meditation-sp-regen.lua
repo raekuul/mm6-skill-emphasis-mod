@@ -12,7 +12,7 @@ end
 
 function calculateMeditationSPRegen(rank, mastery, fullSP)
 	fixed = mastery
-	scaled = math.ceil(fullSP^0.5 * mastery^2/400)
+	scaled = math.ceil(fullSP^0.5 * rank^2/400)
 	output = math.max(fixed, scaled)
 	return math.floor(output)
 end
