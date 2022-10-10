@@ -18,7 +18,7 @@ meditation-sp-regen.lua
 ----------------------------------------------------------------------------------------------------
 
 local blastersUseClassMultipliers = true
-local shieldDoubleSkillEffectForKnights = true
+local shieldDoubleSkillEffectForKnights = false
 local knightClasses = {const.Class.Knight, const.Class.Cavalier, const.Class.Champion}
 
 local newMMExt
@@ -2409,7 +2409,7 @@ local function modifiedCharacterStrikeWithDamageProjectile(d, def, playerPointer
 		local playerEquipmentData = getPlayerEquipmentData(player)
 		
 		if playerEquipmentData.shield.equipped then
-			local classMultiplier = table.find(knightClasses, player.Class) and (shieldDoubleSkillEffectForKnights and 2 or 4) or 1
+			local classMultiplier = table.find(knightClasses, player.Class) and (shieldDoubleSkillEffectForKnights and 2 or 3) or 1
 			damageMultiplier = damageMultiplier * math.pow(1 - (shieldProjectileDamageReductionPerLevel * classMultiplier), playerEquipmentData.shield.level)
 		end
 		
