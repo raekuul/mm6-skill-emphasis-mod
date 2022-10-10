@@ -362,9 +362,9 @@ local classRangedWeaponSkillAttackBonusMultiplier =
 }
 local classRangedWeaponSkillSpeedBonusMultiplier =
 {
-	[const.Class.Archer] = 6,
-	[const.Class.BattleMage] = 6,
-	[const.Class.WarriorMage] = 6,
+	[const.Class.Archer] = 2,
+	[const.Class.BattleMage] = 2,
+	[const.Class.WarriorMage] = 2,
 }
 local classRangedWeaponSkillDamageBonus =
 {
