@@ -11,17 +11,15 @@ function regenAutoRepair(player, item)
 end
 
 function calculateMeditationSPRegen(rank, mastery, fullSP)
-	fixed = mastery
-	scaled = math.ceil(fullSP^0.5 * rank^2/400)
-	output = math.max(fixed, scaled)
-	return math.floor(output)
+	scaled = math.ceil(fullSP^0.5 * rank^2/800)
+	return math.floor(scaled)
 end
 
 function events.Regeneration(t)
 	v = Party[t.PlayerIndex]
 	class = v.Class
 	mediFactor = 1
-	if ((class == const.Class.Paladin) or (class == const.Class.Crusader) or (class == const.Class.Hero))
+	if (class == const.Class.Hero)
 	then
 		mediFactor = 3/2
 	end
