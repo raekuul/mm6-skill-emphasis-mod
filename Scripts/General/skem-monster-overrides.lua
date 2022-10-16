@@ -429,6 +429,7 @@ function applyMonsterDamageMultipliers(monsterArray, damageMultiplier, rankMulti
 	for i=1,2 do
 		key = "Attack" .. i
 		resist = genericForm[key]["Type"]
+		dice = genericForm[key]["DamageDiceCount"]
 		sides = genericForm[key]["DamageDiceSides"]
 		bonus = genericForm[key]["DamageAdd"] 
 		if (resist == const.Damage.Energy)
@@ -445,6 +446,15 @@ function applyMonsterDamageMultipliers(monsterArray, damageMultiplier, rankMulti
 			sides = sides * damageMultiplier
 			bonus = math.min(bonus * damageMultiplier, 250)
 		end
+		
+		-- if sides overflows, clamp sides to 250 and increase dice count 
+		if (sides > 250) then
+			fix = sides / 250
+			dice = dice * fix
+			sides = 250
+		end
+		
+		monsterArray[key]["DamageDiceCount"] = dice	
 		monsterArray[key]["DamageDiceSides"] = sides
 		monsterArray[key]["DamageAdd"] = bonus
 	end
