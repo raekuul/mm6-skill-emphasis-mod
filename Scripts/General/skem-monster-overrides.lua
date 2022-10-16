@@ -350,7 +350,7 @@ end
 function calculateMonsterHealth(monsterArray)
 	level = monsterArray["Level"]
 	oldHealth = monsterArray["FullHitPoints"]
-	
+	healthMod = 1
 	lookupID = monsterArray["Id"]
 	pic = Game.MonstersTxt[lookupID]["Picture"]
 	tier = string.sub(pic, -1)
@@ -367,12 +367,10 @@ function calculateMonsterHealth(monsterArray)
 	
 	if (tier3Level >= (level * 2))
 	then
-		healthMod = tier3Level/(level * 5)
-	else
-		healthMod = 0
+		healthMod = healthMod + tier3Level/(level * 5)
 	end
 	
-	newHealth = oldHealth * (baseHealthMultiplier + healthMod)
+	newHealth = oldHealth * baseHealthMultiplier * healthMod
 	return math.max(newHealth, oldHealth)
 end
 
