@@ -11,12 +11,17 @@ local EASY_OVERRIDES = SETTINGS["EasierMonsters"]
 
 --[[ ADAPTIVE MODE - Monsters are changed after spawn:
 	Preset (not implemented) - relative to preset "Map Level" values
-	Map Average - relative to average monster level for that map
-	Party Average - relative to party level
+	Map - relative to average monster level for that map
+	Party - relative to party level
 	Disabled (default) - monsters are not changed after spawn.
 ]]
 
-local ADAPTIVE = SETTINGS["AdaptiveMonsterMode"]
+local ADAPTIVE = string.lower(SETTINGS["AdaptiveMonsterMode"])
+if (ADAPTIVE == "default") then
+	ADAPTIVE = "disabled"
+elseif not ((ADAPTIVE == "preset") or (ADAPTIVE == "map") or (ADAPTIVE == "party")) then
+	ADAPTIVE = "disabled"
+end
 
 -- the resist_cap is the highest resistance that generic monsters are allowed to have
 -- in the absence of core Skill Emphasis (or other immunity removal mods), "Unique" monsters are still allowed to be immune to stuff
@@ -317,7 +322,7 @@ function calculateMapAverage()
 end
 
 function getAdaptiveMultiplier(switch)
-	if (switch == "default") 
+	if (switch == "preset") 
 	then
 		output = getAdaptiveMultiplier("map")
 	elseif (switch == "map") 
@@ -329,8 +334,8 @@ function getAdaptiveMultiplier(switch)
 		mode = "Party"
 		output = calculatePartyAverage()
 	else
-		error("Recoverable error - Adaptive Mode '".. tostring(switch) .. "' not yet handled.  Falling back to default.",2) 
-		output = getAdaptiveMultiplier("default")
+		error("Recoverable error - Adaptive Mode '".. tostring(switch) .. "' not yet handled.  Falling back to Map Average.",2) 
+		output = getAdaptiveMultiplier("map")
 	end
 	
 	return output
