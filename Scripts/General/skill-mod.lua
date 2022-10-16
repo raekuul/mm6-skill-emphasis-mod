@@ -196,13 +196,13 @@ local oldWeaponSkillAttackBonuses =
 }
 local newWeaponSkillAttackBonuses =
 {
-	[const.Skills.Staff]	= {1, 1.5, 2, },
-	[const.Skills.Sword]	= {1, 1.5, 2, },
-	[const.Skills.Dagger]	= {1, 1.5, 2, },
-	[const.Skills.Axe]		= {1, 1.5, 2, },
+	[const.Skills.Staff]	= {1, 2, 2, },
+	[const.Skills.Sword]	= {1, 2, 2, },
+	[const.Skills.Dagger]	= {1, 2, 2, },
+	[const.Skills.Axe]		= {1, 2, 2, },
 	[const.Skills.Spear]	= {1, 2, 3, },
 	[const.Skills.Bow]		= {1, 2, 3, },
-	[const.Skills.Mace]		= {1, 1.5, 2, },
+	[const.Skills.Mace]		= {1, 2, 2, },
 	[const.Skills.Blaster]	= {5, 10, 15, },
 }
 
