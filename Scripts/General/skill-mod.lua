@@ -1857,6 +1857,7 @@ formatSkillRankNumber(Game.SkillRecoveryTimes[const.Skills.Shield + 1] * (rank =
 	Game.ClassKinds.StartingSkills[0][const.Skills.Leather] = 3
 	Game.ClassKinds.StartingSkills[0][const.Skills.Sword] = 2
 	Game.ClassKinds.StartingSkills[0][const.Skills.Chain] = 1
+	Game.ClassKinds.StartingSkills[0][const.Skills.Repair] = 2
 	-- cleric
 	-- sorcerer
 	-- paladin
