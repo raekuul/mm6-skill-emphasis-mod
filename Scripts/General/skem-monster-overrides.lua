@@ -17,9 +17,10 @@ local EASY_OVERRIDES = SETTINGS["EasierMonsters"]
 ]]
 
 local ADAPTIVE = string.lower(SETTINGS["AdaptiveMonsterMode"])
-if (ADAPTIVE == "default") then
+if ((ADAPTIVE == "default") or (ADAPTIVE == "disabled")) then
 	ADAPTIVE = "disabled"
 elseif not ((ADAPTIVE == "preset") or (ADAPTIVE == "map") or (ADAPTIVE == "party")) then
+	error("Recoverable error: Adaptive Mode '" .. tostring(ADAPTIVE) .. "' not yet handled.  Falling back to default (non-adaptive) behavior.",2) 
 	ADAPTIVE = "disabled"
 end
 
@@ -334,7 +335,7 @@ function getAdaptiveMultiplier(switch)
 		mode = "Party"
 		output = calculatePartyAverage()
 	else
-		error("Recoverable error - Adaptive Mode '".. tostring(switch) .. "' not yet handled.  Falling back to Map Average.",2) 
+		
 		output = getAdaptiveMultiplier("map")
 	end
 	
