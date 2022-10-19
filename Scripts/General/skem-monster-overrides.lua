@@ -481,6 +481,22 @@ function applyMonsterDamageMultipliers(monsterArray, damageMultiplier, rankMulti
 	end
 end
 
+function applyDirectMonsterOverrides(i)
+-- set manual overrides first, so that they get iterated upon
+	if not (monsterInfos[i] == nil)
+	then
+		monsterInfos[i]["Spell"] = spellTxtIds[monsterInfos[i]["Spell"]]
+		for k,v in pairs(monsterInfos[i]) do
+			if not (type(Game.MonstersTxt[i][k]) == "table")
+			then
+				Game.MonstersTxt[i][k] = v
+			else
+				Game.MonstersTxt[i][k] = traverseTable(v)
+			end
+		end
+	end	
+end
+
 function applyStaticMonsterOverrides(monsterID, easy_flag)
 	monsterArray = Game.MonstersTxt[monsterID]
 	i = monsterArray["Id"]
@@ -488,19 +504,7 @@ function applyStaticMonsterOverrides(monsterID, easy_flag)
 	monsterArray["offset"] = calculateTierLevelOffset(monsterArray)
 	offset = monsterArray["offset"]
 	
-	-- set manual overrides first, so that they get iterated upon
-	if not (monsterInfos[i] == nil)
-	then
-		monsterInfos[i]["Spell"] = spellTxtIds[monsterInfos[i]["Spell"]]
-		for k,v in pairs(monsterInfos[i]) do
-			if not (type(monsterArray[k]) == table)
-			then
-				monsterArray[k] = v
-			else
-				monsterArray[i][k] = traverseTable(v)
-			end
-		end
-	end
+	
 
 	-- resistances
 	applyMonsterResistanceAdjustments(monsterID, easy_flag)
@@ -606,6 +610,9 @@ mem.asmpatch(0x401937, [[
 function events.GameInitialized2()
 	for spellTxtId = 1, Game.SpellsTxt.high do
 		spellTxtIds[Game.SpellsTxt[spellTxtId].Name] = spellTxtId
+	end
+	for monsterID = 1, Game.MonstersTxt.high do
+		applyDirectMonsterOverrides(monsterID)
 	end
 	for monsterID = 1, Game.MonstersTxt.high do
 		applyStaticMonsterOverrides(monsterID, EASY_OVERRIDES)
