@@ -22,6 +22,8 @@ if ((ADAPTIVE == "default") or (ADAPTIVE == "disabled")) then
 elseif not ((ADAPTIVE == "preset") or (ADAPTIVE == "map") or (ADAPTIVE == "party")) then
 	error("Recoverable error: Adaptive Mode '" .. tostring(ADAPTIVE) .. "' not yet handled.  Falling back to default (non-adaptive) behavior.",2) 
 	ADAPTIVE = "disabled"
+else
+	debug.Message("Adaptive mode " .. ADAPTIVE .. " enabled.")
 end
 
 -- the resist_cap is the highest resistance that generic monsters are allowed to have
@@ -44,6 +46,8 @@ local baseArmorMultiplier = 1
 -- Gold and Experience will always set calculated (to permit Zero Monster EXP games)
 local baseGoldMultiplier = 2
 local baseExperienceMultiplier = SETTINGS["MonsterExperienceMultiplier"]
+
+local dmesg = ''
 
 -- masteries text
 
@@ -210,12 +214,14 @@ local monsterInfos =
 }
 
 function traverseTable(input)
-	if not (type(input) == table)
+	if not (type(input) == "table")
 	then
+		debug.Message("Traverse Table returned " .. input)
 		return input
 	else
 		output = { }
 		for key, value in pairs(input) do
+			debug.Message("Traversing table " .. key)
 			output[key] = traverseTable(input[key])
 		end
 		return output
@@ -452,12 +458,13 @@ function applyMonsterDamageMultipliers(monsterArray, damageMultiplier, rankMulti
 				sides = sides * damageMultiplier
 				bonus = math.min(bonus * damageMultiplier, 250)
 			end
-
+			dmesg = dmesg .. "\n" .. monsterArray.Name .. ", Attack " .. i .. ": ".. genericForm[key]["DamageDiceCount"].."d"..genericForm[key]["DamageDiceSides"].."+"..genericForm[key]["DamageAdd"].." -> "..dice.."d"..sides.."+"..bonus
 			-- if sides overflows, clamp sides to 250 and increase dice count 
 			if (sides > 250) then
 				fix = sides / 250
 				dice = dice * fix
 				sides = 250
+				dmesg = ", fixed to " .. dice .. "d" .. sides .. "+" .. bonus
 			end
 
 			monsterArray[key]["DamageDiceCount"] = dice	
@@ -485,13 +492,22 @@ function applyDirectMonsterOverrides(i)
 -- set manual overrides first, so that they get iterated upon
 	if not (monsterInfos[i] == nil)
 	then
+	--	debug.Message("Direct Overrides for " .. Game.MonstersTxt[i]["Name"])
 		monsterInfos[i]["Spell"] = spellTxtIds[monsterInfos[i]["Spell"]]
 		for k,v in pairs(monsterInfos[i]) do
 			if not (type(Game.MonstersTxt[i][k]) == "table")
 			then
 				Game.MonstersTxt[i][k] = v
+				-- debug.Message(k .. ": " .. v)
+			elseif ((k == "Attack1") or (k == "Attack2")) 
+			then
+				-- debug.Message("Attack Data")
+				for l,w in pairs(monsterInfos[i][k]) do
+				--	debug.Message(l .. " = " .. w)
+					Game.MonstersTxt[i][k][l] = w
+				end
 			else
-				Game.MonstersTxt[i][k] = traverseTable(v)
+				Game.MonstersTxt[i][k] = traverseTable(monsterInfos[k])
 			end
 		end
 	end	
@@ -500,7 +516,7 @@ end
 function applyStaticMonsterOverrides(monsterID, easy_flag)
 	monsterArray = Game.MonstersTxt[monsterID]
 	i = monsterArray["Id"]
-	
+	-- debug.Message("Static Pass Overrides for " .. monsterArray["Name"])
 	monsterArray["offset"] = calculateTierLevelOffset(monsterArray)
 	offset = monsterArray["offset"]
 	
@@ -536,11 +552,12 @@ function applyStaticMonsterOverrides(monsterID, easy_flag)
 	monsterArray["MoveSpeed"] = calculateMovespeed(monsterArray)
 
 	for k,v in pairs(monsterArray) do
-		if not (type(monsterArray[k]) == table)
+		if not (type(monsterArray[k]) == "table")
 		then
+			dmesg = dmesg .. '\n' .. k .. ": " .. v
 			Game.MonstersTxt[monsterID][k] = v
 		else
-			Game.MonstersTxt[monsterID][k] = traverseTable(v)
+			Game.MonstersTxt[monsterID][k] = traverseTable(monsterArray[k])
 		end
 	end
 end
@@ -611,9 +628,11 @@ function events.GameInitialized2()
 	for spellTxtId = 1, Game.SpellsTxt.high do
 		spellTxtIds[Game.SpellsTxt[spellTxtId].Name] = spellTxtId
 	end
+--	debug.Message("Direct Overrides")
 	for monsterID = 1, Game.MonstersTxt.high do
 		applyDirectMonsterOverrides(monsterID)
 	end
+--	debug.Message("Static Pass Overrides")
 	for monsterID = 1, Game.MonstersTxt.high do
 		applyStaticMonsterOverrides(monsterID, EASY_OVERRIDES)
 	end
@@ -623,7 +642,6 @@ function events.LoadMap()
 	if not (ADAPTIVE == "disabled")
 	then
 		adaptive_level = getAdaptiveMultiplier(ADAPTIVE)
-		
 		if (ADAPTIVE == "party") 
 		then 
 			if not (mapvars["adaptive"] == nil)
@@ -645,5 +663,6 @@ function events.LoadMap()
 				applyAdaptiveMonsterOverrides(monsterID, monsterArray, adaptive_level)
 			end
 		end
+--		 debug.Message("Adaptive Mode:  "..ADAPTIVE..", using Adaptive Level " .. adaptive_level)
 	end
 end
