@@ -432,35 +432,38 @@ function applyMonsterDamageMultipliers(monsterArray, damageMultiplier, rankMulti
 
 	for i=1,2 do
 		key = "Attack" .. i
-		resist = genericForm[key]["Type"]
 		dice = genericForm[key]["DamageDiceCount"]
-		sides = genericForm[key]["DamageDiceSides"]
-		bonus = genericForm[key]["DamageAdd"] 
-		if (resist == const.Damage.Energy)
+		if not (dice == 0)
 		then
-			if (easy_flag == true)
-			then -- if it's easy mode, we don't apply any multipliers to Energy attacks
-				sides = sides
-				bonus = bonus 
-			else -- if it's not easy mode, we apply multipliers and then divide by EnergyMod
-				sides = sides * damageMultiplier / EnergyMod
-				bonus = math.min(bonus * damageMultiplier / EnergyMod, 250)
+			resist = genericForm[key]["Type"]
+			sides = genericForm[key]["DamageDiceSides"]
+			bonus = genericForm[key]["DamageAdd"] 
+			if (resist == const.Damage.Energy)
+			then
+				if (easy_flag == true)
+				then -- if it's easy mode, we don't apply any multipliers to Energy attacks
+					sides = sides
+					bonus = bonus 
+				else -- if it's not easy mode, we apply multipliers and then divide by EnergyMod
+					sides = sides * damageMultiplier / EnergyMod
+					bonus = math.min(bonus * damageMultiplier / EnergyMod, 250)
+				end
+			else -- if it's not an energy attack, the usual math applies
+				sides = sides * damageMultiplier
+				bonus = math.min(bonus * damageMultiplier, 250)
 			end
-		else -- if it's not an energy attack, the usual math applies
-			sides = sides * damageMultiplier
-			bonus = math.min(bonus * damageMultiplier, 250)
+
+			-- if sides overflows, clamp sides to 250 and increase dice count 
+			if (sides > 250) then
+				fix = sides / 250
+				dice = dice * fix
+				sides = 250
+			end
+
+			monsterArray[key]["DamageDiceCount"] = dice	
+			monsterArray[key]["DamageDiceSides"] = sides
+			monsterArray[key]["DamageAdd"] = bonus
 		end
-		
-		-- if sides overflows, clamp sides to 250 and increase dice count 
-		if (sides > 250) then
-			fix = sides / 250
-			dice = dice * fix
-			sides = 250
-		end
-		
-		monsterArray[key]["DamageDiceCount"] = dice	
-		monsterArray[key]["DamageDiceSides"] = sides
-		monsterArray[key]["DamageAdd"] = bonus
 	end
 	
 	if not(genericForm["SpellChance"] == 0)
