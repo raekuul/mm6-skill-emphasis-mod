@@ -11,7 +11,7 @@ function regenAutoRepair(player, item)
 end
 
 function calculateMeditationSPRegen(rank, mastery, fullSP)
-	scaled = math.ceil(fullSP^0.5 * rank^2/800)
+	scaled = math.ceil(fullSP^0.5 * rank^2/400)
 	return math.floor(scaled)
 end
 
