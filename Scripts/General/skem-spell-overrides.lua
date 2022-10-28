@@ -67,7 +67,7 @@ end
 -- Spell Powers
 -- supersedes skill-mod.lua:374-637
 
-local protectionSpellExtraMultiplier = 1
+local protectionSpellExtraMultiplier = -1
 
 local spellResists =
 {
@@ -508,8 +508,8 @@ mem.asmpatch(0x00426912, "add     eax, 65", 3)
 
 -- First Aid
 mem.bytecodepatch(0x00427E46, "\005", 1)
-mem.bytecodepatch(0x00427E3C, "\010", 1)
-mem.bytecodepatch(0x00427E32, "\040", 1)
+mem.bytecodepatch(0x00427E3C, "\015", 1)
+mem.bytecodepatch(0x00427E32, "\250", 1)
 
 -- Cure Wounds
 mem.asmpatch(0x00427FA2, "lea     edx, [ecx+ecx+10]", 4)
