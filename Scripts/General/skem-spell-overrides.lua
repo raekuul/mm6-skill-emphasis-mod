@@ -67,7 +67,7 @@ end
 -- Spell Powers
 -- supersedes skill-mod.lua:374-637
 
-local protectionSpellExtraMultiplier = -1
+local protectionSpellExtraMultiplier = 0
 
 local spellResists =
 {
