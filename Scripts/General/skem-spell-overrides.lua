@@ -184,8 +184,8 @@ local spellDescs = {
 	["First Aid"] = {
 		["Description"] = "Cheaply heals a single character for a fixed amount.  Skill increases the recovery rate of this spell.",
 		["Normal"] = "Heals 5 HP",
-		["Expert"] = "Heals 10 HP",
-		["Master"] = "Heals 20 HP",
+		["Expert"] = "Heals 14 HP",
+		["Master"] = "Heals 250 HP",
 	},
 	["Cure Wounds"] = {
 		["Description"] = "Heals a single character.  Potency increases relative to the caster's skill in Body Magic.",
@@ -204,7 +204,8 @@ local spellCosts =
 	["Healing Touch"] = {["Normal"] = 3, ["Expert"] = 6, ["Master"] = 12},
 	["Cure Wounds"] = {["Normal"] = 5, ["Expert"] = 8, ["Master"] = 15},
 	["Shared Life"] = {["Normal"] = 10, ["Expert"] = 10, ["Master"] = 12},
-	
+	["First Aid"] = {["Master"] = 100},
+		
 	-- damage spells
 	["Fireball"] = {["Master"] = 16},
 	["Ice Bolt"] = {["Master"] = 11},
@@ -212,6 +213,15 @@ local spellCosts =
 	["Deadly Swarm"] = {["Master"] = 6},
 	["Mind Blast"] = {["Master"] = 1},
 	["Lightning Bolt"] = {["Master"] = 14},
+	["Moon Ray"] = {["Master"] = 55},
+	["Dark Containment"] = {["Master"] = 100},
+	
+	--debuff spells
+	["Slow"] = {["Master"] = 5},
+	["Paralyze"] = {["Master"] = 25},
+	["Mass Curse"] = {["Master"] = 20},
+	["Shrinking Ray"] = {["Master"] = 16},
+
 	
 }
 
