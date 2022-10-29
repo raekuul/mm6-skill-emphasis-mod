@@ -215,6 +215,20 @@ local monsterInfos =
 	[42] = {["PhysResistance"] = 20,},
 }
 
+-- mergeTables function, from https://stackoverflow.com/a/29133654
+function mergeTables(a, b)
+    if (type(a) == 'table' and type(b) == 'table') then
+        for k,v in pairs(b) do 
+		if (type(v)=='table' and type(a[k] or false)=='table') then 
+			mergeTables(a[k],v) 
+		else 
+			a[k]=v 
+		end 
+	end
+    end
+    return a
+end
+
 function traverseTable(input)
 	if not (type(input) == "table")
 	then
@@ -496,22 +510,7 @@ function applyDirectMonsterOverrides(i)
 	then
 	--	debug.Message("Direct Overrides for " .. Game.MonstersTxt[i]["Name"])
 		monsterInfos[i]["Spell"] = spellTxtIds[monsterInfos[i]["Spell"]]
-		for k,v in pairs(monsterInfos[i]) do
-			if not (type(Game.MonstersTxt[i][k]) == "table")
-			then
-				Game.MonstersTxt[i][k] = v
-				-- debug.Message(k .. ": " .. v)
-			elseif ((k == "Attack1") or (k == "Attack2")) 
-			then
-				-- debug.Message("Attack Data")
-				for l,w in pairs(monsterInfos[i][k]) do
-				--	debug.Message(l .. " = " .. w)
-					Game.MonstersTxt[i][k][l] = w
-				end
-			else
-				Game.MonstersTxt[i][k] = traverseTable(monsterInfos[k])
-			end
-		end
+		Game.MonstersTxt[i] = mergeTables(Game.MonstersTxt[i],monsterInfos[i])
 	end	
 end
 
