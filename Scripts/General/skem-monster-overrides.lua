@@ -114,13 +114,15 @@ local monsterInfos =
 	--devil Worker
 	[29] = {["FullHP"] = 480,["Level"] = 60,["ArmorClass"]=60,["Experience"]= 4800, ["Attack1"] = {["Type"] = const.Damage.Phys, ["DamageDiceCount"] = 5, ["DamageDiceSides"] = 6, ["DamageAdd"] = 20,},["Attack2"] = {["Type"] = const.Damage.Fire, ["DamageDiceCount"] = 3, ["DamageDiceSides"] = 26, ["DamageAdd"] = 10, ["Missile"] = missiles["Elec"], },["SpellChance"] = 20, ["SpellName"] = "Fire Bolt", ["SpellSkill"] = JoinSkill(13, const.Master),},
 	--devil Warrior
-	[30] = {["FullHP"] = 600,["Level"] = 70,["ArmorClass"]=80,["Experience"]= 6500, ["Attack1"] = {["Type"] = const.Damage.Phys, ["DamageDiceCount"] = 5, ["DamageDiceSides"] = 6, ["DamageAdd"] = 30,},["Attack2"] = {["Type"] = const.Damage.Fire, ["DamageDiceCount"] = 3, ["DamageDiceSides"] = 26, ["DamageAdd"] = 14, ["Missile"] = missiles["Elec"], },["SpellChance"] = 20, ["SpellName"] = "Fireball", ["SpellSkill"] = JoinSkill(6, const.Master),},
+	[30] = {["FullHP"] = 600,["Level"] = 70,["ArmorClass"]=80,["Experience"]= 6500, ["Attack1"] = {["Type"] = const.Damage.Phys, ["DamageDiceCount"] = 5, ["DamageDiceSides"] = 6, ["DamageAdd"] = 30,},["Attack2"] = {["Type"] = const.Damage.Fire, ["DamageDiceCount"] = 3, ["DamageDiceSides"] = 26, ["DamageAdd"] = 14, ["Missile"] = missiles["Elec"], },["SpellChance"] = 20, ["SpellName"] = "Fireball", ["SpellSkill"] = JoinSkill(6, const.Master),["Bonus"] = 0, ["BonusMul"] = 0},
 	--devil captain
 	[25] = {["FullHP"] = 750,["Level"] = 80,["ArmorClass"]=80, ["Attack1"] = {["Type"] = const.Damage.Phys, ["DamageDiceCount"] = 16, ["DamageDiceSides"] = 6, ["DamageAdd"] = 20,},},
 	--Devil Master
 	[26] = {["FullHP"] = 950,["Level"] = 90,["ArmorClass"]=90, ["Attack1"] = {["Type"] = const.Damage.Phys, ["DamageDiceCount"] = 17, ["DamageDiceSides"] = 8, ["DamageAdd"] = 20,},["SpellChance"] = 20, ["SpellName"] = "Meteor Shower", ["SpellSkill"] = JoinSkill(3, const.Master),},	
 	--Devil King
-	[27] = { ["FullHP"] = 1150,["Level"] = 100,["ArmorClass"]=100, ["Attack1"] = {["Type"] = const.Damage.Phys, ["DamageDiceCount"] = 20, ["DamageDiceSides"] = 9, ["DamageAdd"] = 20,},},
+	[27] = { ["FullHP"] = 1150,["Level"] = 100,["ArmorClass"]=100, ["Attack1"] = {["Type"] = const.Damage.Phys, ["DamageDiceCount"] = 20, ["DamageDiceSides"] = 9, ["DamageAdd"] = 20,},["Bonus"] = 0, ["BonusMul"] = 0},
+	--Grand druid
+	[45] = {["Bonus"] = 0, ["BonusMul"] = 0},
 	--Defender of VARN
 	[88] = {["SpellChance"] = 20, ["Spell"] = "Psychic Shock", ["SpellSkill"] = JoinSkill(4, const.Master), },
 	--Sentinel of VARN
