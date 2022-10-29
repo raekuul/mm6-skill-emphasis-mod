@@ -436,6 +436,16 @@ end
 
 function applyMonsterDamageMultipliers(monsterArray, damageMultiplier, rankMultiplier, easy_flag)
 	genericForm = Game.MonstersTxt[monsterArray["Id"]]
+	dampener = 1
+
+	if (monsterArray.Level > 60)
+	then
+		local levelmod = monsterArray.Level - 60
+		if levelmod > 50 then
+			levelmod = 50
+		end
+		dampener = 1 - (levelmod / 100)
+	end
 
 	for i=1,2 do
 		key = "Attack" .. i
@@ -455,17 +465,21 @@ function applyMonsterDamageMultipliers(monsterArray, damageMultiplier, rankMulti
 					sides = sides * damageMultiplier / EnergyMod
 					bonus = math.min(bonus * damageMultiplier / EnergyMod, 250)
 				end
-			else -- if it's not an energy attack, the usual math applies
+			elseif (resist == const.Damage.Phys) 	
+			then
+				sides = sides * damageMultiplier * dampener
+				bonus = math.min(bonus * damageMultiplier * dampener, 250)
+			else
 				sides = sides * damageMultiplier
 				bonus = math.min(bonus * damageMultiplier, 250)
 			end
-			dmesg = dmesg .. "\n" .. monsterArray.Name .. ", Attack " .. i .. ": ".. genericForm[key]["DamageDiceCount"].."d"..genericForm[key]["DamageDiceSides"].."+"..genericForm[key]["DamageAdd"].." -> "..dice.."d"..sides.."+"..bonus
+			dmesg = monsterArray.Name .. ", Attack " .. i .. ": ".. genericForm[key]["DamageDiceCount"].."d"..genericForm[key]["DamageDiceSides"].."+"..genericForm[key]["DamageAdd"].." -> "..dice.."d"..sides.."+"..bonus
 			-- if sides overflows, clamp sides to 250 and increase dice count 
 			if (sides > 250) then
 				fix = sides / 250
 				dice = dice * fix
 				sides = 250
-				dmesg = ", fixed to " .. dice .. "d" .. sides .. "+" .. bonus
+				dmesg = dmesg .. ", fixed to " .. dice .. "d" .. sides .. "+" .. bonus
 			end
 
 			monsterArray[key]["DamageDiceCount"] = dice	
