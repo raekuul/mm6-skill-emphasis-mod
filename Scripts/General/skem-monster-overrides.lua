@@ -229,21 +229,6 @@ function mergeTables(a, b)
     return a
 end
 
-function traverseTable(input)
-	if not (type(input) == "table")
-	then
-		debug.Message("Traverse Table returned " .. input)
-		return input
-	else
-		output = { }
-		for key, value in pairs(input) do
-			debug.Message("Traversing table " .. key)
-			output[key] = traverseTable(input[key])
-		end
-		return output
-	end
-end
-
 function calculateTierLevelOffset(monsterArray)
 	id = monsterArray["Id"]
 	name = monsterArray["Name"]
@@ -552,15 +537,7 @@ function applyStaticMonsterOverrides(monsterID, easy_flag)
 	-- always end with movespeed adjustments, since they depend on other adjustments
 	monsterArray["MoveSpeed"] = calculateMovespeed(monsterArray)
 
-	for k,v in pairs(monsterArray) do
-		if not (type(monsterArray[k]) == "table")
-		then
-			dmesg = dmesg .. '\n' .. k .. ": " .. v
-			Game.MonstersTxt[monsterID][k] = v
-		else
-			Game.MonstersTxt[monsterID][k] = traverseTable(monsterArray[k])
-		end
-	end
+	Game.MonstersTxt[monsterID] = mergeTables(Game.MonstersTxt[monsterID], monsterArray)
 end
 
 function applyAdaptiveMonsterOverrides(monsterID, monsterArray, adaptive_level)
@@ -599,15 +576,8 @@ function applyAdaptiveMonsterOverrides(monsterID, monsterArray, adaptive_level)
 			end
 		end
 	end
-
-	for k,v in pairs(monsterArray) do
-		if not (type(monsterArray[k]) == table)
-		then
-			Map.Monsters[monsterID][k] = v
-		else
-			Map.Monsters[monsterID][k] = traverseTable(v)
-		end
-	end
+	
+	Map.Monsters[monsterID] = mergeTables(Map.Monsters[monsterID],monsterArray)
 end
 
 mem.asmpatch(0x431A7D, [[
