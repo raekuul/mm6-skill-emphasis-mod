@@ -1966,13 +1966,21 @@ mem.autohook2(0x00415A0B, adjustSkillPointsForSkillHighlight, 0x7)
 --]]
 
 -- modified Body Building calculation
-mem.autohook(0x482089, function(d)
-	local i, pl = GetPlayer(d.esi)
-	local amount = d.eax
-	local s, m = SplitSkill(pl.Skills[const.Skills.Bodybuilding])
-	if s == 0 then return end
-	d.eax = amount + math.round(amount * 0.01 * s)
-end)
+-- max HP is increased by skill%
+local function BBHook(amountReg)
+	return function(d)
+		local i, pl = GetPlayer(d.esi)
+		local amount = d[amountReg]
+		local s, m = SplitSkill(pl.Skills[const.Skills.Bodybuilding])
+		if s == 0 then return end
+		d[amountReg] = amount + math.round(amount * 0.01 * s)
+	end
+end
+
+-- GetFullHP()
+mem.autohook(0x482089, BBHook("eax"))
+-- AddHP()
+mem.autohook(0x47FD71, BBHook("edi"))
 
 -- allow to hold sword in left hand at novice rank
 mem.asmpatch(0x0045A4AB, "test   BYTE [ebp+0x61],0xFF", 0x4)
