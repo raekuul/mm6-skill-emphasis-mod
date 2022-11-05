@@ -1598,7 +1598,7 @@ function events.GameInitialized2()
 	end
 	
 	----------------------------------------------------------------------------------------------------
-	-- skill descriptions
+	--[[ skill descriptions
 	----------------------------------------------------------------------------------------------------
 	
 	Game.SkillDescriptions[const.Skills.Bow] = Game.SkillDescriptions[const.Skills.Bow] ..
@@ -1794,7 +1794,7 @@ formatSkillRankNumber(Game.SkillRecoveryTimes[const.Skills.Shield + 1] * (rank =
 				learningSkillMultiplierByMastery[rank]
 			)
 	end
-
+]]
 	----------------------------------------------------------------------------------------------------
 	-- spell descriptions - externalized to spell-overrides as of 0.8.3
 	
