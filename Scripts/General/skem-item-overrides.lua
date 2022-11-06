@@ -329,7 +329,7 @@ function randomizerOverrides(itemID)
 end
 
 function traverseTable(input)
-	if not (type(input) == table)
+	if not (type(input) == "table")
 	then
 		return input
 	else
@@ -350,7 +350,7 @@ function itemOverrides(flag)
 		if not (items[itemID] == nil)
 		then
 			for k,v in pairs(items[itemID]) do
-				if not (type(Game.ItemsTxt[itemID][k]) == table)
+				if not (type(Game.ItemsTxt[itemID][k]) == "table")
 				then
 					Game.ItemsTxt[itemID][k] = v
 				else

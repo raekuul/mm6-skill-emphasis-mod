@@ -2725,3 +2725,89 @@ end
 mem.hookcall(0x00431D4F, 1, 1, modifiedMonsterCalculateDamage)
 mem.hookcall(0x00431EE3, 1, 1, modifiedMonsterCalculateDamage)
 ]]
+
+-- dagger critical chance hooks
+local DaggerCritsIgnoreElementalBonuses = false
+-- crit messages
+-- variables need to be global (in table to not pollute namespace) for mem.topointer to always work correctly
+CritStrings = {attack = "%s critically hits %s for %lu damage!", kill = "%s critically inflicts %lu points killing %s!"}
+-- disable old crits
+-- mainhand
+mem.asmpatch(0x47E4F8, "jmp short " .. (0x47E526 - 0x47E4F8))
+-- offhand
+mem.asmpatch(0x47E61C, "jmp short " .. (0x47E652 - 0x47E61C))
+
+-- new crit hook
+local NewCode = mem.asmpatch(0x47E7FA, [[
+	nop
+	nop
+	nop
+	nop
+	nop
+	cmp eax,1
+	pop ebx
+	jge @skip
+	mov eax,1
+	@skip:
+]], 0xB)
+
+local crit, mul
+mem.hook(NewCode, function(d)
+	-- when not using hookjmp() (for example in plain hook()), esp points to return address,
+	-- not to position before return address (the one esp pointed to before hook proc call)
+	local i, pl = GetPlayer(mem.u4[d.esp + 4])
+	local s, m = SplitSkill(pl.Skills[const.Skills.Dagger])
+	crit = false -- just in case
+	if s == 0 or m < const.Expert then return end
+	-- returns item struct, not item index
+	local main, off = pl:GetActiveItem(const.ItemSlot.MainHand, false), pl:GetActiveItem(const.ItemSlot.ExtraHand, false)
+	-- damage multiplier
+	mul = 1 + (main and main:T().Skill == const.Skills.Dagger and 1 or 0) + (off and off:T().Skill == const.Skills.Dagger and 1 or 0)
+	if mul > 1 then
+		-- (10 + skill * 1) / 200 is equal to 5% + 0.5% per skill
+		local chance = 10 + s
+		if math.random(1, 200) <= chance then
+			d.eax = d.eax * mul
+			crit = true
+		end
+	end
+end)
+
+-- elemental spcbonus damage is buried in mm6patch dll
+if not DaggerCritsIgnoreElementalBonuses and mem.dll.kernel32.GetPrivateProfileIntA("Settings", "DaggerCritsIgnoreElementalBonuses", 0, ".\\mm6.ini") ~= 1 then
+	local errorMsg = "%s and dagger crit mechanic change will no longer work correctly. " ..
+	string.format("To disable problematic part, edit this file, that is %q, and change line %q to %q, or ",
+		debug.getinfo(1, "S").short_src, "DaggerCritsIgnoreElementalBonuses = false", "local DaggerCritsIgnoreElementalBonuses = true"
+	) .. string.format("edit file %q in main game directory, and add line %q in [Settings] section, " ..
+	"or if the option already exists, modify it", "mm6.ini", "DaggerCritsIgnoreElementalBonuses=1"
+	) .. ". Elemental damage won't be multiplied by crits anymore."
+	local patchAddr = mem.dll.mm6patch and mem.dll.mm6patch["?ptr"]
+	if not patchAddr or patchAddr == 0 then
+		error(string.format(errorMsg, "Couldn't get MM6Patch.dll address"))
+	end
+	-- failsafe in case of patch update changing instructions/addresses
+	if mem.GetInstructionSize(patchAddr + 0x34444) ~= 5 or mem.GetInstructionSize(patchAddr + 0x34449) ~= 2 then
+		error(string.format(errorMsg, "MM6Patch.dll code changed"))
+	end
+	local maxMonHP = bit.lshift(1, 15) - 1;
+	mem.autohook2(patchAddr + 0x34444, function(d)
+		if crit then
+			d.ax = math.min(maxMonHP, d.ax * mul)
+		end
+	end, 0x7)
+end
+
+mem.autohook2(0x431276, function(d)
+	if crit then
+		d.eax = mem.topointer(CritStrings.kill)
+		crit = false
+		mul = 1
+	end
+end)
+mem.autohook2(0x431339, function(d)
+	if crit then
+		d.eax = mem.topointer(CritStrings.attack)
+		crit = false
+		mul = 1
+	end
+end)
