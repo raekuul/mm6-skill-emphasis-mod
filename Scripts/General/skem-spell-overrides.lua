@@ -215,6 +215,8 @@ local spellCosts =
 	["Lightning Bolt"] = {["Master"] = 14},
 	["Moon Ray"] = {["Master"] = 55},
 	["Dark Containment"] = {["Master"] = 100},
+	["Poison Spray"] = {["Master"] = 13},
+	["Sparks"] = {["Master"] = 13},
 	
 	--debuff spells
 	["Slow"] = {["Master"] = 5},
@@ -295,7 +297,7 @@ local spellPowers =
 	{
 		[const.Novice] = {fixedMin = 3, fixedMax = 3, variableMin = 1, variableMax = 2, },
 		[const.Expert] = {fixedMin = 3, fixedMax = 3, variableMin = 1, variableMax = 2, },
-		[const.Master] = {fixedMin = 3, fixedMax = 3, variableMin = 1, variableMax = 2, },
+		[const.Master] = {fixedMin = 1, fixedMax = 1, variableMin = 1, variableMax = 3, },
 	},
 	-- Lightning Bolt
 	[18] =
@@ -323,7 +325,7 @@ local spellPowers =
 	{
 		[const.Novice] = {fixedMin = 4, fixedMax = 4, variableMin = 1, variableMax = 2, },
 		[const.Expert] = {fixedMin = 4, fixedMax = 4, variableMin = 1, variableMax = 2, },
-		[const.Master] = {fixedMin = 4, fixedMax = 4, variableMin = 1, variableMax = 2, },
+		[const.Master] = {fixedMin = 5, fixedMax = 4, variableMin = 1, variableMax = 4, },
 	},
 	-- Ice Bolt
 	[28] =
