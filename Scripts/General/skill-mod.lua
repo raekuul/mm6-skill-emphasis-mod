@@ -198,7 +198,7 @@ local newWeaponSkillAttackBonuses =
 {
 	[const.Skills.Staff]	= {1, 2, 2, },
 	[const.Skills.Sword]	= {1, 2, 2, },
-	[const.Skills.Dagger]	= {1, 2, 2, },
+	[const.Skills.Dagger]	= {1, 1, 1, },
 	[const.Skills.Axe]		= {1, 2, 2, },
 	[const.Skills.Spear]	= {1, 2, 3, },
 	[const.Skills.Bow]		= {1, 2, 3, },
@@ -223,7 +223,7 @@ local newWeaponSkillRecoveryBonuses =
 {
 	[const.Skills.Staff]	= {0, 0, 0, },
 	[const.Skills.Sword]	= {0, 3, 3, },
-	[const.Skills.Dagger]	= {0, 0, 0, },
+	[const.Skills.Dagger]	= {0, 0, 1, },
 	[const.Skills.Axe]		= {0, 3, 3, },
 	[const.Skills.Spear]	= {0, 0, 0, },
 	[const.Skills.Bow]		= {6, 6, 6, },
@@ -335,7 +335,7 @@ local learningSkillExtraMultiplier = 2
 local learningSkillMultiplierByMastery = {[const.Novice] = 1 + learningSkillExtraMultiplier, [const.Expert] = 2 + learningSkillExtraMultiplier, [const.Master] = 3 + learningSkillExtraMultiplier, }
 
 -- special modifiers
-local daggerCrowdDamageMultiplier = 0.25
+local daggerCrowdDamageMultiplier = 0
 
 -- special weapon skill chances
 local staffEffect = {["base"] = 10, ["multiplier"] = 2, ["duration"] = 5, }
@@ -2764,9 +2764,9 @@ mem.hook(NewCode, function(d)
 	-- damage multiplier
 	mul = 1 + (main and main:T().Skill == const.Skills.Dagger and 1 or 0) + (off and off:T().Skill == const.Skills.Dagger and 1 or 0)
 	if mul > 1 then
-		-- (10 + skill * 1) / 200 is equal to 5% + 0.5% per skill
-		local chance = 10 + s
-		if math.random(1, 200) <= chance then
+		-- (5 + skill * 1) / 100 is equal to 5% + 0.5% per skill
+		local chance = 5 + s
+		if math.random(1, 100) <= chance then
 			d.eax = d.eax * mul
 			crit = true
 		end
