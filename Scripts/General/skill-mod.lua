@@ -301,7 +301,7 @@ local newWeaponSkillResistanceBonuses =
 
 local newArmorSkillACBonuses =
 {
-	[const.Skills.Shield]	= {3, 3, 3, },
+	[const.Skills.Shield]	= {1, 2, 3, },
 	[const.Skills.Leather]	= {3, 3, 3, },
 	[const.Skills.Chain]	= {3, 3, 3, },
 	[const.Skills.Plate]	= {3, 3, 3, },
