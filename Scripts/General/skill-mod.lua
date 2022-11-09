@@ -1981,6 +1981,10 @@ end
 mem.autohook(0x482089, BBHook("eax"))
 -- AddHP()
 mem.autohook(0x47FD71, BBHook("edi"))
+-- Rest()
+mem.autohook(0x484FF3, BBHook("edi"))
+-- HP regeneration
+mem.autohook(0x487F05, BBHook("edi"))
 
 -- allow to hold sword in left hand at novice rank
 mem.asmpatch(0x0045A4AB, "test   BYTE [ebp+0x61],0xFF", 0x4)
@@ -2777,7 +2781,7 @@ end)
 if not DaggerCritsIgnoreElementalBonuses and mem.dll.kernel32.GetPrivateProfileIntA("Settings", "DaggerCritsIgnoreElementalBonuses", 0, ".\\mm6.ini") ~= 1 then
 	local errorMsg = "%s and dagger crit mechanic change will no longer work correctly. " ..
 	string.format("To disable problematic part, edit this file, that is %q, and change line %q to %q, or ",
-		debug.getinfo(1, "S").short_src, "DaggerCritsIgnoreElementalBonuses = false", "local DaggerCritsIgnoreElementalBonuses = true"
+		debug.getinfo(1, "S").short_src, "local DaggerCritsIgnoreElementalBonuses = false", "local DaggerCritsIgnoreElementalBonuses = true"
 	) .. string.format("edit file %q in main game directory, and add line %q in [Settings] section, " ..
 	"or if the option already exists, modify it", "mm6.ini", "DaggerCritsIgnoreElementalBonuses=1"
 	) .. ". Elemental damage won't be multiplied by crits anymore."
