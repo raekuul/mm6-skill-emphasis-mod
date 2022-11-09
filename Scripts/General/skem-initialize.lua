@@ -13,7 +13,7 @@ local PRESETS = {
 	["EasierMonsters"] = false,
 	["MoreLinkedSkills"] = false,
 	["ShowDiceInSpellDescription"] = false,
-	["MonsterExperienceMultiplier"] = 1.09,
+	["MonsterExperienceMultiplier"] = 1.00,
 	["GlobalMapResetDays"] = "default",
 }
 
