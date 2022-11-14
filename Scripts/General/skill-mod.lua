@@ -226,7 +226,7 @@ local newWeaponSkillRecoveryBonuses =
 	[const.Skills.Dagger]	= {0, 0, 1, },
 	[const.Skills.Axe]		= {0, 2, 2, },
 	[const.Skills.Spear]	= {0, 0, 0, },
-	[const.Skills.Bow]		= {6, 6, 6, },
+	[const.Skills.Bow]		= {0, 0, 0, },
 	[const.Skills.Mace]		= {0, 0, 0, },
 	[const.Skills.Blaster]	= {0, 0, 0, },
 }
@@ -362,15 +362,18 @@ local classRangedWeaponSkillAttackBonusMultiplier =
 }
 local classRangedWeaponSkillSpeedBonusMultiplier =
 {
-	[const.Class.Archer] = 2,
-	[const.Class.BattleMage] = 2,
-	[const.Class.WarriorMage] = 2,
+	[const.Class.Archer] = 0,
+	[const.Class.BattleMage] = 0,
+	[const.Class.WarriorMage] = 1,
 }
 local classRangedWeaponSkillDamageBonus =
 {
-	[const.Class.Archer] = 1,
+	[const.Class.Archer] = 0,
 	[const.Class.BattleMage] = 1,
 	[const.Class.WarriorMage] = 1,
+	[const.Class.Knight] = 0,
+	[const.Class.Cavalier] = 0,
+	[const.Class.Champion] = 1,
 }
 
 -- plate cover chances by rank
