@@ -252,7 +252,7 @@ local newWeaponSkillDamageBonuses =
 	[const.Skills.Dagger]	= {0, 0, 0, },
 	[const.Skills.Axe]		= {0, 1, 2, },
 	[const.Skills.Spear]	= {0, 1, 2, },
-	[const.Skills.Bow]		= {1, 2, 2, },
+	[const.Skills.Bow]		= {1, 2, 4, },
 	[const.Skills.Mace]		= {0, 1, 2, },
 	[const.Skills.Blaster]	= {0, 0, 0, },
 	
