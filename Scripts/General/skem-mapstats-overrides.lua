@@ -136,6 +136,7 @@ end
 -- Monster Substitutions stuff
 
 localSubstitutions = {  
+	[MapIDs["Silver Helm Outpost"]] = { Monster1Pic = "Thief", Monster3Pic = "PeasantF3" },
 	[MapIDs["Frozen Highlands"]] = { Monster2Pic = "Archer", Monster3Pic = "Ogre" },
 	[MapIDs["Temple of Baa"]] = { Monster1Pic = "Monk" },
 	[MapIDs["Free Haven Sewer"]] = { Monster2Pic = "Monk" },
