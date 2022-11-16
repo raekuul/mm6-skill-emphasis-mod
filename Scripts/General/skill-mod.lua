@@ -18,7 +18,7 @@ meditation-sp-regen.lua
 ----------------------------------------------------------------------------------------------------
 
 local blastersUseClassMultipliers = true
-local shieldDoubleSkillEffectForKnights = true
+local shieldDoubleSkillEffectForKnights = false
 local knightClasses = {const.Class.Knight, const.Class.Cavalier, const.Class.Champion}
 
 local newMMExt
