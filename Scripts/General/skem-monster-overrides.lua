@@ -188,6 +188,10 @@ local monsterInfos =
 	[ 74] = {["SpellChance"] = 20, ["Spell"] = "Psychic Shock", ["SpellSkill"] = JoinSkill(2, const.Novice), },
 	-- Specter
 	[ 75] = {["SpellChance"] = 30, ["Spell"] = "Psychic Shock", ["SpellSkill"] = JoinSkill(4, const.Novice), },
+	--Initiate Monk
+	[110] = {["FullHP"] = 50,["Level"] =12,["Experience"]= 264,["Attack1"] = {["Type"] = const.Damage.Elec, ["DamageDiceCount"] = 2, ["DamageDiceSides"] = 4, ["DamageAdd"] = 4, ["Missile"] = missiles["Elec"], }, ["SpellChance"] = 20, ["SpellName"] = "Lightning Bolt", ["SpellSkill"] = JoinSkill(2, const.Novice), },
+	--Master Monk
+	[111] = {["FullHP"] = 73,["Level"] =16,["Experience"]= 416,["ArmorClass"]=22,["Attack1"] = {["Type"] = const.Damage.Cold, ["DamageDiceCount"] = 2, ["DamageDiceSides"] = 4, ["DamageAdd"] = 8, ["Missile"] = missiles["Cold"], }, ["SpellChance"] = 20, ["SpellName"] = "Ice Bolt", ["SpellSkill"] = JoinSkill(4, const.Novice), ["MagicResistance"] = 30,},	
 	-- steal crash workaround	
 	-- Cutpurse
 	[127] = {["Bonus"] = 0, ["BonusMul"] = 0},
