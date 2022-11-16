@@ -370,10 +370,10 @@ local classRangedWeaponSkillDamageBonus =
 {
 	[const.Class.Archer] = 0,
 	[const.Class.BattleMage] = 1,
-	[const.Class.WarriorMage] = 1,
+	[const.Class.WarriorMage] = 2,
 	[const.Class.Knight] = 0,
 	[const.Class.Cavalier] = 0,
-	[const.Class.Champion] = 1,
+	[const.Class.Champion] = 2,
 }
 
 -- plate cover chances by rank
@@ -2818,3 +2818,14 @@ mem.autohook2(0x431339, function(d)
 		mul = 1
 	end
 end)
+
+--Bow Calculation
+function events.ModifyItemDamage(t)
+local s, m = SplitSkill(t.Player.Skills[const.Skills.Bow])
+	if t.Item:T().EquipStat == const.ItemType.Missile - 1 then
+		t.Result = t.Result + s * (m <= const.Expert and m or 2)
+		if classRangedWeaponSkillDamageBonus[t.Player.Class] ~= nil then
+				t.Result = t.Result + (classRangedWeaponSkillDamageBonus[t.Player.Class] * s)
+			end
+	end
+end
