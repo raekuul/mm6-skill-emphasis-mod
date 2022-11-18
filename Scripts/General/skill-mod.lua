@@ -1848,8 +1848,8 @@ formatSkillRankNumber(Game.SkillRecoveryTimes[const.Skills.Shield + 1] * (rank =
 	setProfessionCost(const.NPCProfession.Apprentice, 1500)
 	setProfessionCost(const.NPCProfession.Instructor, 1500)
 	setProfessionCost(const.NPCProfession.Teacher, 800)
-	setProfessionCost(const.NPCProfession.SpellMaster, 2500)
-	setProfessionCost(const.NPCProfession.Mystic, 4000)
+	setProfessionCost(const.NPCProfession.SpellMaster, 4000)
+	setProfessionCost(const.NPCProfession.Mystic, 2500)
 	
 	----------------------------------------------------------------------------------------------------
 	-- class starting skills
