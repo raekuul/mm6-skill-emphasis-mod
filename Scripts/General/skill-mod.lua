@@ -1584,7 +1584,7 @@ function events.GameInitialized2()
 	----------------------------------------------------------------------------------------------------
 	
 	-- melee damage bonus
-
+	--[[
 	for classIndex, value in pairs(classMeleeWeaponSkillDamageBonus) do
 	
 		Game.ClassDescriptions[classIndex] = Game.ClassDescriptions[classIndex] ..
@@ -1599,7 +1599,7 @@ function events.GameInitialized2()
 			)
 			
 	end
-	
+	]]
 	----------------------------------------------------------------------------------------------------
 	--[[ skill descriptions
 	----------------------------------------------------------------------------------------------------
