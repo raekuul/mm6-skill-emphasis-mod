@@ -1266,7 +1266,7 @@ function events.CalcStatBonusBySkills(t)
 				-- add new bonus for extra weapon if any
 				
 				if extra.weapon then
-					t.Result = t.Result + math.round(newWeaponSkillDamageBonuses[extra.skill][extra.rank] * extraEffectiveSkillLevel)
+					t.Result = t.Result + math.round((newWeaponSkillDamageBonuses[extra.skill][extra.rank]+(classMeleeWeaponSkillDamageBonus[t.Player.Class])) * (extraEffectiveSkillLevel))
 				end
 				
 				-- add class bonus for main hand weapon
