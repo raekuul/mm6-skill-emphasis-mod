@@ -224,7 +224,7 @@ local newWeaponSkillRecoveryBonuses =
 	[const.Skills.Staff]	= {0, 0, 0, },
 	[const.Skills.Sword]	= {0, 2, 2, },
 	[const.Skills.Dagger]	= {0, 0, 1, },
-	[const.Skills.Axe]		= {0, 3, 3, },
+	[const.Skills.Axe]		= {0, 2, 2, },
 	[const.Skills.Spear]	= {0, 0, 0, },
 	[const.Skills.Bow]		= {0, 0, 0, },
 	[const.Skills.Mace]		= {0, 0, 0, },
@@ -2775,7 +2775,7 @@ mem.hook(NewCode, function(d)
 	-- returns item struct, not item index
 	local main, off = pl:GetActiveItem(const.ItemSlot.MainHand, false), pl:GetActiveItem(const.ItemSlot.ExtraHand, false)
 	-- damage multiplier
-	mul = 0.75 * (main and main:T().Skill == const.Skills.Dagger and 2 or 1) * (off and off:T().Skill == const.Skills.Dagger and 2 or 1)
+	mul = 0.3 + (main and main:T().Skill == const.Skills.Dagger and 1.1 or 0) + (off and off:T().Skill == const.Skills.Dagger and 1.1 or 0)
 	if mul > 1 then
 		-- (5 + skill * 1) / 100 is equal to 5% + 0.5% per skill
 		local chance = 5 + s
