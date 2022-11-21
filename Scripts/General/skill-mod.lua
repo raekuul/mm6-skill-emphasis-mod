@@ -1879,6 +1879,7 @@ formatSkillRankNumber(Game.SkillRecoveryTimes[const.Skills.Shield + 1] * (rank =
 	Game.ClassKinds.StartingSkills[3][const.Skills.Chain] = 1
 	Game.ClassKinds.StartingSkills[3][const.Skills.Diplomacy] = 3
 	Game.ClassKinds.StartingSkills[3][const.Skills.Light] = 3
+	Game.ClassKinds.StartingSkills[3][const.Skills.Dagger] = 0
 	-- archer
 	Game.ClassKinds.StartingSkills[4][const.Skills.Spear] = 2
 	Game.ClassKinds.StartingSkills[4][const.Skills.Leather] = 1
