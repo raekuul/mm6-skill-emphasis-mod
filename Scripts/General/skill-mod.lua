@@ -1262,7 +1262,7 @@ function events.CalcStatBonusBySkills(t)
 				-- add new bonus for main weapon
 				-- halving the class bonus if main hand sword, removing if dagger
 				if main.skill == const.Skills.Sword then
-				t.Result = t.Result + (newWeaponSkillDamageBonuses[main.skill][main.rank] * mainEffectiveSkillLevel)-((classMeleeWeaponSkillDamageBonus[t.Player.Class])*mainEffectiveSkillLevel/2)
+				t.Result = t.Result + (newWeaponSkillDamageBonuses[main.skill][main.rank] * mainEffectiveSkillLevel)-((classMeleeWeaponSkillDamageBonus[t.Player.Class])*mainEffectiveSkillLevel)
 					elseif main.skill == const.Skills.Dagger then
 					t.Result = t.Result + (newWeaponSkillDamageBonuses[main.skill][main.rank] * mainEffectiveSkillLevel)-((classMeleeWeaponSkillDamageBonus[t.Player.Class])*mainEffectiveSkillLevel)
 						else
