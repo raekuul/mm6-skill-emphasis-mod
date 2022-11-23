@@ -337,6 +337,14 @@ local learningSkillMultiplierByMastery = {[const.Novice] = 1 + learningSkillExtr
 -- special modifiers
 local daggerCrowdDamageMultiplier = 0
 
+local daggerClassCriticalMultipliers = {
+	[const.Class.Archer] = {1, 1.75, 3},
+	[const.Class.BattleMage] = {1, 1.75, 3},
+	[const.Class.WarriorMage] = {1, 1.75, 3},
+}
+
+local daggerDefaultCriticalMultipliers = {1, 1.4, 2.5}
+
 -- special weapon skill chances
 local staffEffect = {["base"] = 10, ["multiplier"] = 2, ["duration"] = 5, }
 local maceEffect = {["base"] = 5, ["multiplier"] = 0.25, ["duration"] = 5, }
@@ -2776,11 +2784,13 @@ mem.hook(NewCode, function(d)
 	-- returns item struct, not item index
 	local main, off = pl:GetActiveItem(const.ItemSlot.MainHand, false), pl:GetActiveItem(const.ItemSlot.ExtraHand, false)
 	-- damage multiplier
-	mul = 0.3 + (main and main:T().Skill == const.Skills.Dagger and 1.1 or 0) + (off and off:T().Skill == const.Skills.Dagger and 1.1 or 0)
-	if mul > 1 then
-		-- (5 + skill * 1) / 100 is equal to 5% + 0.5% per skill
+	local daggerAmount = (main and main:T().Skill == const.Skills.Dagger and 1 or 0) + (off and off:T().Skill == const.Skills.Dagger and 1 or 0)
+	if daggerAmount > 0 then
+		-- (5 + skill * 1) / 100 is equal to 5% + 1% per skill
 		local chance = 5 + s
 		if math.random(1, 100) <= chance then
+			local classMul = daggerClassCriticalMultipliers[pl.Class][daggerAmount + 1]
+			mul = classMul or daggerDefaultCriticalMultipliers[daggerAmount + 1]
 			d.eax = d.eax * mul
 			crit = true
 		end
@@ -2828,11 +2838,11 @@ end)
 
 --Bow Calculation
 function events.ModifyItemDamage(t)
-local s, m = SplitSkill(t.Player.Skills[const.Skills.Bow])
+	local s, m = SplitSkill(t.Player.Skills[const.Skills.Bow])
 	if t.Item:T().EquipStat == const.ItemType.Missile - 1 then
 		t.Result = t.Result + s * (m <= const.Expert and m or 2)
 		if classRangedWeaponSkillDamageBonus[t.Player.Class] ~= nil then
-				t.Result = t.Result + (classRangedWeaponSkillDamageBonus[t.Player.Class] * s)
-			end
+			t.Result = t.Result + (classRangedWeaponSkillDamageBonus[t.Player.Class] * s)
+		end
 	end
 end
