@@ -877,3 +877,175 @@ function events.GameInitialized2()
 	
 	
 end
+
+-- allow setting healing spells power
+local healingSpellPowers =
+{
+	[const.Spells.FirstAid] =
+	{
+		[const.Novice] = {fixedMin = 5, fixedMax = 5, variableMin = 0, variableMax = 0, },
+		[const.Expert] = {fixedMin = 15, fixedMax = 15, variableMin = 0, variableMax = 0, },
+		[const.Master] = {fixedMin = 300, fixedMax = 300, variableMin = 0, variableMax = 0, },
+	},
+	[const.Spells.RemoveCurse] =
+	{
+		[const.Novice] = {fixedMin = 5, fixedMax = 5, variableMin = 0, variableMax = 0, },
+		[const.Expert] = {fixedMin = 30, fixedMax = 30, variableMin = 0, variableMax = 0, },
+		[const.Master] = {fixedMin = 70, fixedMax = 70, variableMin = 0, variableMax = 0, },
+	},
+	[const.Spells.RemoveFear] =
+	{
+		[const.Novice] = {fixedMin = 2, fixedMax = 2, variableMin = 0, variableMax = 0, },
+		[const.Expert] = {fixedMin = 10, fixedMax = 10, variableMin = 0, variableMax = 0, },
+		[const.Master] = {fixedMin = 50, fixedMax = 50, variableMin = 0, variableMax = 0, },
+	},
+	[const.Spells.CureInsanity] =
+	{
+		[const.Novice] = {fixedMin = 25, fixedMax = 25, variableMin = 0, variableMax = 0, },
+		[const.Expert] = {fixedMin = 80, fixedMax = 80, variableMin = 0, variableMax = 0, },
+		[const.Master] = {fixedMin = 200, fixedMax = 200, variableMin = 0, variableMax = 0, },
+	},
+	[const.Spells.CurePoison] =
+	{
+		[const.Novice] = {fixedMin = 15, fixedMax = 15, variableMin = 0, variableMax = 0, },
+		[const.Expert] = {fixedMin = 30, fixedMax = 30, variableMin = 0, variableMax = 0, },
+		[const.Master] = {fixedMin = 65, fixedMax = 65, variableMin = 0, variableMax = 0, },
+	},
+	[const.Spells.HealingTouch] =
+	{
+		[const.Novice] = {fixedMin = 2, fixedMax = 2, variableMin = 2, variableMax = 2, },
+		[const.Expert] = {fixedMin = 4, fixedMax = 4, variableMin = 3, variableMax = 3, },
+		[const.Master] = {fixedMin = 15, fixedMax = 15, variableMin = 5, variableMax = 5, },
+	},
+	[const.Spells.CureWounds] =
+	{
+		[const.Novice] = {fixedMin = 0, fixedMax = 0, variableMin = 3, variableMax = 3, },
+		[const.Expert] = {fixedMin = 0, fixedMax = 0, variableMin = 5, variableMax = 5, },
+		[const.Master] = {fixedMin = 0, fixedMax = 0, variableMin = 8, variableMax = 8, },
+	},
+	[const.Spells.SharedLife] =
+	{
+		[const.Novice] = {fixedMin = 0, fixedMax = 0, variableMin = 3, variableMax = 3, },
+		[const.Expert] = {fixedMin = 0, fixedMax = 0, variableMin = 3, variableMax = 3, },
+		[const.Master] = {fixedMin = 0, fixedMax = 0, variableMin = 3, variableMax = 3, },
+	},
+	[const.Spells.PowerCure] =
+	{
+		[const.Novice] = {fixedMin = 10, fixedMax = 10, variableMin = 3, variableMax = 3, },
+		[const.Expert] = {fixedMin = 10, fixedMax = 10, variableMin = 3, variableMax = 3, },
+		[const.Master] = {fixedMin = 10, fixedMax = 10, variableMin = 3, variableMax = 3, },
+	},
+}
+
+-- def is addHP()
+local function modifiedHealCharacterWithSpell(d, def, targetPtr, amount)
+	local t = {Result = amount}
+	local spellStructurePtr = d.ebx
+	t.TargetIndex, t.Target = GetPlayer(targetPtr) -- also index u2[spellStructurePtr + 4]
+	t.Spell = mem.u2[spellStructurePtr]
+	t.CasterIndex, t.Caster = mem.u2[spellStructurePtr + 2], Party.PlayersArray[mem.u2[spellStructurePtr + 2] ]
+	t.Skill, t.Mastery = SplitSkill(mem.u1[spellStructurePtr + 0xA])
+	events.call("HealingSpellPower", t)
+	def(targetPtr, t.Result)
+end
+
+mem.hookcall(0x427E9D, 1, 1, modifiedHealCharacterWithSpell) -- first aid + maybe more
+mem.hookcall(0x427FFB, 1, 1, modifiedHealCharacterWithSpell) -- healing touch + maybe more
+mem.hookcall(0x4285D7, 1, 1, modifiedHealCharacterWithSpell) -- power cure + maybe more, power cure amount is per player
+mem.hookcall(0x4299A9, 1, 1, modifiedHealCharacterWithSpell) -- moon ray + maybe more, moon ray amount is per player
+mem.autohook(0x4271DC, function(d) -- shared life, amount is total
+	local t = {Result = mem.u4[d.esp + 0x28]}
+	local spellStructurePtr = d.ebx
+	t.Spell = mem.u2[spellStructurePtr]
+	t.CasterIndex, t.Caster = mem.u2[spellStructurePtr + 2], Party.PlayersArray[mem.u2[spellStructurePtr + 2] ]
+	t.Skill, t.Mastery = SplitSkill(mem.u1[spellStructurePtr + 0xA])
+	events.call("HealingSpellPower", t)
+	mem.u4[d.esp + 0x28] = t.Result
+end)
+
+local function Randoms(min, max, count)
+	local r = 0
+	for i = 1, count do
+		r = r + math.random(min, max)
+	end
+	return r
+end
+
+function events.HealingSpellPower(t)
+	local power = healingSpellPowers[t.Spell]
+	if power then
+		if spell == const.Spells.SharedLife then
+			return
+		end
+		local skill = t.Caster.Skills[const.Skills.Fire + math.ceil((t.Spell + 1) / 11) - 1]
+		local s, m = SplitSkill(skill)
+		local entry = power[m]
+		t.Result = Randoms(entry.variableMin, entry.variableMax, s) + math.random(entry.fixedMin or 0, entry.fixedMax or 0)
+	end
+end
+
+-- condition u8 is time when it was inflicted (taken from current game time)
+
+-- removeConditionBySpell()
+mem.hookfunction(0x484840, 1, 3, function(d, def, playerPtr, cond, timeLow,  timeHigh)
+	local t = {Condition = cond, Spell = mem.u2[d.ebx]}
+	t.CasterIndex, t.Caster = mem.u2[d.ebx + 2], Party.PlayersArray[mem.u2[d.ebx + 2] ]
+	t.TargetIndex, t.Target = GetPlayer(playerPtr)
+	t.Skill, t.Mastery = SplitSkill(mem.u1[d.ebx + 0xA])
+	-- time is calculated by subtracting spell's time limit from Game.Time, and then
+	-- checking if result is <= condition affect time,
+	-- so to calc spell time limit we need to subtract time from Game.Time
+	
+	-- params supplied to hookfunction() by d.getparams() are signed
+	
+	-- lua uses doubles, which can't represent accurately full range of 64bit integer values,
+	-- that's why mem arrays are needed
+	t.TimeLimit = Game.Time - mem.i8[d.esp + 0x8]
+	events.call("RemoveConditionBySpell", t)
+	mem.i8[d.esp + 0x8] = Game.Time - t.TimeLimit
+	timeLow, timeHigh = mem.u4[d.esp + 0x8], mem.i4[d.esp + 0xC]
+	def(playerPtr, cond, timeLow, timeHigh)
+end)
+
+-- always call removeConditionBySpell() for cure insanity
+
+local cureInsanityTmp = mem.StaticAlloc(1) -- temporary to store whether to inflict weakness
+mem.asmpatch(0x427A90, [[
+	je @noweak
+	mov byte []] .. cureInsanityTmp .. [[], 1
+	jmp absolute 0x427A96
+	@noweak:
+	mov byte []] .. cureInsanityTmp .. [[], 0
+	jmp absolute 0x427AB5
+]], 6)
+
+mem.asmhook(0x427AFC, [[
+	cmp byte []] .. cureInsanityTmp .. [[], 0
+	je absolute 0x427B33
+]])
+
+local conditionToSpell = {
+	[const.Condition.Cursed] = const.Spells.RemoveCurse,
+	[const.Condition.Weak] = const.Spells.CureWeakness,
+	[const.Condition.Asleep] = const.Spells.Awaken,
+	[const.Condition.Afraid] = const.Spells.RemoveFear,
+	[const.Condition.Insane] = const.Spells.CureInsanity,
+	[const.Condition.Poison3] = const.Spells.CurePoison, -- poison and disease only 1 of 3 variants to not perform effect 3 times
+	[const.Condition.Disease3] = const.Spells.CureDisease,
+	[const.Condition.Paralyzed] = const.Spells.CureParalysis,
+	[const.Condition.Dead] = const.Spells.RaiseDead,
+	[const.Condition.Stoned] = const.Spells.StoneToFlesh,
+	[const.Condition.Eradicated] = const.Spells.Resurrection,
+}
+
+function events.RemoveConditionBySpell(t)
+	local sp = conditionToSpell[t.Condition]
+	if sp then
+		local t2 = table.copy(t)
+		t2.TimeLimit, t2.Condition, t2.Result = nil, nil, 0
+		events.call("HealingSpellPower", t2)
+		if t2.Result > 0 then
+			t.Target:AddHP(t2.Result)
+		end
+	end
+end
