@@ -1919,17 +1919,17 @@ formatSkillRankNumber(Game.SkillRecoveryTimes[const.Skills.Shield + 1] * (rank =
 	-- Class starting HP/SP
 	----------------------------------------------------------------------------------------------------
 	--Paladin
-	Game.Classes.HPFactor[const.Class.Paladin] = 4
-	Game.Classes.HPFactor[const.Class.Crusader] = 5
+	Game.Classes.HPFactor[const.Class.Paladin] = 3
+	Game.Classes.HPFactor[const.Class.Crusader] = 4
 	Game.Classes.HPFactor[const.Class.Hero] = 6
 	Game.Classes.SPFactor[const.Class.Paladin] = 2
 	Game.Classes.SPFactor[const.Class.Crusader] = 3
 	Game.Classes.SPFactor[const.Class.Hero] = 3
 	Game.ClassKinds.SPBase[3] = 8
 	--Archer
-	Game.Classes.HPFactor[const.Class.Archer] = 4
-	Game.Classes.HPFactor[const.Class.BattleMage] = 5
-	Game.Classes.HPFactor[const.Class.WarriorMage] = 6
+	Game.Classes.HPFactor[const.Class.Archer] = 3
+	Game.Classes.HPFactor[const.Class.BattleMage] = 4
+	Game.Classes.HPFactor[const.Class.WarriorMage] = 5
 	Game.Classes.SPFactor[const.Class.Archer] = 2
 	Game.Classes.SPFactor[const.Class.BattleMage] = 3
 	Game.Classes.SPFactor[const.Class.WarriorMage] = 4	
