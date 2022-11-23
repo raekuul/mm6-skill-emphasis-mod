@@ -19,7 +19,7 @@ function events.Regeneration(t)
 	v = Party[t.PlayerIndex]
 	class = v.Class
 	mediFactor = 1
-	if (class == const.Class.Hero)
+	if (class == const.Class.Hero) or (class == const.Class.WarriorMage)
 	then
 		mediFactor = 3/2
 	end
