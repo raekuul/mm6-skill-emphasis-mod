@@ -1895,15 +1895,15 @@ formatSkillRankNumber(Game.SkillRecoveryTimes[const.Skills.Shield + 1] * (rank =
 	Game.ClassKinds.StartingSkills[3][const.Skills.Light] = 3
 	Game.ClassKinds.StartingSkills[3][const.Skills.Dagger] = 0
 	-- archer
-	Game.ClassKinds.StartingSkills[4][const.Skills.Dagger] = 1
+
 	Game.ClassKinds.StartingSkills[4][const.Skills.Spear] = 2
 	Game.ClassKinds.StartingSkills[4][const.Skills.Leather] = 2
+	Game.ClassKinds.StartingSkills[4][const.Skills.Dagger] = 1
 	Game.ClassKinds.StartingSkills[4][const.Skills.Bow] = 1
 	Game.ClassKinds.StartingSkills[4][const.Skills.Air] = 2
 	Game.ClassKinds.StartingSkills[4][const.Skills.Water] = 2
 	Game.ClassKinds.StartingSkills[4][const.Skills.Earth] = 2
 	Game.ClassKinds.StartingSkills[4][const.Skills.Axe] = 3
-	Game.ClassKinds.StartingSkills[4][const.Skills.Dagger] = 3
 	Game.ClassKinds.StartingSkills[4][const.Skills.Diplomacy] = 3
 	Game.ClassKinds.StartingSkills[4][const.Skills.IdentifyItem] = 2
 	Game.ClassKinds.StartingSkills[4][const.Skills.Dark] = 3
