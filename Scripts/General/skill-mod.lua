@@ -345,6 +345,12 @@ local daggerClassCriticalMultipliers = {
 
 local daggerDefaultCriticalMultipliers = {1, 1.4, 2.5}
 
+local classDaggerCriticalChanceBonus = {
+	[const.Class.Archer] = 5,
+	[const.Class.BattleMage] = 5,
+	[const.Class.WarriorMage] = 5,
+}
+
 -- special weapon skill chances
 local staffEffect = {["base"] = 10, ["multiplier"] = 2, ["duration"] = 5, }
 local maceEffect = {["base"] = 5, ["multiplier"] = 0.25, ["duration"] = 5, }
@@ -2787,7 +2793,7 @@ mem.hook(NewCode, function(d)
 	local daggerAmount = (main and main:T().Skill == const.Skills.Dagger and 1 or 0) + (off and off:T().Skill == const.Skills.Dagger and 1 or 0)
 	if daggerAmount > 0 then
 		-- (5 + skill * 1) / 100 is equal to 5% + 1% per skill
-		local chance = 5 + s
+		local chance = 5 + s + (classDaggerCriticalChanceBonus[pl.Class] or 0)
 		if math.random(1, 100) <= chance then
 			local classMul = daggerClassCriticalMultipliers[pl.Class][daggerAmount + 1]
 			mul = classMul or daggerDefaultCriticalMultipliers[daggerAmount + 1]
