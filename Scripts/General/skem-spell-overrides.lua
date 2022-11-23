@@ -974,9 +974,6 @@ end
 function events.HealingSpellPower(t)
 	local power = healingSpellPowers[t.Spell]
 	if power then
-		if spell == const.Spells.SharedLife then
-			return
-		end
 		local skill = t.Caster.Skills[const.Skills.Fire + math.ceil((t.Spell + 1) / 11) - 1]
 		local s, m = SplitSkill(skill)
 		local entry = power[m]
