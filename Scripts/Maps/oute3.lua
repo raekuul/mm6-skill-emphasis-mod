@@ -105,6 +105,7 @@ end
 evt.map[225] = function()
 	if not evt.Cmp("MapVar59", 1) then
 		evt.Add("Inventory", 218)         -- "Jump"
+		evt.FaceExpression{Player = "All", Frame = 44}
 		evt.Set("MapVar59", 1)
 	end
 end
