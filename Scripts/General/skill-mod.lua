@@ -2786,6 +2786,7 @@ local crit, mul
 mem.hook(NewCode, function(d)
 	-- when not using hookjmp() (for example in plain hook()), esp points to return address,
 	-- not to position before return address (the one esp pointed to before hook proc call)
+	-- need to add 4 to esp
 	local i, pl = GetPlayer(mem.u4[d.esp + 4])
 	local s, m = SplitSkill(pl.Skills[const.Skills.Dagger])
 	crit = false -- just in case

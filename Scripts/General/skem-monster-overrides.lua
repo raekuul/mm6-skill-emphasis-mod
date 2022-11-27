@@ -656,3 +656,41 @@ function events.LoadMap()
 --		 debug.Message("Adaptive Mode:  "..ADAPTIVE..", using Adaptive Level " .. adaptive_level)
 	end
 end
+
+-- monster power spawn event
+local idsToBasePics = {}
+function events.GameInitialized2()
+	local a, c = string.byte("ac", 1, 2)
+	for i, v in Game.MonstersTxt do
+		local pic = v.Picture:lower()
+		if pic:len() > 0 then
+			local byte = string.byte(pic:sub(-1))
+			if byte >= a and byte <= c then
+				pic = pic:sub(1, -2)
+			end
+			idsToBasePics[pic] = idsToBasePics[pic] or i
+		end
+	end
+end
+-- function events.RandomSpawnMonster(t)
+-- t.Id = monster id
+-- t.Power = monster power (1-3), pass 0 to skip this monster
+-- supports only random power spawnpoints (doesn't fire on mxa/mxb/mxc spawnpoints, mx only)
+mem.hook(0x455BF4, function(d)
+	local pictureBase = mem.string(d.esp + 0x34):lower()
+	local id = idsToBasePics[pictureBase] or error("Unknown monster pic (Game.MonstersTxt[n].Picture): " .. pictureBase)
+	local t = {Id = id, Power = d.esi}
+	events.call("RandomSpawnMonster", t)
+	if t.Power == 0 then
+		mem.u4[d.esp] = 0x455E76 -- return address
+		return
+	end
+	t.Id = type(t.Id) == "number" and (t.Id - 1):Div(3) * 3 -- id before A variation (with Power it'll be right)
+	local pic = t.Id ~= nil and Game.MonstersTxt[t.Id + t.Power] and Game.MonstersTxt[t.Id + t.Power].Picture or error("Invalid monster id in RandomSpawnMonster() event")
+	mem.copy(d.esp + 0x5C, pic .. string.char(0))
+	mem.u4[d.esp] = 0x455C3A
+end, 6)
+
+function events.RandomSpawnMonster(t)
+	
+end
