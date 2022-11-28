@@ -877,6 +877,119 @@ function events.GameInitialized2()
 	
 	
 end
+if not const.Spells then
+	const.Spells = {
+		TorchLight = 1,
+		Haste = 5,
+		Fireball = 6,
+		MeteorShower = 9,
+		Inferno = 10,
+		Incinerate = 11,
+		WizardEye = 12,
+		Sparks = 15,
+		Shield = 17,
+		LightningBolt = 18,
+		Implosion = 20,
+		Fly = 21,
+		Starburst = 22,
+		Awaken = 23,
+		WaterWalk = 27,
+		TownPortal = 31,
+		IceBlast = 32,
+		LloydsBeacon = 33,
+		Stun = 34,
+		DeadlySwarm = 37,
+		StoneSkin = 38,
+		Blades = 39,
+		StoneToFlesh = 40,
+		RockBlast = 41,
+		DeathBlossom = 43,
+		MassDistortion = 44,
+		Bless = 46,
+		RemoveCurse = 49,
+		Heroism = 51,
+		RaiseDead = 53,
+		SharedLife = 54,
+		Resurrection = 55,
+		CureInsanity = 64,
+		PsychicShock = 65,
+		CureWeakness = 67,
+		Harm = 70,
+		CurePoison = 72,
+		CureDisease = 74,
+		FlyingFist = 76,
+		PowerCure = 77,
+		DispelMagic = 80,
+		DayOfTheGods = 83,
+		PrismaticLight = 84,
+		DivineIntervention = 88,
+		Reanimate = 89,
+		ToxicCloud = 90,
+		DragonBreath = 97,
+		Armageddon = 98,
+		ShootFire = nil,  -- unused
+	}
+
+	table.copy({
+		Shoot = 100,
+		ShootFire = 101,
+		ShootBlaster = 102,
+	}, const.Spells, true)
+	table.copy({
+		FlameArrow = 2,
+		ProtectionFromFire = 3,
+		FireBolt = 4,
+		RingOfFire = 7,
+		FireBlast = 8,
+		StaticCharge = 13,
+		ProtectionFromElectricity = 14,
+		FeatherFall = 16,
+		Jump = 19,
+		ColdBeam = 24,
+		ProtectionFromCold = 25,
+		PoisonSpray = 26,
+		IceBolt = 28,
+		EnchantItem = 29,
+		AcidBurst = 30,
+		MagicArrow = 35,
+		ProtectionFromMagic = 36,
+		TurnToStone = 42,
+		SpiritArrow = 45,
+		HealingTouch = 47,
+		LuckyDay = 48,
+		GuardianAngel = 50,
+		TurnUndead = 52,
+		Meditation = 56,
+		RemoveFear = 57,
+		MindBlast = 58,
+		Precision = 59,
+		CureParalysis = 60,
+		Charm = 61,
+		MassFear = 62,
+		Feeblemind = 63,
+		Telekinesis = 66,
+		FirstAid = 68,
+		ProtectionFromPoison = 69,
+		CureWounds = 71,
+		Speed = 73,
+		Power = 75,
+		CreateFood = 78,
+		GoldenTouch = 79,
+		Slow = 81,
+		DestroyUndead = 82,
+		HourOfPower = 85,
+		Paralyze = 86,
+		SunRay = 87,
+		MassCurse = 91,
+		Shrapmetal = 92,
+		ShrinkingRay = 93,
+		DayOfProtection = 94,
+		FingerOfDeath = 95,
+		MoonRay = 96,
+		DarkContainment = 99,
+		
+	}, const.Spells, true)
+end
 
 -- allow setting healing spells power
 local healingSpellPowers =
@@ -1021,7 +1134,7 @@ mem.asmhook(0x427AFC, [[
 	je absolute 0x427B33
 ]])
 
-local conditionToSpell = {
+local spellToCondition = {
 	[const.Condition.Cursed] = const.Spells.RemoveCurse,
 	[const.Condition.Weak] = const.Spells.CureWeakness,
 	[const.Condition.Asleep] = const.Spells.Awaken,
@@ -1036,7 +1149,7 @@ local conditionToSpell = {
 }
 
 function events.RemoveConditionBySpell(t)
-	local sp = conditionToSpell[t.Condition]
+	local sp = spellToCondition[t.Condition]
 	if sp then
 		local t2 = table.copy(t)
 		t2.TimeLimit, t2.Condition, t2.Result = nil, nil, 0

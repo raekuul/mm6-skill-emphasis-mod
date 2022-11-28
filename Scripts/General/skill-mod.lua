@@ -2799,7 +2799,7 @@ mem.hook(NewCode, function(d)
 		-- (5 + skill * 1) / 100 is equal to 5% + 1% per skill
 		local chance = 5 + s + (classDaggerCriticalChanceBonus[pl.Class] or 0)
 		if math.random(1, 100) <= chance then
-			local classMul = daggerClassCriticalMultipliers[pl.Class][daggerAmount + 1]
+			local classMul = daggerClassCriticalMultipliers[pl.Class] and daggerClassCriticalMultipliers[pl.Class][daggerAmount + 1]
 			mul = classMul or daggerDefaultCriticalMultipliers[daggerAmount + 1]
 			d.eax = d.eax * mul
 			crit = true
