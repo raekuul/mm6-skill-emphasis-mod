@@ -211,7 +211,7 @@ local spellCosts =
 	["Ice Bolt"] = {["Master"] = 11},
 	["Fire Bolt"] = {["Master"] = 8},
 	["Deadly Swarm"] = {["Master"] = 6},
-	["Mind Blast"] = {["Master"] = 1},
+	["Mind Blast"] = {["Expert"] = 2, ["Master"] = 1},
 	["Lightning Bolt"] = {["Master"] = 14},
 	["Moon Ray"] = {["Master"] = 55},
 	["Dark Containment"] = {["Master"] = 100},
@@ -325,7 +325,7 @@ local spellPowers =
 	{
 		[const.Novice] = {fixedMin = 4, fixedMax = 4, variableMin = 1, variableMax = 2, },
 		[const.Expert] = {fixedMin = 4, fixedMax = 4, variableMin = 1, variableMax = 2, },
-		[const.Master] = {fixedMin = 5, fixedMax = 4, variableMin = 1, variableMax = 4, },
+		[const.Master] = {fixedMin = 4, fixedMax = 4, variableMin = 1, variableMax = 4, },
 	},
 	-- Ice Bolt
 	[28] =

@@ -200,7 +200,7 @@ local monsterInfos =
 	-- Thief
 	[163] = {["Attack1"] = {["Type"] = const.Damage.Phys, ["DamageDiceCount"] = 3, ["DamageDiceSides"] = 4, ["DamageAdd"] = 0,},["Attack2"] = {["Type"] = const.Damage.Phys, ["DamageDiceCount"] = 3, ["DamageDiceSides"] = 4, ["DamageAdd"] = 3,},["Level"] = 6,["FullHP"] = 21, ["ArmorClass"]=8, ["Experience"]= 96, ["Bonus"] = 0, ["BonusMul"] = 0},
 	-- Burglar
-	[164] = {["Attack1"] = {["Type"] = const.Damage.Phys, ["DamageDiceCount"] = 3, ["DamageDiceSides"] = 4, ["DamageAdd"] = 3,},["Attack2"] = {["Type"] = const.Damage.Phys, ["DamageDiceCount"] = 3, ["DamageDiceSides"] = 4, ["DamageAdd"] = 6,},["Level"] = 8,["FullHP"] = 39, ["ArmorClass"]=10, ["Experience"]= 144, ["Bonus"] = 0, ["BonusMul"] = 0},
+	[164] = {["Attack1"] = {["Type"] = const.Damage.Phys, ["DamageDiceCount"] = 3, ["DamageDiceSides"] = 4, ["DamageAdd"] = 3,},["Attack2"] = {["Type"] = const.Damage.Phys, ["DamageDiceCount"] = 3, ["DamageDiceSides"] = 4, ["DamageAdd"] = 6,},["Level"] = 8,["FullHP"] = 30, ["ArmorClass"]=10, ["Experience"]= 144, ["Bonus"] = 0, ["BonusMul"] = 0},
 	-- Rogue
 	[165] = {["Attack1"] = {["Type"] = const.Damage.Phys, ["DamageDiceCount"] = 3, ["DamageDiceSides"] = 4, ["DamageAdd"] = 6,},["Attack2"] = {["Type"] = const.Damage.Phys, ["DamageDiceCount"] = 3, ["DamageDiceSides"] = 4, ["DamageAdd"] = 9,},["Level"] = 12,["FullHP"] = 50, ["ArmorClass"]=14, ["Experience"]= 264, ["Bonus"] = 0, ["BonusMul"] = 0},
 
@@ -376,17 +376,22 @@ function calculateMonsterHealth(monsterArray)
 	if (tier == "A")
 	then
 		tier3Level = Game.MonstersTxt[lookupID + 2]["Level"]
-	elseif (tier == "B")
-	then
-		tier3Level = Game.MonstersTxt[lookupID + 1]["Level"]
-	else
-		tier3Level = level
-	end
-	
-	if (tier3Level >= (level * 2))
+		if (tier3Level >= (level * 2))
 	then
 		healthMod = healthMod + tier3Level/(level * 5)
 	end
+	elseif (tier == "B")
+	then
+		tier3Level = Game.MonstersTxt[lookupID + 1]["Level"]
+		if (tier3Level >= (Game.MonstersTxt[lookupID - 1]["Level"] * 2))
+	then
+		healthMod = healthMod + tier3Level/(level * 5)
+	end
+	else
+		tier3Level = 0
+	end
+	
+	
 	
 	newHealth = oldHealth * baseHealthMultiplier * healthMod
 	return math.max(newHealth, oldHealth)
