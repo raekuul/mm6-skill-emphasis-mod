@@ -1087,7 +1087,7 @@ end
 function events.HealingSpellPower(t)
 	local power = healingSpellPowers[t.Spell]
 	if power then
-		local skill = t.Caster.Skills[const.Skills.Fire + math.ceil((t.Spell + 1) / 11) - 1]
+		local skill = t.Caster.Skills[const.Skills.Fire + math.ceil(t.Spell / 11) - 1]
 		local s, m = SplitSkill(skill)
 		local entry = power[m]
 		t.Result = Randoms(entry.variableMin, entry.variableMax, s) + math.random(entry.fixedMin or 0, entry.fixedMax or 0)
