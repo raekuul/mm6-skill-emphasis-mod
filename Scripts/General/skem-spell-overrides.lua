@@ -1071,7 +1071,7 @@ mem.autohook(0x4271DC, function(d) -- shared life, amount is total
 	local spellStructurePtr = d.ebx
 	t.Spell = mem.u2[spellStructurePtr]
 	t.CasterIndex, t.Caster = mem.u2[spellStructurePtr + 2], Party.PlayersArray[mem.u2[spellStructurePtr + 2] ]
-	t.Skill, t.Mastery = SplitSkill(mem.u1[spellStructurePtr + 0xA])
+	t.Skill, t.Mastery = SplitSkill(t.Caster.Skills[const.Skills.Spirit])
 	events.call("HealingSpellPower", t)
 	mem.u4[d.esp + 0x28] = t.Result
 end)
@@ -1090,7 +1090,11 @@ function events.HealingSpellPower(t)
 		local skill = t.Caster.Skills[const.Skills.Fire + math.ceil(t.Spell / 11) - 1]
 		local s, m = SplitSkill(skill)
 		local entry = power[m]
-		t.Result = Randoms(entry.variableMin, entry.variableMax, s) + math.random(entry.fixedMin or 0, entry.fixedMax or 0)
+		if t.Spell == const.Spells.SharedLife then
+			t.Result = t.Result - t.Skill * t.Mastery + Randoms(entry.variableMin, entry.variableMax, s) + math.random(entry.fixedMin or 0, entry.fixedMax or 0)
+		else
+			t.Result = Randoms(entry.variableMin, entry.variableMax, s) + math.random(entry.fixedMin or 0, entry.fixedMax or 0)
+		end
 	end
 end
 
