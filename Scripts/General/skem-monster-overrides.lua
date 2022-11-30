@@ -260,8 +260,14 @@ end
 
 function calculateMonsterArmor(monsterArray)
 	oldArmor = monsterArray["ArmorClass"]
-	newArmor = oldArmor * baseArmorMultiplier
+	newArmor = math.round(oldArmor * (1 + (100 - oldArmor) / 100)) * baseArmorMultiplier
 	return math.max(newArmor, oldArmor)
+end
+
+function calculateMonsterLevel(monsterArray)
+	monsterLevel = monsterArray["Level"]
+	monsterLevel = math.round(monsterLevel * (1 + (100 - monsterLevel) / 100)) 
+	return monsterLevel
 end
 
 function calculateMovespeed(monsterArray) 
@@ -547,7 +553,7 @@ function applyStaticMonsterOverrides(monsterID, easy_flag)
 	monsterArray["TreasureDiceCount"], monsterArray["TreasureDiceSides"] = calculateMonsterTreasures(monsterArray, easy_flag)
 	monsterArray["FullHitPoints"] = calculateMonsterHealth(monsterArray)
 	monsterArray["ArmorClass"] = calculateMonsterArmor(monsterArray)
-	
+	monsterArray["Level"] = calculateMonsterLevel(monsterArray)
 	-- these changes are exclusive to easy mode
 	if easy_flag == true
 	then
