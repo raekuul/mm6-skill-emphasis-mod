@@ -205,6 +205,9 @@ local spellCosts =
 	["Cure Wounds"] = {["Normal"] = 5, ["Expert"] = 8, ["Master"] = 15},
 	["Shared Life"] = {["Normal"] = 10, ["Expert"] = 10, ["Master"] = 12},
 	["First Aid"] = {["Master"] = 100},
+	["Remove Fear"] = {["Normal"] = 2, ["Expert"] = 4, ["Master"] = 6},
+	["Remove Curse"] = {["Normal"] = 3, ["Expert"] = 6, ["Master"] = 12},
+	["Cure Insanity"] = {["Normal"] = 20, ["Expert"] = 40, ["Master"] = 60},
 		
 	-- damage spells
 	["Fireball"] = {["Master"] = 16},
