@@ -1039,6 +1039,12 @@ local healingSpellPowers =
 		[const.Expert] = {fixedMin = 0, fixedMax = 0, variableMin = 5, variableMax = 5, },
 		[const.Master] = {fixedMin = 0, fixedMax = 0, variableMin = 8, variableMax = 8, },
 	},
+	[const.Spells.CureDisease] =
+	{
+	[const.Novice] = {fixedMin = 25, fixedMax = 25, variableMin = 0, variableMax = 0, },
+	[const.Expert] = {fixedMin = 50, fixedMax = 50, variableMin = 0, variableMax = 0, },
+	[const.Master] = {fixedMin = 100, fixedMax = 100, variableMin = 0, variableMax = 0, },
+	},
 	[const.Spells.SharedLife] =
 	{
 		[const.Novice] = {fixedMin = 0, fixedMax = 0, variableMin = 3, variableMax = 3, },
