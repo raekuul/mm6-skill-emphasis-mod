@@ -202,13 +202,14 @@ local spellCosts =
 {
 	-- healing spells
 	["Healing Touch"] = {["Normal"] = 3, ["Expert"] = 6, ["Master"] = 12},
-	["Cure Wounds"] = {["Normal"] = 5, ["Expert"] = 8, ["Master"] = 15},
-	["Shared Life"] = {["Normal"] = 10, ["Expert"] = 10, ["Master"] = 12},
-	["First Aid"] = {["Master"] = 100},
+	["Cure Wounds"] = {["Normal"] = 5, ["Expert"] = 8, ["Master"] = 16},
+	["Shared Life"] = {["Normal"] = 10, ["Expert"] = 10, ["Master"] = 10},
+	["First Aid"] = {["Expert"] = 3,["Master"] = 100},
 	["Remove Fear"] = {["Normal"] = 2, ["Expert"] = 4, ["Master"] = 6},
 	["Remove Curse"] = {["Normal"] = 3, ["Expert"] = 6, ["Master"] = 12},
-	["Cure Insanity"] = {["Normal"] = 20, ["Expert"] = 40, ["Master"] = 60},
-		
+	["Cure Insanity"] = {["Normal"] = 20, ["Expert"] = 30, ["Master"] = 40},
+	["Resurrection"] = {["Normal"] = 200, ["Expert"] = 200, ["Master"] = 200},
+	
 	-- damage spells
 	["Fireball"] = {["Master"] = 16},
 	["Ice Bolt"] = {["Master"] = 11},
@@ -1017,9 +1018,9 @@ local healingSpellPowers =
 	},
 	[const.Spells.CureInsanity] =
 	{
-		[const.Novice] = {fixedMin = 25, fixedMax = 25, variableMin = 0, variableMax = 0, },
-		[const.Expert] = {fixedMin = 80, fixedMax = 80, variableMin = 0, variableMax = 0, },
-		[const.Master] = {fixedMin = 200, fixedMax = 200, variableMin = 0, variableMax = 0, },
+		[const.Novice] = {fixedMin = 15, fixedMax = 15, variableMin = 4, variableMax = 4, },
+		[const.Expert] = {fixedMin = 25, fixedMax = 25, variableMin = 5, variableMax = 5, },
+		[const.Master] = {fixedMin = 35, fixedMax = 35, variableMin = 6, variableMax = 6, },
 	},
 	[const.Spells.CurePoison] =
 	{
