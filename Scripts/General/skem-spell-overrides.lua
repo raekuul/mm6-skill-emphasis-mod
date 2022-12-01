@@ -1001,7 +1001,7 @@ local healingSpellPowers =
 	{
 		[const.Novice] = {fixedMin = 5, fixedMax = 5, variableMin = 0, variableMax = 0, },
 		[const.Expert] = {fixedMin = 15, fixedMax = 15, variableMin = 0, variableMax = 0, },
-		[const.Master] = {fixedMin = 300, fixedMax = 300, variableMin = 0, variableMax = 0, },
+		[const.Master] = {fixedMin = 100, fixedMax = 100, variableMin = 12, variableMax = 12, },
 	},
 	[const.Spells.RemoveCurse] =
 	{
@@ -1029,21 +1029,21 @@ local healingSpellPowers =
 	},
 	[const.Spells.HealingTouch] =
 	{
-		[const.Novice] = {fixedMin = 2, fixedMax = 2, variableMin = 2, variableMax = 2, },
-		[const.Expert] = {fixedMin = 4, fixedMax = 4, variableMin = 3, variableMax = 3, },
+		[const.Novice] = {fixedMin = 5, fixedMax = 5, variableMin = 2, variableMax = 2, },
+		[const.Expert] = {fixedMin = 10, fixedMax = 10, variableMin = 3, variableMax = 3, },
 		[const.Master] = {fixedMin = 15, fixedMax = 15, variableMin = 5, variableMax = 5, },
 	},
 	[const.Spells.CureWounds] =
 	{
-		[const.Novice] = {fixedMin = 0, fixedMax = 0, variableMin = 3, variableMax = 3, },
-		[const.Expert] = {fixedMin = 0, fixedMax = 0, variableMin = 5, variableMax = 5, },
-		[const.Master] = {fixedMin = 0, fixedMax = 0, variableMin = 8, variableMax = 8, },
+		[const.Novice] = {fixedMin = 10, fixedMax = 10, variableMin = 3, variableMax = 3, },
+		[const.Expert] = {fixedMin = 15, fixedMax = 15, variableMin = 4, variableMax = 4, },
+		[const.Master] = {fixedMin = 25, fixedMax = 25, variableMin = 6, variableMax = 6, },
 	},
 	[const.Spells.CureDisease] =
 	{
 	[const.Novice] = {fixedMin = 25, fixedMax = 25, variableMin = 0, variableMax = 0, },
-	[const.Expert] = {fixedMin = 50, fixedMax = 50, variableMin = 0, variableMax = 0, },
-	[const.Master] = {fixedMin = 100, fixedMax = 100, variableMin = 0, variableMax = 0, },
+	[const.Expert] = {fixedMin = 40, fixedMax = 40, variableMin = 0, variableMax = 0, },
+	[const.Master] = {fixedMin = 90, fixedMax = 90, variableMin = 0, variableMax = 0, },
 	},
 	[const.Spells.SharedLife] =
 	{
@@ -1057,6 +1057,13 @@ local healingSpellPowers =
 		[const.Expert] = {fixedMin = 10, fixedMax = 10, variableMin = 3, variableMax = 3, },
 		[const.Master] = {fixedMin = 10, fixedMax = 10, variableMin = 3, variableMax = 3, },
 	},
+	[const.Spells.Resurrection] =
+	{
+		[const.Novice] = {fixedMin = 150, fixedMax = 150, variableMin = 15, variableMax = 15, },
+		[const.Expert] = {fixedMin = 150, fixedMax = 150, variableMin = 15, variableMax = 15, },
+		[const.Master] = {fixedMin = 150, fixedMax = 150, variableMin = 15, variableMax = 15, },
+	},
+	
 }
 
 -- def is addHP()
