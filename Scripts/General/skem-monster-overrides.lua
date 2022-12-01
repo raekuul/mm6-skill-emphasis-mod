@@ -272,11 +272,14 @@ end
 
 function calculateMovespeed(monsterArray) 
 	speed = monsterArray["MoveSpeed"]
-	if (monsterArray["Attack1"]["Missile"] == 0)
+	if (speed > 0)
 	then
-		speed = (speed + (400 - speed) / 2 + 100) * 101 / 100
-	else
-		speed = speed * 99 / 100
+		if (monsterArray["Attack1"]["Missile"] == 0)
+		then
+			speed = (speed + (400 - speed) / 2 + 100) * 101 / 100
+		else
+			speed = speed * 99 / 100
+		end
 	end
 	return speed
 end
