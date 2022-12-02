@@ -177,25 +177,67 @@ local spellDescs = {
 	},
 	["Healing Touch"] = {
 		["Description"] = "Heals a single character.  Skill increases the recovery rate of this spell.",
-		["Normal"] = "Costs 3 SP.\nHeals around 5 HP.",
-		["Expert"] = "Costs 6 SP.\nHeals around 30 HP.",
-		["Master"] = "Costs 12 SP.\nHeals around 70 HP.",
+		["Normal"] = "Costs 3 SP.\nHeals 5+2 HP per skill level.",
+		["Expert"] = "Costs 6 SP.\nHeals 10+3 HP per skill level.",
+		["Master"] = "Costs 12 SP.\nHeals 15+5 HP per skill level.",
 	},
 	["First Aid"] = {
-		["Description"] = "Cheaply heals a single character for a fixed amount.  Skill increases the recovery rate of this spell.",
-		["Normal"] = "Heals 5 HP",
-		["Expert"] = "Heals 14 HP",
-		["Master"] = "Heals 250 HP",
+		["Description"] = "Cheaply heals a single character.  Skill increases the recovery rate of this spell.\nAt Master becomes Final Aid, healing a huge amount of health",
+		["Normal"] = "Costs 2 SP.\nHeals 5 HP",
+		["Expert"] = "Costs 3 SP.\nHeals 15 HP",
+		["Master"] = "Final Aid: costs 100 SP.\nHeals 100+12 HP per skill level.",
 	},
 	["Cure Wounds"] = {
 		["Description"] = "Heals a single character.  Potency increases relative to the caster's skill in Body Magic.",
-		["Normal"] = "Costs 5 SP.\nHeals 10 HP + 2 per point of skill.",
-		["Expert"] = "Costs 8 SP.\nHeals 20 HP + 3 per point of skill.",
-		["Master"] = "Costs 15 SP.\nHeals 40 HP + 5 per point of skill.",
+		["Normal"] = "Costs 5 SP.\nHeals 10 HP + 3 per point of skill.",
+		["Expert"] = "Costs 8 SP.\nHeals 15 HP + 4 per point of skill.",
+		["Master"] = "Costs 16 SP.\nHeals 25 HP + 6 per point of skill.",
 	},
 	["Power Cure"] = {
-		["Description"] = "Heals every member of the party for 3 HP per point of skill in Body Magic.",
+		["Description"] = "Cures hit points of all characters in your party at once.  The number cured is equal to 10 plus 3 per point of skill in Body Magic.",
 	},
+		["Resurrection"] = {
+		["Description"] = "The final healing magic. Resurrects an eradicated (body destroyed) character if you cast this spell in time.  The greater the skill and rank in Spirit Magic the longer the condition could have been present before the “point of no return” is reached.  After that, the only way to resurrect the character is to visit a temple.  Casting this spell will leave your character in the weak condition.",
+		["Normal"] = "Works if eradicated less than 3 minutes per point of skill.\nHeals 50 HP + 15 per point of skill.",
+		["Expert"] = "Works if eradicated less than 1 hour per point of skill.\nHeals 100 HP + 15 per point of skill.",
+		["Master"] = "Works if eradicated less than 1 day per point of skill.\nHeals 150 HP + 15 per point of skill.",
+	},
+	["Shared life"] = {
+		["Description"] = "Shared Life combines the life force of your characters and redistributes it amongst them as evenly as possible.  All current hit points are totaled and 9 extra point per point of skill in Spirit Magic is added to this total.  Then the points are distributed back to the characters, with no individual character being allowed to have more points than his maximum total hit points.",
+		["Normal"] = "Moderate recovery rate",
+		["Expert"] = "Faster recovery rate",
+		["Master"] = "Fastest recovery rate",
+	},
+	["Cure Poison"] = {
+		["Description"] = "Heals and cures poison in a character if you cast this spell in time.  The greater the skill and rank in Body Magic the longer the character could have been poisoned before the “point of no return” is reached.  After that, the only way to remove the condition short of Divine Intervention is to visit a temple.",
+		["Normal"] = "Works if poisoned less than 3 minutes per point of skill\nHeals 15 HP.",
+		["Expert"] = "Works if poisoned less than 1 hour per point of skill\nHeals 30 HP.",
+		["Master"] = "Works if poisoned less than 1 day per point of skill\nHeals 65 HP.",
+	},	
+		["Cure Insanity"] = {
+		["Description"] = "Heals and cures insanity if you cast this spell in time.  The greater the skill and rank in Mind Magic the longer the character could have been insane before the “point of no return” is reached.  After that, the only way to remove the condition short of Divine Intervention is to visit a temple.",
+		["Normal"] = "Works if insane less than 3 minutes per point of skill\nCosts 20 SP.\nHeals 15+4 HP per point of skill.",
+		["Expert"] = "Works if insane less than 1 hour per point of skill\nCosts 30 SP.\nHeals 25+5 HP per point of skill.",
+		["Master"] = "Works if insane less than 1 day per point of skill\nCosts 40 SP.\nHeals 35+6 HP per point of skill.",
+	},	
+			["Remove Fear"] = {
+		["Description"] = "Heals and removes fear if you cast this spell in time.  The greater the skill and rank in Mind Magic the longer the character could have been insane before the “point of no return” is reached.  After that, the only way to remove the condition short of Divine Intervention is to visit a temple.",
+		["Normal"] = "Works if afraid less than 3 minutes per point of skill\nCosts 2 SP.\nHeals 2 HP.",
+		["Expert"] = "Works if afraid less than 1 hour per point of skill\nCosts 4 SP.\nHeals 10 HP.",
+		["Master"] = "Works if afraid less than 1 day per point of skill\nCosts 6 SP.\nHeals 50 HP.",
+	},
+			["Remove Curse"] = {
+		["Description"] = "Heals and removes the cursed condition from a character if you cast this spell in time.  The greater the skill and rank in Spirit Magic the longer the condition could have been present before the “point of no return” is reached.  After that, the only way to remove the condition short of Divine Intervention is to visit a temple.",
+		["Normal"] = "Works if cursed less than 3 minutes per point of skill\nCosts 2 SP.\nHeals 2 HP.",
+		["Expert"] = "Works if cursed less than 1 hour per point of skill\nCosts 4 SP.\nHeals 10 HP.",
+		["Master"] = "Works if cursed less than 1 day per point of skill\nCosts 6 SP.\nHeals 50 HP.",
+	},	
+			["Cure Disease"] = {
+		["Description"] = "Heals and cures disease in a character if you cast this spell in time.  The greater the skill and rank in Body Magic the longer the character could have been diseased before the “point of no return” is reached.  After that, the only way to remove the condition short of Divine Intervention is to visit a temple.",
+		["Normal"] = "Works if cursed less than 3 minutes per point of skill\nHeals 25 HP.",
+		["Expert"] = "Works if cursed less than 1 hour per point of skill\nHeals 40 HP.",
+		["Master"] = "Works if cursed less than 1 day per point of skill\nHeals 90 HP.",
+	},	
 }
 
 local spellCosts =
@@ -1059,8 +1101,8 @@ local healingSpellPowers =
 	},
 	[const.Spells.Resurrection] =
 	{
-		[const.Novice] = {fixedMin = 150, fixedMax = 150, variableMin = 15, variableMax = 15, },
-		[const.Expert] = {fixedMin = 150, fixedMax = 150, variableMin = 15, variableMax = 15, },
+		[const.Novice] = {fixedMin = 50, fixedMax = 50, variableMin = 15, variableMax = 15, },
+		[const.Expert] = {fixedMin = 100, fixedMax = 100, variableMin = 15, variableMax = 15, },
 		[const.Master] = {fixedMin = 150, fixedMax = 150, variableMin = 15, variableMax = 15, },
 	},
 	
