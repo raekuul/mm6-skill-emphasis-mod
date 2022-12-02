@@ -30,13 +30,13 @@ local NEVER = math.huge
 
 local globalReset = SETTINGS["GlobalMapResetDays"]
 
-if ((globalReset == nil) or (globalReset.toLower() == 'default'))
+if ((globalReset == nil) or (string.lower(globalReset) == 'default'))
 then
 	globalReset = nil
-elseif (globalReset.toLower() == 'never')
+elseif (string.lower(globalReset) == 'never')
 then
 	globalReset = math.huge
-elseif (globalReset.toLower() == 'instant')
+elseif (string.lower(globalReset) == 'instant')
 then
 	globalReset = 0
 elseif (type(globalReset) == 'number' ) 
