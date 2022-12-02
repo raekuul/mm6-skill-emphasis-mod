@@ -32,10 +32,10 @@ local globalReset = SETTINGS["GlobalMapResetDays"]
 
 if ((globalReset == nil) or (globalReset.toLower() == 'default'))
 then
-	globalReset == nil
+	globalReset = nil
 elseif (globalReset.toLower() == 'never')
 then
-	globalReset == math.huge
+	globalReset = math.huge
 elseif (globalReset.toLower() == 'instant')
 then
 	globalReset = 0
@@ -136,14 +136,15 @@ localResets = {
 
 function changeAllRegionResets()
 	for i = 1, Game.MapStats.high do
+		orig = Game.MapStats[i]["RefillDays"]
 		if not (localResets[i] == nil)
 		then
 			Game.MapStats[i]["RefillDays"] = localResets[i]
+		elseif not (globalReset == nil) 
+		then
+			Game.MapStats[i]["RefillDays"] = globalReset
 		else
-			if not (globalReset == nil) 
-			then
-				Game.MapStats[i]["RefillDays"] = globalReset
-			end
+			Game.MapStats[i]["RefillDays"] = orig
 		end
 	end
 end
