@@ -203,7 +203,6 @@ local spellCosts =
 	-- healing spells
 	["Healing Touch"] = {["Normal"] = 3, ["Expert"] = 6, ["Master"] = 12},
 	["Cure Wounds"] = {["Normal"] = 5, ["Expert"] = 8, ["Master"] = 16},
-	["Shared Life"] = {["Normal"] = 10, ["Expert"] = 10, ["Master"] = 10},
 	["First Aid"] = {["Expert"] = 3,["Master"] = 100},
 	["Remove Fear"] = {["Normal"] = 2, ["Expert"] = 4, ["Master"] = 6},
 	["Remove Curse"] = {["Normal"] = 3, ["Expert"] = 6, ["Master"] = 12},
@@ -1048,9 +1047,9 @@ local healingSpellPowers =
 	},
 	[const.Spells.SharedLife] =
 	{
-		[const.Novice] = {fixedMin = 0, fixedMax = 0, variableMin = 3, variableMax = 3, },
-		[const.Expert] = {fixedMin = 0, fixedMax = 0, variableMin = 3, variableMax = 3, },
-		[const.Master] = {fixedMin = 0, fixedMax = 0, variableMin = 3, variableMax = 3, },
+		[const.Novice] = {fixedMin = 0, fixedMax = 0, variableMin = 9, variableMax = 9, },
+		[const.Expert] = {fixedMin = 0, fixedMax = 0, variableMin = 9, variableMax = 9, },
+		[const.Master] = {fixedMin = 0, fixedMax = 0, variableMin = 9, variableMax = 9, },
 	},
 	[const.Spells.PowerCure] =
 	{
