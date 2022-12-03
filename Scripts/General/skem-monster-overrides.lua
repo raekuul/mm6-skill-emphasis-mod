@@ -260,7 +260,7 @@ end
 
 function calculateMonsterArmor(monsterArray)
 	oldArmor = monsterArray["ArmorClass"]
-	newArmor = math.round(oldArmor * (1 + (100 - oldArmor) / 100)) * baseArmorMultiplier
+	newArmor = math.round(oldArmor * baseArmorMultiplier)
 	return math.max(newArmor, oldArmor)
 end
 
