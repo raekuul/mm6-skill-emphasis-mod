@@ -260,14 +260,8 @@ end
 
 function calculateMonsterArmor(monsterArray)
 	oldArmor = monsterArray["ArmorClass"]
-	newArmor = math.round(oldArmor * baseArmorMultiplier)
+	newArmor = oldArmor * baseArmorMultiplier
 	return math.max(newArmor, oldArmor)
-end
-
-function calculateMonsterLevel(monsterArray)
-	monsterLevel = monsterArray["Level"]
-	monsterLevel = math.round(monsterLevel * (1 + (100 - monsterLevel) / 100)) 
-	return monsterLevel
 end
 
 function calculateMovespeed(monsterArray) 
@@ -556,7 +550,7 @@ function applyStaticMonsterOverrides(monsterID, easy_flag)
 	monsterArray["TreasureDiceCount"], monsterArray["TreasureDiceSides"] = calculateMonsterTreasures(monsterArray, easy_flag)
 	monsterArray["FullHitPoints"] = calculateMonsterHealth(monsterArray)
 	monsterArray["ArmorClass"] = calculateMonsterArmor(monsterArray)
-	monsterArray["Level"] = calculateMonsterLevel(monsterArray)
+	
 	-- these changes are exclusive to easy mode
 	if easy_flag == true
 	then
@@ -671,7 +665,7 @@ function events.LoadMap()
 	end
 end
 
--- monster power spawn event
+--[[ monster power spawn event
 local idsToBasePics = {}
 function events.GameInitialized2()
 	local a, c = string.byte("ac", 1, 2)
@@ -708,3 +702,4 @@ end, 6)
 function events.RandomSpawnMonster(t)
 	
 end
+]]
