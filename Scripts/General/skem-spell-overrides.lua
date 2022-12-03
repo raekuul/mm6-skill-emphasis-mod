@@ -222,7 +222,7 @@ local spellDescs = {
 	},	
 			["Remove Fear"] = {
 		["Description"] = "Heals and removes fear if you cast this spell in time.  The greater the skill and rank in Mind Magic the longer the character could have been insane before the “point of no return” is reached.  After that, the only way to remove the condition short of Divine Intervention is to visit a temple.",
-		["Normal"] = "Works if afraid less than 3 minutes per point of skill\nCosts 2 SP.\nHeals 2 HP.",
+		["Normal"] = "Works if afraid less than 3 minutes per point of skill\nCosts 2 SP.\nHeals 3 HP.",
 		["Expert"] = "Works if afraid less than 1 hour per point of skill\nCosts 4 SP.\nHeals 10 HP.",
 		["Master"] = "Works if afraid less than 1 day per point of skill\nCosts 6 SP.\nHeals 50 HP.",
 	},
@@ -235,7 +235,7 @@ local spellDescs = {
 			["Cure Disease"] = {
 		["Description"] = "Heals and cures disease in a character if you cast this spell in time.  The greater the skill and rank in Body Magic the longer the character could have been diseased before the “point of no return” is reached.  After that, the only way to remove the condition short of Divine Intervention is to visit a temple.",
 		["Normal"] = "Works if cursed less than 3 minutes per point of skill\nHeals 25 HP.",
-		["Expert"] = "Works if cursed less than 1 hour per point of skill\nHeals 40 HP.",
+		["Expert"] = "Works if cursed less than 1 hour per point of skill\nHeals 45 HP.",
 		["Master"] = "Works if cursed less than 1 day per point of skill\nHeals 90 HP.",
 	},	
 }
