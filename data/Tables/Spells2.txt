@@ -61,7 +61,7 @@ Spell	DelayNormal	DelayExpert	DelayMaster
 59  Precision	120	60	30
 60  Cure Paralysis	120	120	120
 61  Charm	100	70	10
-62  Mass Fear	100	70	10
+62  Mass Fear	100	70	40
 63  Feeblemind	110	60	30
 64  Cure Insanity	120	120	120
 65  Psychic Shock	130	120	110
