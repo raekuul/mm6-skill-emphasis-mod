@@ -41,7 +41,7 @@ Spell	DelayNormal	DelayExpert	DelayMaster
 39  Blades	110	100	90
 40  Stone to Flesh	140	140	140
 41  Rock Blast	110	100	90
-42  Turn to Stone	130	130	33
+42  Turn to Stone	130	65	33
 43  Death Blossom	120	110	100
 44  Mass Distortion	140	220	200
 45  Spirit Arrow	90	80	80
@@ -60,8 +60,8 @@ Spell	DelayNormal	DelayExpert	DelayMaster
 58  Mind Blast	110	100	90
 59  Precision	120	60	30
 60  Cure Paralysis	120	120	120
-61  Charm	100	50	25
-62  Mass Fear	100	50	25
+61  Charm	100	70	10
+62  Mass Fear	100	70	10
 63  Feeblemind	110	60	30
 64  Cure Insanity	120	120	120
 65  Psychic Shock	130	120	110
