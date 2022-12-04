@@ -198,7 +198,7 @@ local newWeaponSkillAttackBonuses =
 {
 	[const.Skills.Staff]	= {1, 2, 2, },
 	[const.Skills.Sword]	= {1, 2, 2, },
-	[const.Skills.Dagger]	= {1, 1, 1, },
+	[const.Skills.Dagger]	= {1, 2, 2, },
 	[const.Skills.Axe]		= {1, 2, 2, },
 	[const.Skills.Spear]	= {1, 2, 3, },
 	[const.Skills.Bow]		= {3, 3, 3, },
